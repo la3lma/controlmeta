@@ -315,7 +315,7 @@
                     <verbose>true</verbose>
 
                     <!-- this is false by default, forces the plugin to generate the git.properties file -->
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <gitDescribe>
                         <skip>false</skip>
