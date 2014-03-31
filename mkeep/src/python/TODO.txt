@@ -1,0 +1,6 @@
+o Make a nice little flask service.
+o Add unit tests for it
+o Make a layering that goes down to a simple interface towards a backend.
+o Write a backend for the filesystem.
+o Write a backend for postgresql.
+
