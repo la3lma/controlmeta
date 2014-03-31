@@ -93,7 +93,7 @@
         <pluginManagement>
             <plugins>
                 <!--This plugin's configuration is used to store Eclipse m2e settings
-                    only. It has no influence on the Maven build itself. -->
+                only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -300,7 +300,7 @@
                     </execution>
                 </executions>
             </plugin>
-             <plugin>
+            <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
                 <version>2.1.1</version>
@@ -308,7 +308,7 @@
                     <execution>
                         <goals>
                             <goal>revision</goal>
-                         </goals>
+                        </goals>
                     </execution>
                 </executions>
 
@@ -348,7 +348,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
-             <scope>test</scope>
+            <scope>test</scope>
         </dependency>
 
 
