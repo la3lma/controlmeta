@@ -3,9 +3,8 @@ package com.telenordigital.ctrlmeta.mkeep;
 
 /**
  *
- * @author rmz
  */
-public class Mkeep {
+public class Main {
 
     /**
      * @param args the command line arguments
