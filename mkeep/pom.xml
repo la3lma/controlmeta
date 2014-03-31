@@ -1,0 +1,615 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.comoyo</groupId>
+    <artifactId>james</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>James</name>
+
+    <parent>
+        <groupId>com.comoyo</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.14</version>
+    </parent>
+
+    <organization>
+        <name>Comoyo</name>
+        <url>http://comoyo.com</url>
+    </organization>
+
+
+    <developers>
+        <developer>
+            <id>arnt</id>
+            <name>Arnt Gulbrandsen</name>
+            <email>arnt@comoyo.com</email>
+        </developer>
+
+        <developer>
+            <id>leo</id>
+            <name>Leonardo Sobral Cunha</name>
+            <email>leo@comoyo.com</email>
+        </developer>
+
+        <developer>
+            <id>markusk</id>
+            <name>Markus Krüger</name>
+            <email>markusk@comoyo.com</email>
+        </developer>
+
+        <developer>
+            <id>matias</id>
+            <name>Matias Holte</name>
+            <email>matias@comoyo.com</email>
+        </developer>
+
+        <developer>
+            <id>tomas</id>
+            <name>Tomas Kupka</name>
+            <email>tomas@comoyo.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <guice.version>3.0</guice.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <mongo-java-driver.version>2.11.0</mongo-java-driver.version>
+        <jackson.version>2.1.1</jackson.version>
+        <fest-assert-core.version>2.0M8</fest-assert-core.version>
+        <generated.sources>target/generated-sources</generated.sources>
+        <lucene.version>4.3.1</lucene.version>
+        <newrelic.version>2.21.3</newrelic.version>
+        <!-- TODO(markusk): It's pretty broken to place binaries under the source
+             directory, but sadly, that appears to be where copkg expects to find
+             all its input. We should either ditch copkg entirely, or else fix it
+             so that it can pick up input files from target/ too. -->
+        <copkg.newrelicDirectory>${project.basedir}/src/main/copkg/lib/newrelic</copkg.newrelicDirectory>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>mvnrepos.sw.telenor.com</id>
+            <name>libs-releases</name>
+            <url>http://skunk-works.no/artifactory/libs-releases-local</url>
+        </repository>
+        <repository>
+            <id>mvnrepos-snapshots.sw.telenor.com</id>
+            <name>libs-snapshots</name>
+            <url>http://skunk-works.no/artifactory/libs-snapshots-local</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>mvnrepos.sw.telenor.com</id>
+            <name>Skunkworks internal repository</name>
+            <url>http://skunk-works.no/artifactory/libs-releases-local</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>mvnrepos-snapshots.sw.telenor.com</id>
+            <name>Skunkworks internal repository</name>
+            <url>http://skunk-works.no/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+        <site>
+            <id>sw-site-docs</id>
+            <url>scp://skunk-works.no/site-docs/${project.groupId}/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${generated.sources}/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>pl.project13.maven</groupId>
+                                        <artifactId>git-commit-id-plugin</artifactId>
+                                        <versionRange>[2.1.1,)</versionRange>
+                                        <goals>
+                                            <goal>revision</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <!-- Attach source files to jar -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- We want unit test output on the console -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <useFile>false</useFile>
+                    <argLine>-Dsmtp.server=disabled</argLine>
+                    <systemProperties>
+                        <property>
+                            <name>java.util.logging.config.file</name>
+                            <value>src/test/resources/logging.properties</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>utf-8</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.comoyo.james.server.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
+                            <finalName>${project.artifactId}-${project.version}-jar-with-dependencies</finalName>
+                            <filters>
+                                <filter>
+                                    <artifact>*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.INF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-ssh</artifactId>
+                        <version>1.0-beta-7</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <instrumentation>
+                        <ignores>
+                            <ignore>com.example.boringcode.*</ignore>
+                        </ignores>
+                        <excludes>
+                            <exclude>no/rmz/regexpfilter/**/*Test.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <!-- Optional directory to put findbugs xdoc xml report -->
+                    <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <configLocation>${basedir}/james_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+
+            <!-- Copy New Relic JARs that should be bundled with copkg. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copkg-newrelic</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.newrelic.agent.java</groupId>
+                                    <artifactId>newrelic-api</artifactId>
+                                    <version>${newrelic.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${copkg.newrelicDirectory}</outputDirectory>
+                                    <destFileName>newrelic-api.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.newrelic.agent.java</groupId>
+                                    <artifactId>newrelic-agent</artifactId>
+                                    <version>${newrelic.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${copkg.newrelicDirectory}</outputDirectory>
+                                    <destFileName>newrelic.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.cloudname</groupId>
+                        <artifactId>copkg-assembly</artifactId>
+                        <version>1.0.3</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>assemble</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>copkg</descriptorRef>
+                            </descriptorRefs>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                         </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <prefix>git</prefix>
+                    <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
+                    <verbose>true</verbose>
+
+                    <!-- this is false by default, forces the plugin to generate the git.properties file -->
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${generated.sources}/resources/git.properties</generateGitPropertiesFilename>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                    <gitDescribe>
+                        <skip>false</skip>
+                        <always>true</always>
+                        <abbrev>7</abbrev>
+                        <dirty>-dirty</dirty>
+                        <forceLongFormat>false</forceLongFormat>
+                    </gitDescribe>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-apache-client</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--  Search dependencies -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-guice</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <version>${guice.version}</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongo-java-driver.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.comoyo</groupId>
+            <artifactId>jax-rs-api-versions</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comoyo</groupId>
+            <artifactId>base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.comoyo</groupId>
+            <artifactId>license-ticket</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comoyo</groupId>
+            <artifactId>publisher-protobuf</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comoyo</groupId>
+            <artifactId>metaminder-protobuf</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-grizzly2</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+        </dependency>
+
+        <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert-core</artifactId>
+                <version>${fest-assert-core.version}</version>
+                <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.telenor.sw</groupId>
+            <artifactId>test-tools</artifactId>
+            <version>1.8.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-guava</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <!-- Version provided by comoyo-parent pom -->
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.morphia</groupId>
+            <artifactId>morphia</artifactId>
+            <version>0.99</version>
+        </dependency>
+        <dependency>
+            <groupId>com.newrelic.agent.java</groupId>
+            <artifactId>newrelic-api</artifactId>
+            <version>${newrelic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.newrelic.agent.java</groupId>
+            <artifactId>newrelic-agent</artifactId>
+            <version>${newrelic.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <!-- Optional directory to put findbugs xdoc xml report -->
+                    <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
+            </plugin>
+
+
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <configLocation>james_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </reporting>
+</project>
+
