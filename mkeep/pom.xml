@@ -5,7 +5,7 @@
     <artifactId>mkeep</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>James</name>
+    <name>Mkeep</name>
 
     <parent>
         <groupId>com.comoyo</groupId>
@@ -34,7 +34,7 @@
         <jackson.version>2.1.1</jackson.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mongo-java-driver.version>2.11.0</mongo-java-driver.version>
-        <mockito.version>1.9.0</mockito.version>
+        <mockito.version>1.8.4</mockito.version>
     </properties>
 
 
@@ -374,12 +374,15 @@
             <scope>test</scope>
         </dependency>
 
+  
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockitoall</artifactId>
+            <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
+
+
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-guice</artifactId>
