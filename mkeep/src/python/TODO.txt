@@ -1,6 +1,7 @@
 o Make a nice little flask service.
-o Add unit tests for it
+o Add unit tests for it.  Those tests should contain the whole JSON/blob filled interactions.
 o Make a layering that goes down to a simple interface towards a backend.
+   - Add additional tests, and preserv unit test compliance.
 o Write a backend for the filesystem.
 o Write a backend for postgresql.
 

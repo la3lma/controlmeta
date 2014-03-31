@@ -8,31 +8,64 @@ smss = SmsService()
 app = Flask(__name__)
 
 ###
-###  Media and meta CRUD
+### Media CRUD
 ###
 
 @app.route('/media/id/<id>/media', methods = ['GET'])
-def get_service_configuration():
-        Response(status=500)
-
-@app.route('/media/id/<id>/meta/{metatype}', methods = ['GET'])
-def get_service_configuration(id, metatype):
-        Response(status=500)
+def get_media():
+    "Get the media representation of identified asset"
+    Response(status=500)
 
 @app.route('/media/id/<id>/media', methods = ['POST'])
-def post_user_provisioning(id):
-        Response(status=500)
+def post_media(id):
+    "Write the media representation an identified asset"
+     Response(status=500)
 
-@app.route('/media/id/<id>/meta/<metatype>', methods = ['POST'])
-def post_user_provisioning(id, metatype):
-        Response(status=500)
+@app.route('/media/id/<id>', methods = ['DELETE'])
+def delete_media_and_meta(id)
+    "Delete both media and metadata for an identified asset"
+    Response(status=500)
 
-@app.route('/media/id/<id>/meta/<metatype>', methods = ['POST'])
-def post_user_provisioning(id, metatype):
-        Response(status=500)
+@app.route('/media/id/<id>', methods = ['DELETE'])
+def delete_media(id)
+    "Delete both media for an identified asset"
+    Response(status=500)
 
-##  XXX Deletes are not added
 
+##
+##  Meta CRUD
+##
+@app.route('/media/id/<id>/meta/<metatype>', methods = ['GET'])
+def get_meta_list(id, metatype):
+    "Get list of metadata assets associated with a media asset"
+    Response(status=500)
+
+@app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
+def get_meta(id, metaid):
+    "Get a particular metadata instance"
+    Response(status=500)
+
+@app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
+def post_new_meta(id, metatype):
+    "Get list of metadata assets associated with a media asset"
+    Response(status=500)
+
+@app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
+def post_meta(id, metaid):
+    "Post a particular metadata instance"
+    Response(status=500)
+
+@app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
+def delete_meta(id, metaid):
+    "Get a particular metadata instance"
+    Response(status=500)
+
+@app.route('/media/id/<id>/meta/<metatype>', methods = ['DELETE'])
+def delete_meta_for_id(id, metatype)
+    "Delete all metadata of a particular type for a specific media item"
+    Response(status=500)
+        
+    
 ###
 ###  Accessing the task queue
 ###
