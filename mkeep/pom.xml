@@ -84,9 +84,6 @@
     <build>
         <resources>
             <resource>
-                <directory>${generated.sources}/resources</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
@@ -319,7 +316,6 @@
 
                     <!-- this is false by default, forces the plugin to generate the git.properties file -->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${generated.sources}/resources/git.properties</generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <gitDescribe>
                         <skip>false</skip>
