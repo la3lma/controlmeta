@@ -53,7 +53,6 @@ def delete_media_and_meta(id):
     return Response(status=404)
 
 
-
 ##
 ##  Meta CRUD
 ##
