@@ -12,7 +12,7 @@ app = Flask(__name__)
 ###
 
 @app.route('/media', methods = ['GET'])
-def get_media():
+def get_all_media():
     "Get a list of all the available media."
     return Response(status=500)
 
