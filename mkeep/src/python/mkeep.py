@@ -2,9 +2,11 @@
 from flask import Flask, jsonify, Response, request, abort
 from smsservice import SmsService
 import json
-
+from metadatastorage import MetadataStorage
 
 app = Flask(__name__)
+
+mds = MetadataStorage()
 
 ###
 ### Helper functions for return values
@@ -46,15 +48,8 @@ def get_media(id):
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
      "Write the media representation an identified asset"
-     returnValue= {
-         "Name": "Test",
-         "Latitude": 12.59817,
-         "Longitude": 52.12873,
-         "ContentURL": "http://server/media/id/21323",
-         "ContentId": "21323"
-         }
+     returnValue = mds.createNewMediaEntraFromMetadata(request.json)
      return allowEmptyMapReturnAsJson(returnValue, status=201)
-
 
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):
