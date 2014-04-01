@@ -10,7 +10,7 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import openbtssms
+import mkeep
 import unittest
 
 
@@ -27,8 +27,9 @@ class OpenBtsSmsTestCase(unittest.TestCase):
         pass
 
     def test_get_service_configuration(self):
-        rv = self.app.get('/service-configuration')
-        assert b'mom_instance_id' in rv.data
+        rv = self.app.get('/media')
+        print rv
+        # XXX Test missing
 
     def test_post_user_provisioning(self):
         provisioningData = '''{
