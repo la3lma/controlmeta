@@ -16,12 +16,12 @@ import unittest
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
-        """Get a reference to the testclient"""
+        "Get a reference to the testclient"
         self.app = mkeep.app.test_client()
 
     
     def tearDown(self):
-        """Nothing to tear down yet"""
+        "Nothing to tear down yet"
         pass
 
     ##
