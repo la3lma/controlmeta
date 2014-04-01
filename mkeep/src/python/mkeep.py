@@ -92,11 +92,20 @@ def delete_meta_for_id(id, metatype):
 ###  Accessing the task queue
 ###
 
-@app.route('/task/type/<type>/waiting/next', methods = ['GET'])
+
+@app.route('/task/waiting', methods = ['GET'])
+def list_all_waiting_tasks():
+    return Response(status=404)
+
+@app.route('/task/waiting/type/<type>', methods = ['GET'])
+def list_waiting_task_of_type(type):
+    return Response(status=404)
+
+@app.route('/task/waiting/type/<type>/next', methods = ['GET'])
 def get_next_waiting_task(type):
     return Response(status=404)
         
-@app.route('/task/type/<type>/waiting/pick', methods = ['POST'])
+@app.route('/task/waiting/type/<type>/next', methods = ['POST'])
 def pick_next_waiting_task(type):
     return Response(status=404)
         
