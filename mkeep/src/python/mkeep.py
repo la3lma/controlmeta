@@ -37,12 +37,12 @@ def get_all_media():
     "Get a list of all the available media."
     return allowEmptyMapReturnAsJson([])
 
-@app.route('/media/id/<id>/media', methods = ['GET'])
+@app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
     "Get the media representation of identified asset"
     return Response(status=404)
 
-@app.route('/media/id/<id>/media', methods = ['POST'])
+@app.route('/media/id/<id>', methods = ['POST'])
 def post_media(id):
     "Write the media representation an identified asset"
     return Response(status=204)

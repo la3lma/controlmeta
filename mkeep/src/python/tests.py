@@ -31,12 +31,37 @@ class MkeepTestCase(unittest.TestCase):
         rv = self.app.get('/media')
 
     def  test_get_specific_media(self):
-        rv = self.app.get('/media/id/<id>/media')
+        rv = self.app.get('/media/id/<id>')
         self.assertEqual(rv.status_code, 404)
 
-    def test_post_user_provisioning(self):
+    def test_post_content_metadata_upload(self):
         rv = self.app.post(
-            '/media/id/1/media',
+            '/media/',
+            headers={'Content-Type': 'text/plain'},
+            data="""{
+             "Name": "Test",
+             "Latitude": 12.59817,
+             "Longitude": 52.12873
+             }""")
+        self.assertEqual(rv.status_code, 404)
+        expectedReturnValue = {
+            "Name": "Test",
+            "Latitude": 12.59817,
+            "Longitude": 52.12873,
+            "ContentURL": "http://server/media/id/21323",
+            "ContentId": "21323"
+            }
+
+        # XXX Parse the return value as JSON, then check that
+        # XXX The name, latitude and longditude are mirrored,
+        # XXX that the ContentURL is present, and that the media ID
+        # XXX and that the Content ID is consistent with the URL
+        
+
+
+    def test_post_content_media_upload(self):
+        rv = self.app.post(
+            '/media/id/1',
             headers={'Content-Type': 'text/plain'},
             data='this is amazing')
         self.assertEqual(rv.status_code, 204)
