@@ -13,3 +13,4 @@ hs_err_pid*
 /mkeep/target
 /mkeep/nbproject
 mkeep/src/main/resources/git.properties
+*.pyc
