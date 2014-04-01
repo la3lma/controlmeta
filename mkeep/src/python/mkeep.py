@@ -16,34 +16,48 @@ def expectNonemptyMapReturnAsJson(retval):
     else:
         return Response(json.dumps(retval), status=200, mimetype="application/json")
 
-def allowEmptyMapReturnAsJson(retval):
+def allowEmptyMapReturnAsJson(retval, status=200):
     if (not retval):
         return Response(status=204)
     else:
-        return Response(json.dumps(retval), status=200, mimetype="application/json")
+         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def expectEmptyMapReturnErrorAsJson(retval):
-    if (not bool(retval)):
-        return Response(status=204)
-    else:
-        return Response(json.dumps(retval), status=500, mimetype="application/json")
+     if (not bool(retval)):
+         return Response(status=204)
+     else:
+         return Response(json.dumps(retval), status=500, mimetype="application/json")
 
-###
-### Media CRUD
-###
+ ###
+ ### Media CRUD
+ ###
 
 @app.route('/media', methods = ['GET'])
 def get_all_media():
-    "Get a list of all the available media."
-    return allowEmptyMapReturnAsJson([])
+     "Get a list of all the available media."
+     return allowEmptyMapReturnAsJson([])
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
-    "Get the media representation of identified asset"
-    return Response(status=404)
+     "Get the media representation of identified asset"
+     return Response(status=404)
+
+
+@app.route('/media/', methods = ['POST'])
+def create_new_media_entry_from_metadata():
+     "Write the media representation an identified asset"
+     returnValue= {
+         "Name": "Test",
+         "Latitude": 12.59817,
+         "Longitude": 52.12873,
+         "ContentURL": "http://server/media/id/21323",
+         "ContentId": "21323"
+         }
+     return allowEmptyMapReturnAsJson(returnValue, status=201)
+
 
 @app.route('/media/id/<id>', methods = ['POST'])
-def post_media(id):
+def post_media_to_id(id):
     "Write the media representation an identified asset"
     return Response(status=204)
 

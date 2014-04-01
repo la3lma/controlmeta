@@ -37,13 +37,14 @@ class MkeepTestCase(unittest.TestCase):
     def test_post_content_metadata_upload(self):
         rv = self.app.post(
             '/media/',
-            headers={'Content-Type': 'text/plain'},
+            headers={'Content-Type': 'application/json'},
             data="""{
              "Name": "Test",
              "Latitude": 12.59817,
              "Longitude": 52.12873
              }""")
-        self.assertEqual(rv.status_code, 404)
+        # XXX Error, this should be 201 (created)
+        self.assertEqual(rv.status_code, 201)
         expectedReturnValue = {
             "Name": "Test",
             "Latitude": 12.59817,
