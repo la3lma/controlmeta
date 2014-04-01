@@ -8,33 +8,51 @@ smss = SmsService()
 app = Flask(__name__)
 
 ###
+### Helper functions for return values
+###
+
+def expectNonemptyMapReturnAsJson(retval):
+    if (not retval):
+        return Response(status=500)
+    else:
+        return Response(json.dumps(retval), status=200, mimetype="application/json")
+
+def allowEmptyMapReturnAsJson(retval):
+    if (not retval):
+        return Response(status=204)
+    else:
+        return Response(json.dumps(retval), status=200, mimetype="application/json")
+
+def expectEmptyMapReturnErrorAsJson(retval):
+    if (not bool(retval)):
+        return Response(status=204)
+    else:
+        return Response(json.dumps(retval), status=500, mimetype="application/json")
+
+###
 ### Media CRUD
 ###
 
 @app.route('/media', methods = ['GET'])
 def get_all_media():
     "Get a list of all the available media."
-    return Response(status=500)
+    return allowEmptyMapReturnAsJson([])
 
 @app.route('/media/id/<id>/media', methods = ['GET'])
 def get_media(id):
     "Get the media representation of identified asset"
-    return Response(status=500)
+    return Response(status=404)
 
 @app.route('/media/id/<id>/media', methods = ['POST'])
 def post_media(id):
     "Write the media representation an identified asset"
-    return Response(status=500)
+    return Response(status=204)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
-    return Response(status=500)
+    return Response(status=404)
 
-@app.route('/media/id/<id>', methods = ['DELETE'])
-def delete_media(id):
-    "Delete both media for an identified asset"
-    return Response(status=500)
 
 
 ##
