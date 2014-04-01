@@ -108,6 +108,11 @@ def get_in_progress_task_list(type):
 def get_done_task_list(type):
     return Response(status=404)
 
+@app.route('/task/type/<id>/done', methods = ['POST'])
+def declare_task_as_done(type):
+    return Response(status=404)
+
+
 
 ##  XXX Deletes are not added
 

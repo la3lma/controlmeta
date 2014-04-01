@@ -101,7 +101,9 @@ class MkeepTestCase(unittest.TestCase):
     def test_pick_task_of_type(self):
         rv = self.app.post('/task/type/face/waiting/pick')
         self.assertEqual(rv.status_code, 404)
-        
+
+    def test_declare_task_done(self):
+        rv = self.app.post('/task/id/1/done')
 
 
 
