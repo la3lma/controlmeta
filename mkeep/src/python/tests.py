@@ -29,8 +29,6 @@ class MkeepTestCase(unittest.TestCase):
     ##
     def test_get_all_media(self):
         rv = self.app.get('/media')
-        # XXX Ensure that the return data is json
-        # XXX Ensure that the return data is empty
 
     def  test_get_specific_media(self):
         rv = self.app.get('/media/id/<id>/media')
