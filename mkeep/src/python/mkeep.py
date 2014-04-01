@@ -94,19 +94,19 @@ def delete_meta_for_id(id, metatype):
 
 @app.route('/task/type/<type>/waiting/next', methods = ['GET'])
 def get_next_waiting_task(type):
-    return Response(status=500)
+    return Response(status=404)
         
 @app.route('/task/type/<type>/waiting/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
-    return Response(status=500)
+    return Response(status=404)
         
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])
 def get_in_progress_task_list(type):
-    return Response(status=500)
+    return Response(status=404)
         
-@app.route('/task/type/<type>/done', methods = ['POST'])
+@app.route('/task/type/<type>/done', methods = ['GET'])
 def get_done_task_list(type):
-    return Response(status=500)
+    return Response(status=404)
 
 
 ##  XXX Deletes are not added

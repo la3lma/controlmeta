@@ -81,6 +81,29 @@ class MkeepTestCase(unittest.TestCase):
         rv = self.app.delete('/media/id/1/meta/faces')
         self.assertEqual(rv.status_code, 404)
 
+    ##
+    ## Task list CRUD
+    ##
+
+    def test_next_task_of_type(self):
+        rv = self.app.get('/task/type/face/waiting/next')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_get_in_progress_list(self):
+        rv = self.app.get('/task/type/face/in-progress')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_get_done_task_list(self):
+        rv = self.app.get('/task/type/face/done')
+        self.assertEqual(rv.status_code, 404)
+
+
+    def test_pick_task_of_type(self):
+        rv = self.app.post('/task/type/face/waiting/pick')
+        self.assertEqual(rv.status_code, 404)
+        
+
+
 
 if __name__ == '__main__':
     unittest.main()
