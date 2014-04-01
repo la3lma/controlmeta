@@ -109,12 +109,13 @@ def get_done_task_list(type):
     return Response(status=404)
 
 @app.route('/task/type/<id>/done', methods = ['POST'])
-def declare_task_as_done(type):
+def declare_task_as_done(id):
     return Response(status=404)
 
+@app.route('/task/type/<type>', methods = ['POST'])
+def create_new_task(type):
+    return Response(status=204)
 
-
-##  XXX Deletes are not added
 
 if __name__ == '__main__':
     app.run(debug = True)

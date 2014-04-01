@@ -104,6 +104,14 @@ class MkeepTestCase(unittest.TestCase):
 
     def test_declare_task_done(self):
         rv = self.app.post('/task/id/1/done')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_create_new_task(self):
+        rv = self.app.post(
+            '/task/type/face',
+            headers={'Content-Type': 'text/plain'},
+            data='this is amazing')
+        self.assertEqual(rv.status_code, 204)
 
 
 
