@@ -48,6 +48,40 @@ class MkeepTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 404)
 
 
+    ##
+    ##  Test CRUD for metadata
+    ## 
+    def test_get_all_meta_of_type(self):
+        rv = self.app.get('/media/id/1/metatype/faces')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_get_specific_meta_item(self):
+        rv = self.app.get('/media/id/1/metaid/1')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_post_new_meta(self):
+        rv = self.app.post(
+            '/media/id/1/metatype/faces',
+            headers={'Content-Type': 'text/plain'},
+            data='this is amazing')
+        self.assertEqual(rv.status_code, 204)                           
+
+    def test_post_new_meta_update(self):
+        rv = self.app.post(
+            '/media/id/1/meta/metaid/1',
+            headers={'Content-Type': 'text/plain'},
+            data='this is amazing')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_delete_meta(self):
+        rv = self.app.delete('/media/id/1/metaid/1')
+        self.assertEqual(rv.status_code, 404)
+        
+    def test_delete_all_meta_of_type(self):
+        rv = self.app.delete('/media/id/1/meta/faces')
+        self.assertEqual(rv.status_code, 404)
+
+
 if __name__ == '__main__':
     unittest.main()
 
