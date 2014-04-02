@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-    mkeep unit tests
-    ~~~~~~~~~~~~~~~~
-
+    Test crud against an empty database.  If this doesn't work nothing will.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Tests the Flaskr application.
 
     :copyright: (c) 2014 by Bjørn Remseth
