@@ -64,7 +64,7 @@ def post_media_to_id(id):
 @app.route('/media/id/<id>', methods = ['DELETE'])
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
-    errors = mms.delete(id)
+    errors = mms.delete_media(id)
     return expectEmptyMapReturnErrorAsJson(errors, status=204)
 
 
@@ -74,7 +74,9 @@ def delete_media_and_meta(id):
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    return Response(status=404)
+    metalist = mms.get_meta_list(id, metatype)
+    return expectNonemptyMapReturnAsJson(metalist, status=200, errorcode=404)
+
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):

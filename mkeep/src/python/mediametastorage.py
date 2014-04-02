@@ -34,13 +34,16 @@ class MediaAndMetaStorage:
             return None, None
 
 
-    def delete(self, id):
+    def delete_media(self, id):
         self.media_objects.pop(id,  None)
         self.content_types.pop(id,  None)
         self.meta_objects.pop(id,  None)
 
         return {}
-    
-    ## XXX TODO:
-    ## o Rewrite tests to be logically consistent with a working persistence backend.
+
+    def get_meta_list(self, id, metatype):
+        return {}
+
+
+
     
