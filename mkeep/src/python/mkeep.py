@@ -42,13 +42,9 @@ def get_all_media():
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
      "Get the media representation of identified asset"
-     print "gakk"
-     try:
-         mms.get_media(id)
-         print "zot"
-     except Exception as e:
-         print e
-     return Response(status=404)
+     mimetype, data = mms.get_media(id)
+     
+     return Response(data, mimetype=mimetype, status=200)
 
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():

@@ -22,7 +22,6 @@ class MediaAndMetaStorage:
         return "ja"
 
     def get_media(self, id):
-        return "jalla"
         mimetype='text/plain'
         data='this is amazing'
         return mimetype, data
