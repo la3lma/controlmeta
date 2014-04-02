@@ -53,7 +53,11 @@ class MkeepTestCase(unittest.TestCase):
         self.assertEqual(rvj.get('Latitude'), 12.59817)
         self.assertEqual(rvj.get('Longitude'), 52.12873)
         contentid=rvj.get('ContentId')
-        contentur=rvj.get('ContentURL')
+        contenturl=rvj.get('ContentURL')
+        # This doesn't work. Ask someone with more fu.
+        # self.assertTrue(contenturl.endswith(""+`contentid`))
+
+        
 
         # XXX Parse the return value as JSON, then check that
         # XXX The name, latitude and longditude are mirrored,

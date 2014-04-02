@@ -10,7 +10,7 @@ class MediaAndMetaStorage:
         # We don't need no stinkin' locking!
         contentId = self.next_index
         self.next_index = self.next_index + 1
-        metadata['ContentURL']  = "http://server/media/id/${contentId}"
+        metadata['ContentURL']  = "http://server/media/id/" +  `contentId`
         metadata['ConttentId']  = contentId
         self.meta_objects[contentId] = metadata
         return metadata
