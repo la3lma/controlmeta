@@ -1,4 +1,4 @@
-#!flask/bin/python
+#!/bin/python
 from flask import Flask, jsonify, Response, request, abort
 from smsservice import SmsService
 import json
@@ -97,19 +97,15 @@ def post_meta(id, metaid):
     "Post a particular metadata instance"
     postresult = mms.store_meta(id, metaid)
     return expectNonemptyMapReturnAsJson(postresult, status=200, errorcode=404)
-    
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 def delete_meta(id, metaid):
-    "Get a particular metadata instance"
-    return Response(status=404)
+    "Delete a particular metadata instance"
+    retval = mms.delete_metaid(id, metaid)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
 
-@app.route('/media/id/<id>/meta/<metatype>', methods = ['DELETE'])
-def delete_meta_for_id(id, metatype):
-    "Delete all metadata of a particular type for a specific media item"
-    return Response(status=404)
 
- 
+
 ###
 ###  Accessing the task queue
 ###
