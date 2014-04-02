@@ -16,6 +16,8 @@ def expectNonemptyMapReturnAsJson(retval, errorcode=500, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
+        print "tok"
+        print errorcode
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def allowEmptyMapReturnAsJson(retval, status=200):
@@ -80,8 +82,9 @@ def get_meta_list(id, metatype):
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):
-    "Get a particular metadata instance"
-    return Response(status=404)
+    metadata = mms.get_metadata_from_id(id, metaid)
+    return expectNonemptyMapReturnAsJson(metadata, status=200, errorcode=404)
+
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
