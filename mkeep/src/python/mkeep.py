@@ -37,13 +37,12 @@ def expectEmptyMapReturnErrorAsJson(retval, status=204):
 @app.route('/media', methods = ['GET'])
 def get_all_media():
      "Get a list of all the available media."
-     return allowEmptyMapReturnAsJson([])
+     return allowEmptyMapReturnAsJson(mds.get_all_media())
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
      "Get the media representation of identified asset"
      return Response(status=404)
-
 
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
