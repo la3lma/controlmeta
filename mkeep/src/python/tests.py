@@ -57,13 +57,6 @@ class MkeepTestCase(unittest.TestCase):
         # This doesn't work. Ask someone with more fu.
         # self.assertTrue(contenturl.endswith(""+`contentid`))
 
-        
-
-        # XXX Parse the return value as JSON, then check that
-        # XXX The name, latitude and longditude are mirrored,
-        # XXX that the ContentURL is present, and that the media ID
-        # XXX and that the Content ID is consistent with the URL
-
     def test_post_content_media_upload(self):
         rv = self.app.post(
             '/media/id/1',
