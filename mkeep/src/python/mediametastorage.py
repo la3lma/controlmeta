@@ -38,10 +38,11 @@ class MediaAndMetaStorage:
         self.media_objects.pop(id,  None)
         self.content_types.pop(id,  None)
         self.meta_objects.pop(id,  None)
-
+        ## Empty map means no errors
         return {}
 
     def get_meta_list(self, id, metatype):
+        ## Empty map means no metadata found
         return {}
 
 
