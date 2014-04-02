@@ -28,3 +28,8 @@ class MediaAndMetaStorage:
 
 
     
+    ## XXX TODO:
+    ## o Add delete.
+    ## o Add a real backend (in-memory)
+    ## o Rewrite tests to be logically consistent with a working persistence backend.
+    
