@@ -54,7 +54,7 @@ class MkeepTestCase(unittest.TestCase):
         self.assertEqual(rvj.get('Longitude'), 52.12873)
         contentid=rvj.get('ContentId')
         contenturl=rvj.get('ContentURL')
-        # This doesn't work. Ask someone with more fu.
+        # XXX This doesn't work. Ask someone with more fu.
         # self.assertTrue(contenturl.endswith(""+`contentid`))
 
     def test_post_content_media_upload(self):
