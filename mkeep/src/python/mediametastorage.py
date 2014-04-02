@@ -48,6 +48,11 @@ class MediaAndMetaStorage:
     def get_metadata_from_id(self, id, metaid):
         ## Empty map means no metadata found
         return {}
+
+    def store_new_meta(self, id, metatype):
+        ## Empty map means that no data was stored
+        return {}
+        
         
 
 

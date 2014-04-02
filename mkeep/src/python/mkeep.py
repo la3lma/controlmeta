@@ -16,7 +16,6 @@ def expectNonemptyMapReturnAsJson(retval, errorcode=500, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
-        print "tok"
         print errorcode
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
@@ -26,11 +25,11 @@ def allowEmptyMapReturnAsJson(retval, status=200):
     else:
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
-def expectEmptyMapReturnErrorAsJson(retval, status=204):
-     if (not bool(retval)):
-         return Response(status=status)
-     else:
-         return Response(json.dumps(retval), status=500, mimetype="application/json")
+def expectEmptyMapReturnErrorAsJson(retval, status=204, errorcode=500):
+    if (not bool(retval)):
+        return Response(status=status)
+    else:
+        return Response(json.dumps(retval), status=errorcode, mimetype="application/json")
 
 ###
 ### Media CRUD
@@ -89,7 +88,9 @@ def get_meta(id, metaid):
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    return Response(status=404)
+    postresult = mms.store_new_meta(id, metatype)
+    return expectNonemptyMapReturnAsJson(postresult, status=200, errorcode=404)
+
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
