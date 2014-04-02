@@ -18,4 +18,14 @@ class MediaAndMetaStorage:
     def get_all_media(self):
         return []
 
+    def drit(self):
+        return "ja"
+
+    def get_media(self, id):
+        return "jalla"
+        mimetype='text/plain'
+        data='this is amazing'
+        return mimetype, data
+
+
     

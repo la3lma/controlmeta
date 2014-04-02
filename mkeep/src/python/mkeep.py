@@ -6,7 +6,7 @@ from mediametastorage import MediaAndMetaStorage
 
 app = Flask(__name__)
 
-mds = MediaAndMetaStorage()
+mms = MediaAndMetaStorage()
 
 ###
 ### Helper functions for return values
@@ -37,23 +37,29 @@ def expectEmptyMapReturnErrorAsJson(retval, status=204):
 @app.route('/media', methods = ['GET'])
 def get_all_media():
      "Get a list of all the available media."
-     return allowEmptyMapReturnAsJson(mds.get_all_media())
+     return allowEmptyMapReturnAsJson(mms.get_all_media())
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
      "Get the media representation of identified asset"
+     print "gakk"
+     try:
+         mms.get_media(id)
+         print "zot"
+     except Exception as e:
+         print e
      return Response(status=404)
 
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
      "Write the media representation an identified asset"
-     returnValue = mds.create_new_media_entry_from_metadata(request.json)
+     returnValue = mms.create_new_media_entry_from_metadata(request.json)
      return allowEmptyMapReturnAsJson(returnValue, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):
     "Write the media representation an identified asset"
-    errorsMap = mds.post_media_to_id(id, request.mimetype, request.data)
+    errorsMap = mms.post_media_to_id(id, request.mimetype, request.data)
     return expectEmptyMapReturnErrorAsJson(errorsMap, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
