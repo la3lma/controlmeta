@@ -48,7 +48,7 @@ def get_media(id):
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
      "Write the media representation an identified asset"
-     returnValue = mds.createNewMediaEntraFromMetadata(request.json)
+     returnValue = mds.create_new_media_entry_from_metadata(request.json)
      return allowEmptyMapReturnAsJson(returnValue, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
