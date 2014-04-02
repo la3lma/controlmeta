@@ -30,9 +30,9 @@ def expectEmptyMapReturnErrorAsJson(retval, status=204):
      else:
          return Response(json.dumps(retval), status=500, mimetype="application/json")
 
- ###
- ### Media CRUD
- ###
+###
+### Media CRUD
+###
 
 @app.route('/media', methods = ['GET'])
 def get_all_media():
@@ -63,9 +63,9 @@ def delete_media_and_meta(id):
     return Response(status=404)
 
 
-##
-##  Meta CRUD
-##
+###
+###  Meta CRUD
+###
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
