@@ -12,11 +12,11 @@ mms = MediaAndMetaStorage()
 ### Helper functions for return values
 ###
 
-def expectNonemptyMapReturnAsJson(retval):
+def expectNonemptyMapReturnAsJson(retval, errorcode=500, status=200):
     if (not retval):
-        return Response(status=500)
+        return Response(status=errorcode)
     else:
-        return Response(json.dumps(retval), status=200, mimetype="application/json")
+        return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def allowEmptyMapReturnAsJson(retval, status=200):
     if (not retval):
@@ -35,15 +35,19 @@ def expectEmptyMapReturnErrorAsJson(retval, status=204):
 ###
 
 @app.route('/media', methods = ['GET'])
-def get_all_media():
-     "Get a list of all the available media."
-     return allowEmptyMapReturnAsJson(mms.get_all_media())
+def get_all_meta():
+     "Get a list of all the available media's metadata."
+     return expectNonemptyMapReturnAsJson(mms.get_all_meta(), errorcode=404)
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
      "Get the media representation of identified asset"
      mimetype, data = mms.get_media(id)
-     return Response(data, mimetype=mimetype, status=200)
+     if (not mimetype):
+         return Response(status=404)
+     else:
+         print "oranbge"
+         return Response(data, mimetype=mimetype, status=200)
 
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
