@@ -54,7 +54,7 @@ def create_new_media_entry_from_metadata():
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):
     "Write the media representation an identified asset"
-    errorsMap = mds.postMediaId(request.mimetype, request.data)
+    errorsMap = mds.post_media_to_id(id, request.mimetype, request.data)
     return expectEmptyMapReturnErrorAsJson(errorsMap, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
