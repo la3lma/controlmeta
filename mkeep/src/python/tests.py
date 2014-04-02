@@ -126,21 +126,23 @@ class MkeepTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 404)
 
     def test_pick_task_of_type(self):
-        rv = self.app.get('/task/waiting/type/face/pick')
+        rv = self.app.post('/task/waiting/type/face/pick')
         self.assertEqual(rv.status_code, 404)
 
     def test_declare_task_done(self):
         rv = self.app.post('/task/id/1/done')
         self.assertEqual(rv.status_code, 404)
 
-    def test_create_new_task(self):
+    def test_create_task(self):
         rv = self.app.post(
             '/task/type/face',
             headers={'Content-Type': 'text/plain'},
             data='this is amazing')
-        self.assertEqual(rv.status_code, 204)
+        self.assertEqual(rv.status_code, 201)
 
-
+    def test_delete_task(self):
+        rv = self.app.delete('/task/id/1')
+        self.assertEqual(rv.status_code, 404)
 
 if __name__ == '__main__':
     unittest.main()

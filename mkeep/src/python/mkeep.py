@@ -18,7 +18,6 @@ def expectNonemptyMapReturnAsJson(retval, errorcode=500, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
-        print errorcode
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def allowEmptyMapReturnAsJson(retval, status=200):
@@ -49,7 +48,6 @@ def get_media(id):
      if (not mimetype):
          return Response(status=404)
      else:
-         print "oranbge"
          return Response(data, mimetype=mimetype, status=200)
 
 @app.route('/media/', methods = ['POST'])
@@ -113,35 +111,53 @@ def delete_meta(id, metaid):
 
 @app.route('/task/waiting', methods = ['GET'])
 def list_all_waiting_tasks():
-    return Response(status=404)
+    retval = tqs.list_all_waiting_tasks()
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 def list_waiting_task_of_type(type):
-    return Response(status=404)
+    retval = tqs.list_all_waiting_tasks_of_type(type)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
+
 
 @app.route('/task/waiting/type/<type>/next', methods = ['GET'])
 def get_next_waiting_task(type):
-    return Response(status=404)
+    retval = tqs.next_waiting_task_of_type(type)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
         
-@app.route('/task/waiting/type/<type>/next', methods = ['POST'])
+@app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
-    return Response(status=404)
+    retval = tqs.pick_next_waiting_task_of_type(type)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
+
 
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])
 def get_in_progress_task_list(type):
-    return Response(status=404)
+    retval = tqs.list_all_running_tasks()
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
+
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 def get_done_task_list(type):
-    return Response(status=404)
+    retval = tqs.list_all_done_tasks()
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<id>/done', methods = ['POST'])
 def declare_task_as_done(id):
-    return Response(status=404)
-
+    retval = tqs.declare_as_done()
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
+    
 @app.route('/task/type/<type>', methods = ['POST'])
-def create_new_task(type):
-    return Response(status=204)
+def create_task(type):
+    retval = tqs.create_task(type)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=201)
+
+@app.route('/task/id/<taskid>', methods = ['DELETE'])
+def delete_task(taskid):
+    retval = tqs.delete_taskid(type)
+    return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
+
+
 
 
 if __name__ == '__main__':

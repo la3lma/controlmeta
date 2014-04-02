@@ -62,8 +62,6 @@ class MediaAndMetaStorage:
     def delete_metaid(self, id, metaid):
         ## Empty map means that no data was deleted
         return {}
-        
-        
 
 
     
