@@ -35,7 +35,7 @@ class MkeepTestCase(unittest.TestCase):
 
     def  test_get_specific_media(self):
         rv = self.app.get('/media/id/<id>')
-        self.assertEqual(rv.status_code, 404) # XXX Inconsistent 
+        self.assertEqual(rv.status_code, 404)
 
     def test_post_content_metadata_upload(self):
         rv = self.app.post(
@@ -84,7 +84,7 @@ class MkeepTestCase(unittest.TestCase):
             '/media/id/1/metatype/faces',
             headers={'Content-Type': 'text/plain'},
             data='this is amazing')
-        self.assertEqual(rv.status_code, 204)                           
+        self.assertEqual(rv.status_code, 404) 
 
     def test_post_new_meta_update(self):
         rv = self.app.post(
