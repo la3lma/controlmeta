@@ -39,7 +39,8 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
 @app.route('/media', methods = ['GET'])
 def get_all_meta():
      "Get a list of all the available media's metadata."
-     return expect_non_empty_map_return_as_json(mms.get_all_meta(), errorcode=404)
+     retval=mms.get_all_meta()
+     return expect_non_empty_map_return_as_json(retval, errorcode=404)
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
@@ -53,14 +54,14 @@ def get_media(id):
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
      "Write the media representation an identified asset"
-     returnValue = mms.create_new_media_entry_from_metadata(request.json)
-     return allow_empty_map_return_as_json(returnValue, status=201)
+     retval = mms.create_new_media_entry_from_metadata(request.json)
+     return allow_empty_map_return_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):
     "Write the media representation an identified asset"
-    errorsMap = mms.post_media_to_id(id, request.mimetype, request.data)
-    return expect_empty_map_return_error_as_json(errorsMap, status=201)
+    errors = mms.post_media_to_id(id, request.mimetype, request.data)
+    return expect_empty_map_return_error_as_json(errors, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 def delete_media_and_meta(id):
@@ -75,28 +76,28 @@ def delete_media_and_meta(id):
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    metalist = mms.get_meta_list(id, metatype)
-    return expect_non_empty_map_return_as_json(metalist, status=200, errorcode=404)
+    retval = mms.get_meta_list(id, metatype)
+    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
 
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):
-    metadata = mms.get_metadata_from_id(id, metaid)
-    return expect_non_empty_map_return_as_json(metadata, status=200, errorcode=404)
+    retval = mms.get_metadata_from_id(id, metaid)
+    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
 
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    postresult = mms.store_new_meta(id, metatype)
-    return expect_non_empty_map_return_as_json(postresult, status=200, errorcode=404)
+    retval = mms.store_new_meta(id, metatype)
+    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
 
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
     "Post a particular metadata instance"
-    postresult = mms.store_meta(id, metaid)
-    return expect_non_empty_map_return_as_json(postresult, status=200, errorcode=404)
+    retval = mms.store_meta(id, metaid)
+    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 def delete_meta(id, metaid):
