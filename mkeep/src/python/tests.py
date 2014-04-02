@@ -12,6 +12,7 @@
 import os
 import mkeep
 import unittest
+import json
 
 class MkeepTestCase(unittest.TestCase):
 
@@ -46,6 +47,11 @@ class MkeepTestCase(unittest.TestCase):
              "Longitude": 52.12873
              }""")
         self.assertEqual(rv.status_code, 201)
+        ## XXX Check content type
+        rvj=json.loads(rv.data)
+        self.assertEqual(rvj.get('Name'), "Test")
+        self.assertEqual(rvj.get('Latitude'), 12.59817)
+        self.assertEqual(rvj.get('Longitude'), 52.12873)
 
         # XXX Parse the return value as JSON, then check that
         # XXX The name, latitude and longditude are mirrored,
