@@ -159,7 +159,5 @@ def delete_task(taskid):
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 
-
-
 if __name__ == '__main__':
     app.run(debug = True)
