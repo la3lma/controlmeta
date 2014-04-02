@@ -95,7 +95,9 @@ def post_new_meta(id, metatype):
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
     "Post a particular metadata instance"
-    return Response(status=404)
+    postresult = mms.store_meta(id, metaid)
+    return expectNonemptyMapReturnAsJson(postresult, status=200, errorcode=404)
+    
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 def delete_meta(id, metaid):
