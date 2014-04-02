@@ -3,10 +3,12 @@ from flask import Flask, jsonify, Response, request, abort
 from smsservice import SmsService
 import json
 from mediametastorage import MediaAndMetaStorage
+from taskqueuestorage import TaskQueueStorage
 
 app = Flask(__name__)
 
 mms = MediaAndMetaStorage()
+tqs = TaskQueueStorage()
 
 ###
 ### Helper functions for return values
@@ -104,8 +106,6 @@ def delete_meta(id, metaid):
     retval = mms.delete_metaid(id, metaid)
     return expectNonemptyMapReturnAsJson(retval, errorcode=404, status=200)
 
-
-
 ###
 ###  Accessing the task queue
 ###
@@ -126,7 +126,7 @@ def get_next_waiting_task(type):
 @app.route('/task/waiting/type/<type>/next', methods = ['POST'])
 def pick_next_waiting_task(type):
     return Response(status=404)
-        
+
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])
 def get_in_progress_task_list(type):
     return Response(status=404)
