@@ -2,11 +2,11 @@
 from flask import Flask, jsonify, Response, request, abort
 from smsservice import SmsService
 import json
-from metadatastorage import MetadataStorage
+from mediametastorage import MediaAndMetaStorage
 
 app = Flask(__name__)
 
-mds = MetadataStorage()
+mds = MediaAndMetaStorage()
 
 ###
 ### Helper functions for return values
