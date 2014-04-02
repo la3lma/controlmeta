@@ -20,13 +20,13 @@ def expectNonemptyMapReturnAsJson(retval):
 
 def allowEmptyMapReturnAsJson(retval, status=200):
     if (not retval):
-        return Response(status=204)
+        return Response(status=status)
     else:
-         return Response(json.dumps(retval), status=status, mimetype="application/json")
+        return Response(json.dumps(retval), status=status, mimetype="application/json")
 
-def expectEmptyMapReturnErrorAsJson(retval):
+def expectEmptyMapReturnErrorAsJson(retval, status=204):
      if (not bool(retval)):
-         return Response(status=204)
+         return Response(status=status)
      else:
          return Response(json.dumps(retval), status=500, mimetype="application/json")
 
@@ -54,7 +54,8 @@ def create_new_media_entry_from_metadata():
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):
     "Write the media representation an identified asset"
-    return Response(status=204)
+    errorsMap = mds.postMediaId(request.mimetype, request.data)
+    return expectEmptyMapReturnErrorAsJson(errorsMap, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 def delete_media_and_meta(id):
