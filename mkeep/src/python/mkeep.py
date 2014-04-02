@@ -43,7 +43,6 @@ def get_all_media():
 def get_media(id):
      "Get the media representation of identified asset"
      mimetype, data = mms.get_media(id)
-     
      return Response(data, mimetype=mimetype, status=200)
 
 @app.route('/media/', methods = ['POST'])
@@ -61,7 +60,8 @@ def post_media_to_id(id):
 @app.route('/media/id/<id>', methods = ['DELETE'])
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
-    return Response(status=404)
+    errors = mms.delete(id)
+    return expectEmptyMapReturnErrorAsJson(errors, status=204)
 
 
 ###
