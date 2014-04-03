@@ -79,19 +79,16 @@ def get_meta_list(id, metatype):
     retval = mms.get_meta_list(id, metatype)
     return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
 
-
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):
     retval = mms.get_metadata_from_id(id, metaid)
     return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
-
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.store_new_meta(id, metatype)
     return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
-
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
