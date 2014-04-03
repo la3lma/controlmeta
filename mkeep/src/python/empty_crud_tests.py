@@ -33,7 +33,7 @@ class MkeepTestCase(unittest.TestCase):
         
 
     def  test_get_specific_media(self):
-        rv = self.app.get('/media/id/<id>')
+        rv = self.app.get('/media/id/1')
         self.assertEqual(rv.status_code, 404)
 
     def test_post_content_metadata_upload(self):
