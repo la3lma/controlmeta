@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 from flask import Flask, jsonify, Response, request, abort
 from smsservice import SmsService
 import json
@@ -30,7 +30,8 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
     if (not bool(retval)):
         return Response(status=status)
     else:
-        return Response(json.dumps(retval), status=errorcode, mimetype="application/json")
+        retvaldump=json.dumps(retval)
+        return Response(retvaldump, status=errorcode, mimetype="application/json")
 
 ###
 ### Media CRUD
@@ -67,7 +68,7 @@ def post_media_to_id(id):
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
     errors = mms.delete_media(id)
-    return expect_empty_map_return_error_as_json(errors, status=204)
+    return expect_empty_map_return_error_as_json(errors, errorcode=404, status=204)
 
 
 ###
