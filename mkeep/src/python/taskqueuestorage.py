@@ -8,21 +8,17 @@ class TaskQueueStorage:
     def list_all_waiting_tasks(self):
         return {}
 
-
     def list_all_running_tasks(self):
         return {}
 
     def list_all_done_tasks(self):
         return {}
 
-
     def list_all_waiting_tasks_of_type(self, type):
         return []
 
-
     def next_waiting_task_of_type(self, type):
         return {}
-
 
     def pick_next_waiting_task_of_type(self, type):
         return {}
