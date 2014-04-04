@@ -23,8 +23,6 @@ class MediaAndMetaStorageTest(unittest.TestCase):
     def setUp(self):
         "Get a reference to the testclient"
         self.app = mkeep.app.test_client()
-
-
     
     def tearDown(self):
         "Nothing to tear down yet"
