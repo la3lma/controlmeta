@@ -43,7 +43,20 @@ class MediaAndMetaStorageTest(unittest.TestCase):
         self.assertTrue(not keys)
 
 
-    def test_create_meta_then_meta(self):
+    def test_create_meta_then_data(self):
+        mms = MediaAndMetaStorage()
+
+        # Upload some metadata
+        metadata={"gazonk": "foo"}
+        return_metadata=mms.create_new_media_entry_from_metadata(metadata)
+        self.assertTrue(("gazonk" in metadata)  and return_metadata['gazonk'] is 'foo')
+
+        contentid = return_metadata['ContentId']
+        
+        keys = mms.get_all_meta()
+        self.assertTrue(keys)        
+        mms.post_media_to_id(contentid, "text/plain", "foo")
+
         pass 
     
         

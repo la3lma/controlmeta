@@ -17,8 +17,6 @@ from mediametastorage import MediaAndMetaStorage
 mms = MediaAndMetaStorage()
 
 
-
-
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):

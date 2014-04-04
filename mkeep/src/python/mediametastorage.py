@@ -20,7 +20,7 @@ class MediaAndMetaStorage:
         # set by the setter
         # XXX The base URI is completely bogus
         metadata['ContentURL']  = "http://server/media/id/" +  `contentId`
-        metadata['ConttentId']  = contentId
+        metadata['ContentId']  = contentId
         object = Entry(
             contentId,
             None,
