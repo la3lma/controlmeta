@@ -14,23 +14,24 @@ import unittest
 import json
 
 from mediametastorage import MediaAndMetaStorage
-mms = MediaAndMetaStorage()
+
 
 
 class MediaAndMetaStorageTest(unittest.TestCase):
 
+
     def setUp(self):
         "Get a reference to the testclient"
         self.app = mkeep.app.test_client()
+
 
     
     def tearDown(self):
         "Nothing to tear down yet"
         pass
 
-    def test_create_delete_roundtrip(self):
-        mms=MediaAndMetaStorage()
-
+    def test_create_media_only_delete_roundtrip(self):
+        mms = MediaAndMetaStorage()                
         keys = mms.get_all_meta()
         self.assertTrue(not keys)        
         mms.post_media_to_id("1", "text/plain", "foo")
@@ -42,6 +43,11 @@ class MediaAndMetaStorageTest(unittest.TestCase):
         rv = mms.delete_media('1')
         keys = mms.get_all_meta()
         self.assertTrue(not keys)
+
+
+    def test_create_meta_then_meta(self):
+        pass 
+    
         
 
 if __name__ == '__main__':
