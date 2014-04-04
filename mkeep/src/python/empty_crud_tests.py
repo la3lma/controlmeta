@@ -65,7 +65,7 @@ class MkeepTestCase(unittest.TestCase):
 
     def test_delete_item(self):
         rv = self.app.delete('/media/id/1')
-        self.assertEqual(rv.status_code, 204)
+        self.assertEqual(rv.status_code, 404)
 
     ##
     ##  Test CRUD for metadata
