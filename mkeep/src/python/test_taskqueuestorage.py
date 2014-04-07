@@ -34,7 +34,6 @@ class MkeepTestCase(unittest.TestCase):
     def test_list_empty_waiting_tasks_list(self):
         tasktype="rubberduck"
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
-        
 
     def test_get_next(self):
         tasktype="rubberduck"
@@ -43,6 +42,13 @@ class MkeepTestCase(unittest.TestCase):
         task = self.tqs.create_task(tasktype)
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertTrue(tasklist)
+
+    def test_delete_nonexisting_task(self):
+        errorDescription = self.tqs.delete_task("1")
+        # The error description should be nonempty
+        self.assertTrue(errorDescription)
+
+        
 
 if __name__ == '__main__':
     unittest.main()

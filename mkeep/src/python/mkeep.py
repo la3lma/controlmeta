@@ -30,6 +30,9 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
     if (not bool(retval)):
         return Response(status=status)
     else:
+        # XXX The "use a map as a datastructure" antipattern
+        if "HTTP_error_code" in retval:
+            errorcode= retval["HTTP_error_code"]
         retvaldump=json.dumps(retval)
         return Response(retvaldump, status=errorcode, mimetype="application/json")
 
@@ -150,8 +153,8 @@ def create_task(type):
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 def delete_task(taskid):
-    retval = tqs.delete_taskid(type)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    retval = tqs.delete_task(taskid)
+    return expect_empty_map_return_error_as_json(retval, status=200)
 
 if __name__ == '__main__':
     app.run(debug = True)

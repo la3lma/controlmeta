@@ -83,7 +83,7 @@ class TaskQueueStorage:
                        self.list_all_waiting_tasks())
 
     def check_if_task_exists(self, taskid):
-        if not(taskid in tasks):
+        if not(taskid in self.tasks):
             return { "HTTP_error_code": 404,
                      "Description":
                      "No such task"}
