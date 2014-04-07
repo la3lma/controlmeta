@@ -12,13 +12,13 @@ class Task:
       self.runner=None
       self.tasktype = tasktype
 
-    def asMap(self):
+    def as_map(self):
         return {"taskId": self.id,
                 "status": self.status,
                 "taskType": self.tasktype}
 
     def state_transition(self, source, destination):
-        if (self.status != SOURCE):
+        if (self.status != source):
             return { "HTTP_error_code": 404,
                      "Description":
                      (("Attempt to change status to state '%s' " +
@@ -34,29 +34,31 @@ class Task:
                      "Description":
                      "Attempt to start processing, but no process runner specified" }
 
-        error_desc = state_transition(None, RUNNING)
+        error_desc = state_transition(None, self.RUNNING)
         if (not error_desc):
             self.runner = runner
         return error_desc
 
     def done(self):
-        return state_transition(RUNNING, DONE)
+        return state_transition(self.RUNNING, self.DONE)
 
-
-    def hasStatus(self, taskType):
+    def has_status(self, taskType):
         return self.taskType == taskType
 
-    def hasStatus(self, status):
+    def has_status(self, status):
         return self.status == status
 
-    def isWaiting(self):
-        return hasStatus(WAITING)
+    def is_waiting(self):
+        return self.has_status(self.WAITING)
 
-    def isRunning(self):
-        return hasStatus(RUNNING)
+    def is_running(self):
+        return self.has_status(self.RUNNING)
 
-    def isDone(self):
-        return hasStatus(DONE)
+    def is_done(self):
+        return self.has_status(self.DONE)
+
+    def has_task_type(self, tasktype):
+        return self.tasktype == tasktype
 
 
 class TaskQueueStorage:
@@ -67,18 +69,18 @@ class TaskQueueStorage:
       self.tasks = {}
 
     def list_all_waiting_tasks(self):
-        return filter(tasks, lambda x: x.isWaiting())
+        return filter(lambda x: x.is_waiting(), self.tasks.values())
 
     def list_all_running_tasks(self):
-        return filter(tasks, lambda x: x.isRunning())
+        return filter (lambda x: x.is_running(), self.tasks.values())
 
 
     def list_all_done_tasks(self):
-        return filter(tasks, lambda x: x.isDone())
+        return filter(list_all_waiting_tasks_of_type(type), self.tasks.values())
 
     def list_all_waiting_tasks_of_type(self, tasktype):
-        return filter (self.list_all_waiting_tasks(),
-                       lambda x: x.hasTaskType(tasktype))
+        return filter (lambda x: x.has_task_type(tasktype),
+                       self.list_all_waiting_tasks())
 
     def check_if_task_exists(self, taskid):
         if not(taskid in tasks):
@@ -105,14 +107,12 @@ class TaskQueueStorage:
             task=self.tasks[taskid]
             return task.done();
 
-
     def create_task(self, tasktype):
         taskid = self.next_taskid
         self.next_taskid = self.next_taskid + 1
         task = Task(taskid, "waiting", tasktype)
         self.tasks[taskid] = task
-        return task.asMap()
-
+        return task.as_map()
 
     def delete_task(self, taskid):
         errors=self.check_if_task_exists(taskid)

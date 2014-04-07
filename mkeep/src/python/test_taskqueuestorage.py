@@ -29,8 +29,20 @@ class MkeepTestCase(unittest.TestCase):
 
     def test_create_task(self):
         task = self.tqs.create_task("rubberduck")
+        self.assertTrue(task)
 
-    
+    def test_list_empty_waiting_tasks_list(self):
+        tasktype="rubberduck"
+        tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        
+
+    def test_get_next(self):
+        tasktype="rubberduck"
+        tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertFalse(tasklist)
+        task = self.tqs.create_task(tasktype)
+        tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertTrue(tasklist)
 
 if __name__ == '__main__':
     unittest.main()
