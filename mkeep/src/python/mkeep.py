@@ -141,7 +141,6 @@ def get_in_progress_task_list(type):
 @app.route('/task/type/<type>/done', methods = ['GET'])
 def get_done_task_list(type):
     retval = tqs.list_all_done_tasks()
-    print "retval = %r" % (retval)
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<id>/done', methods = ['POST'])
