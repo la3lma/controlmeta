@@ -7,8 +7,13 @@ from taskqueuestorage import TaskQueueStorage
 
 app = Flask(__name__)
 
+### XXX This is a bug.  State is kept between instantiations
+##      of the app instance.  That causes tests to break and it is
+##      clearly the wrong thing to do. Investigate and fix.
+
 mms = MediaAndMetaStorage()
 tqs = TaskQueueStorage()
+
 
 ###
 ### Helper functions for return values
@@ -16,8 +21,10 @@ tqs = TaskQueueStorage()
 
 def expect_non_empty_map_return_as_json(retval, errorcode=500, status=200):
     if (not retval):
+        print "retval= %r, errorcode=%r" %(retval, errorcode)
         return Response(status=errorcode)
     else:
+        print "retval= %r, no error, status=%r" % (retval, status)
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def allow_empty_map_return_as_json(retval, status=200):
@@ -121,16 +128,14 @@ def list_waiting_task_of_type(type):
     retval = tqs.list_all_waiting_tasks_of_type(type)
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
-@app.route('/task/waiting/type/<type>/next', methods = ['GET'])
-def get_next_waiting_task(type):
-    retval = tqs.next_waiting_task_of_type(type)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
     # XXX This thing should fail if there is no runner field in the
     #     post statement
+    print "before"
     retval = tqs.pick_next_waiting_task_of_type(type, "XXXX Dummy runner")
+    print "retval = %r" %(retval)
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])
@@ -160,3 +165,4 @@ def delete_task(taskid):
 
 if __name__ == '__main__':
     app.run(debug = True)
+    

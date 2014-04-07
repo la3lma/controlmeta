@@ -108,10 +108,6 @@ class MkeepTestCase(unittest.TestCase):
         rv = self.app.get('/task/waiting')
         self.assertEqual(rv.status_code, 404)
 
-    def test_next_task_of_type(self):
-        rv = self.app.get('/task/waiting/type/face/next')
-        self.assertEqual(rv.status_code, 404)
-
     def test_all_waiting_tasks_of_type(self):
         rv = self.app.get('/task/waiting/type/face')
         self.assertEqual(rv.status_code, 404)
@@ -145,4 +141,3 @@ class MkeepTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

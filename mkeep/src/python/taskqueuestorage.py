@@ -29,15 +29,23 @@ class Task:
             return {}
 
     def start(self, runner):
+        print "starting"
         if (not runner):
+            print "Starter error"
             return { "HTTP_error_code": 400,
                      "Description":
                      "Attempt to start processing, but no process runner specified" }
 
-        error_desc = state_transition(None, self.RUNNING)
-        if (not error_desc):
-            self.runner = runner
-        return error_desc
+        print "Transitioning state"
+        error_desc = self.state_transition(self.WAITING, self.RUNNING)
+        print "State transitioned"
+        if (error_desc):
+            print "State transition failed %r" % (error_desc)
+            return error_desc
+        print "setting runner"
+        self.runner = runner
+        return {}
+
 
     def done(self):
         return state_transition(self.RUNNING, self.DONE)
@@ -91,12 +99,20 @@ class TaskQueueStorage:
             return {}
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
-        waiting_tasks = self.list_all_waiting_tasks()
+        waiting_tasks = self.list_all_waiting_tasks_of_type(tasktype)
+        print "hello"
         if waiting_tasks:
-            picked_task=waiting_tasks.pop(1)
-            picked_task.start(runner)
-            return picked_task
+            print "a, tasks = %r" %(waiting_tasks)
+            picked_task=waiting_tasks.pop(0)
+            print "b"
+            error_description=picked_task.start(runner)
+            if error_description:
+                print  "e"   
+                return error_description
+            print  "c"
+            return picked_task.as_map()
         else:
+            print "d"            
             return {}
 
     def delare_as_done(self, taskid):

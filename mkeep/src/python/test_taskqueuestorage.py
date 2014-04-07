@@ -48,15 +48,13 @@ class MkeepTestCase(unittest.TestCase):
         # The error description should be nonempty
         self.assertTrue(errorDescription)
 
-    def test_get_next_nonexisting_task(self):
+    def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
         self.assertFalse(errorDescription)
-
 
     def test_list_all_nonexisting_done_tasks(self):        
         errorDescription = self.tqs.list_all_done_tasks()
         self.assertFalse(errorDescription)
-        
 
 if __name__ == '__main__':
     unittest.main()
