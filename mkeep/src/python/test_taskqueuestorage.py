@@ -9,27 +9,26 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import mkeep
 import unittest
 import json
 
-from mediametastorage import MediaAndMetaStorage
-mms = MediaAndMetaStorage()
-
+from taskqueuestorage import TaskQueueStorage
 
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
         "Get a reference to the testclient"
-        self.app = mkeep.app.test_client()
-
+        self.tqs = TaskQueueStorage()
     
     def tearDown(self):
         "Nothing to tear down yet"
         pass
 
-    def grok(self):
+    def get_empty_list(self):
         pass
+
+    def test_create_task(self):
+        task = self.tqs.create_task("rubberduck")
 
     
 
