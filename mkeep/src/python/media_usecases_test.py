@@ -13,16 +13,9 @@ import mkeep
 import unittest
 import json
 
-class MkeepTestCase(unittest.TestCase):
+from mkeeptestcase import MkeepTestCase
 
-    def setUp(self):
-        "Get a reference to the testclient"
-        self.app = mkeep.app.test_client()
-
-    
-    def tearDown(self):
-        "Nothing to tear down yet"
-        pass
+class MediaUsecases(MkeepTestCase):
 
     ##
     ## Create something, then read it, then delete it then fail reading

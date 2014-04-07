@@ -12,17 +12,10 @@ import os
 import mkeep
 import unittest
 import json
+import flask.ext.testing
+from mkeeptestcase import MkeepTestCase
 
-class MkeepTestCase(unittest.TestCase):
-
-    def setUp(self):
-        "Get a reference to the testclient"
-        self.app = mkeep.app.test_client()
-
-    
-    def tearDown(self):
-        "Nothing to tear down yet"
-        pass
+class SimpleCrudCases(MkeepTestCase):
 
     ##
     ## Test CRUD for media
@@ -107,7 +100,6 @@ class MkeepTestCase(unittest.TestCase):
     def test_all_waiting_tasks(self):
         rv = self.app.get('/task/waiting')
         self.assertEqual(rv.status_code, 404)
-
     def test_all_waiting_tasks_of_type(self):
         rv = self.app.get('/task/waiting/type/face')
         self.assertEqual(rv.status_code, 404)
@@ -140,4 +132,4 @@ class MkeepTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 404)
 
 if __name__ == '__main__':
-    unittest.main()
+     unittest.main()
