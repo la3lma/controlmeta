@@ -37,7 +37,7 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
     if (not bool(retval)):
         return Response(status=status)
     else:
-        # XXX The "use a map as a datastructure" antipattern
+        # XXX The "use a map as a datastructure" antipattern, evaluate and refactor.
         if "HTTP_error_code" in retval:
             errorcode= retval["HTTP_error_code"]
         retvaldump=json.dumps(retval)
@@ -165,4 +165,4 @@ def delete_task(taskid):
 
 if __name__ == '__main__':
     app.run(debug = True)
-    
+
