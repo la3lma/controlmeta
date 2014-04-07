@@ -15,10 +15,9 @@ import json
 
 from mediametastorage import MediaAndMetaStorage
 
+from mkeeptestcase import MkeepTestCase
 
-
-class MediaAndMetaStorageTest(unittest.TestCase):
-
+class TestMediaAndMetaStorageDirectly(MkeepTestCase):
 
     def setUp(self):
         "Get a reference to the testclient"

@@ -14,18 +14,14 @@ import unittest
 import json
 
 from mediametastorage import MediaAndMetaStorage
-mms = MediaAndMetaStorage()
 
 
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
-        "Get a reference to the testclient"
-        self.app = mkeep.app.test_client()
-
+        pass
     
     def tearDown(self):
-        "Nothing to tear down yet"
         pass
 
     def test_create_delete_roundtrip(self):
