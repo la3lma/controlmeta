@@ -141,7 +141,6 @@ class MkeepTestCase(unittest.TestCase):
 
     def test_delete_task(self):
         rv = self.app.delete('/task/id/1')
-        print "Got returnvalue = %r" % (rv)
         self.assertEqual(rv.status_code, 404)
 
 if __name__ == '__main__':

@@ -76,7 +76,7 @@ class TaskQueueStorage:
 
 
     def list_all_done_tasks(self):
-        return filter(list_all_waiting_tasks_of_type(type), self.tasks.values())
+        return filter(lambda x: x.is_done(), self.tasks.values())
 
     def list_all_waiting_tasks_of_type(self, tasktype):
         return filter (lambda x: x.has_task_type(tasktype),

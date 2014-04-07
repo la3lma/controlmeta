@@ -128,7 +128,9 @@ def get_next_waiting_task(type):
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
-    retval = tqs.pick_next_waiting_task_of_type(type)
+    # XXX This thing should fail if there is no runner field in the
+    #     post statement
+    retval = tqs.pick_next_waiting_task_of_type(type, "XXXX Dummy runner")
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])
@@ -139,6 +141,7 @@ def get_in_progress_task_list(type):
 @app.route('/task/type/<type>/done', methods = ['GET'])
 def get_done_task_list(type):
     retval = tqs.list_all_done_tasks()
+    print "retval = %r" % (retval)
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<id>/done', methods = ['POST'])
