@@ -113,6 +113,7 @@ class SimpleCrudCases(MkeepTestCase):
         rv = self.app.get('/task/type/face/done')
         self.assertEqual(rv.status_code, 404)
 
+
     def test_pick_task_of_type(self):
         rv = self.app.post('/task/waiting/type/face/pick',
                            headers={'Content-Type': 'application/json'},

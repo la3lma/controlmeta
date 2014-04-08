@@ -116,16 +116,26 @@ def delete_meta(id, metaid):
 ###
 
 
+def tasklist_as_return_value(tasklist):
+    retval = map(lambda x: x.as_map(), tasklist)
+    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+
 @app.route('/task/waiting', methods = ['GET'])
 def list_all_waiting_tasks():
-    retval = tqs.list_all_waiting_tasks()
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    return tasklist_as_return_value(tqs.list_all_waiting_tasks())
+
+@app.route('/task/running', methods = ['GET'])
+def get_in_progress_task_list():
+    tasks = tqs.list_all_running_tasks()
+    return tasklist_as_return_value(tasks)
+        
+@app.route('/task/type/<type>/done', methods = ['GET'])
+def get_done_task_list(type):
+    return task_list_as_return_value(tqs.list_all_done_tasks())
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 def list_waiting_task_of_type(type):
-    retval = tqs.list_all_waiting_tasks_of_type(type)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
-
+    return tasklist_as_return_value(tqs.list_all_waiting_tasks_of_type(type))
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
@@ -142,18 +152,9 @@ def pick_next_waiting_task(type):
         return expect_non_empty_map_return_as_json(
             {"Error description:" : "Agent description was not legal JSON syntax" },
             errorcode=400)
-    retval = tqs.pick_next_waiting_task_of_type(type, agent_description)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    task = tqs.pick_next_waiting_task_of_type(type, agent_description)
+    return expect_non_empty_map_return_as_json(task, errorcode=404, status=200)
 
-@app.route('/task/type/<type>/in-progress', methods = ['GET'])
-def get_in_progress_task_list(type):
-    retval = tqs.list_all_running_tasks()
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
-        
-@app.route('/task/type/<type>/done', methods = ['GET'])
-def get_done_task_list(type):
-    retval = tqs.list_all_done_tasks()
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<id>/done', methods = ['POST'])
 def declare_task_as_done(id):
