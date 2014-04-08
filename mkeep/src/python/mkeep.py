@@ -129,9 +129,20 @@ def list_waiting_task_of_type(type):
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 def pick_next_waiting_task(type):
-    # XXX This thing should fail if there is no runner field in the
-    #     post statement
-    retval = tqs.pick_next_waiting_task_of_type(type, "XXXX Dummy runner")
+    # XXX This code crashes, why?  
+    # if not request.is_json():
+    #     print "This isn't json"
+    #     return expect_non_empty_map_return_as_json(
+    #         {"Error description:" : "No agent description given when picking task" },
+    #         errorcode=400)
+    # XXX This will fail with a 500 error if the JSON is syntactically bogus
+    #     We should test for that and fail gracefully instead
+    agent_description=request.json
+    if not agent_description:
+        return expect_non_empty_map_return_as_json(
+            {"Error description:" : "Agent description was not legal JSON syntax" },
+            errorcode=400)
+    retval = tqs.pick_next_waiting_task_of_type(type, agent_description)
     return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
 
 @app.route('/task/type/<type>/in-progress', methods = ['GET'])

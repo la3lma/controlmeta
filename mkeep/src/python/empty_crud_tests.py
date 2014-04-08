@@ -100,6 +100,7 @@ class SimpleCrudCases(MkeepTestCase):
     def test_all_waiting_tasks(self):
         rv = self.app.get('/task/waiting')
         self.assertEqual(rv.status_code, 404)
+
     def test_all_waiting_tasks_of_type(self):
         rv = self.app.get('/task/waiting/type/face')
         self.assertEqual(rv.status_code, 404)
@@ -113,7 +114,9 @@ class SimpleCrudCases(MkeepTestCase):
         self.assertEqual(rv.status_code, 404)
 
     def test_pick_task_of_type(self):
-        rv = self.app.post('/task/waiting/type/face/pick')
+        rv = self.app.post('/task/waiting/type/face/pick',
+                           headers={'Content-Type': 'application/json'},
+                           data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 404)
 
     def test_declare_task_done(self):
