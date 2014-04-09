@@ -110,7 +110,7 @@ class SimpleCrudCases(MkeepTestCase):
         self.assertEqual(rv.status_code, 404)
 
     def test_get_done_task_list(self):
-        rv = self.app.get('/task/type/face/done')
+        rv = self.app.get('/task/done')
         self.assertEqual(rv.status_code, 404)
 
     def test_pick_task_of_type(self):
