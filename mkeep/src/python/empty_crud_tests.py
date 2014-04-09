@@ -29,6 +29,14 @@ class SimpleCrudCases(MkeepTestCase):
         rv = self.app.get('/media/id/1')
         self.assertEqual(rv.status_code, 404)
 
+    def test_bogus_json_post_content_metadata_upload(self):
+        rv = self.app.post(
+            '/media/',
+            headers={'Content-Type': 'application/json'},
+            # Syntactically erronous json to provoke an error
+            data='{"Name": "Test","' )
+        self.assertEqual(rv.status_code, 400)
+
     def test_post_content_metadata_upload(self):
         rv = self.app.post(
             '/media/',
