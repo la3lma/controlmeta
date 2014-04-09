@@ -60,10 +60,22 @@ def get_media(id):
      else:
          return Response(data, mimetype=mimetype, status=200)
 
+def get_requests_json(request):
+    """Will return a pair of values (error, pval), where
+     pval is the request parsed as python, and error is
+     a Response object containing a parse error message
+     that can be returned to the calling method. If no error
+     is detected, the error value is None"""
+    json_value  = request.json
+    return None, json_value
+
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_metadata():
      "Write the media representation an identified asset"
-     retval = mms.create_new_media_entry_from_metadata(request.json)
+     error, json_value = get_requests_json(request)
+     if error:
+         return error
+     retval = mms.create_new_media_entry_from_metadata(json_value)
      return allow_empty_map_return_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
