@@ -156,10 +156,10 @@ def pick_next_waiting_task(type):
     return expect_non_empty_map_return_as_json(task, errorcode=404, status=200)
 
 
-@app.route('/task/type/<id>/done', methods = ['POST'])
+@app.route('/task/id/<id>/done', methods = ['POST'])
 def declare_task_as_done(id):
-    retval = tqs.declare_as_done()
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    retval = tqs.declare_as_done(id)
+    return expect_empty_map_return_error_as_json(retval, errorcode=404, status=200)
     
 @app.route('/task/type/<type>', methods = ['POST'])
 def create_task(type):

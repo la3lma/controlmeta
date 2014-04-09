@@ -104,7 +104,7 @@ class TaskQueueStorage:
         else:
             return {}
 
-    def delare_as_done(self, taskid):
+    def declare_as_done(self, taskid):
         errors=self.check_if_task_exists(taskid)
         if errors:
             return errors

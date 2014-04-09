@@ -5,7 +5,8 @@ PYTHON=/usr/bin/python
 TESTS="empty_crud_tests.py \
       test_media_and_meta_storage_directly.py \
       test_taskqueuestorage.py \
-      media_usecases_test.py"
+      media_usecases_test.py \
+      test_flask_task_manipulations.py "
 
 
 for test in $TESTS ; do
