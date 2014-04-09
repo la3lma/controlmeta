@@ -1,5 +1,3 @@
-o Make a layering that goes down to a simple interface towards a backend.
-   - Add additional tests, and preserv unit test compliance.
 o Refactor to make things nice.
 o Write a deployment script that deploys the whole thing to EC2 elastic beanstalk.
 o Ensure that we can upload big data objects
