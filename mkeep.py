@@ -99,30 +99,30 @@ def delete_media_and_meta(id):
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.get_meta_list(id, metatype)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):
     retval = mms.get_metadata_from_id(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.store_new_meta(id, metatype)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
     "Post a particular metadata instance"
     retval = mms.store_meta(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
     retval = mms.delete_metaid(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 ###
 ###  Accessing the task queue
@@ -131,7 +131,7 @@ def delete_meta(id, metaid):
 
 def tasklist_as_return_value(tasklist):
     retval = map(lambda x: x.as_map(), tasklist)
-    return expect_non_empty_map_return_as_json(retval, status=200)
+    return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/task/waiting', methods = ['GET'])
 def list_all_waiting_tasks():
@@ -166,7 +166,7 @@ def pick_next_waiting_task(type):
             {"Error description:" : "Agent description was not legal JSON syntax" },
             errorcode=400)
     task = tqs.pick_next_waiting_task_of_type(type, agent_description)
-    return expect_non_empty_map_return_as_json(task, status=200)
+    return expect_non_empty_map_return_as_json(task)
 
 
 @app.route('/task/id/<id>/done', methods = ['POST'])
