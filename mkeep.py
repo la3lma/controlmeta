@@ -1,9 +1,8 @@
 #!/usr/bin/python
 from flask import Flask, jsonify, Response, request, abort
-from smsservice import SmsService
 import json
 from mediametastorage import MediaAndMetaStorage
-from taskqueuestorage import TaskQueueStorage
+from task_queue_storage import TaskQueueStorage
 
 app = Flask(__name__)
 
