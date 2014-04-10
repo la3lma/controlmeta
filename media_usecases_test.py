@@ -13,7 +13,7 @@ import mkeep
 import unittest
 import json
 
-from mkeeptestcase import MkeepTestCase
+from mkeep_test_case import MkeepTestCase
 
 class MediaUsecases(MkeepTestCase):
 

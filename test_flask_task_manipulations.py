@@ -11,7 +11,7 @@ import mkeep
 import unittest
 import json
 import flask.ext.testing
-from mkeeptestcase import MkeepTestCase
+from mkeep_test_case import MkeepTestCase
 
 class FullTaskLifecycleTest(MkeepTestCase):
 
