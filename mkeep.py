@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from flask import Flask, jsonify, Response, request, abort
+import return_value_help
 import json
 from mediametastorage import MediaAndMetaStorage
 from task_queue_storage import TaskQueueStorage
@@ -14,9 +15,10 @@ mms = MediaAndMetaStorage()
 tqs = TaskQueueStorage()
 
 
-###
-### Helper functions for return values
-###
+##
+## Helper functions to make it simpler to translate return values
+## into response objects.
+##
 
 def expect_non_empty_map_return_as_json(retval, errorcode=500, status=200):
     if (not retval):
@@ -39,6 +41,7 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
             errorcode= retval["HTTP_error_code"]
         retvaldump=json.dumps(retval)
         return Response(retvaldump, status=errorcode, mimetype="application/json")
+
 
 ###
 ### Media CRUD
