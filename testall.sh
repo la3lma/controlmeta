@@ -2,7 +2,7 @@
 clear
 
 PYTHON=/usr/bin/python
-TESTS="empty_crud_tests.py \
+TESTS="test_empty_crud.py \
       test_media_and_meta_storage_directly.py \
       test_taskqueuestorage.py \
       media_usecases_test.py \
