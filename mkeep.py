@@ -31,7 +31,7 @@ def allow_empty_map_return_as_json(retval, status=200):
     else:
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
-def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
+def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
     if (not bool(retval)):
         return Response(status=status)
     else:
@@ -89,7 +89,7 @@ def post_media_to_id(id):
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
     errors = mms.delete_media(id)
-    return expect_empty_map_return_error_as_json(errors, errorcode=404, status=204)
+    return expect_empty_map_return_error_as_json(errors)
 
 
 ###
@@ -172,7 +172,7 @@ def pick_next_waiting_task(type):
 @app.route('/task/id/<id>/done', methods = ['POST'])
 def declare_task_as_done(id):
     retval = tqs.declare_as_done(id)
-    return expect_empty_map_return_error_as_json(retval, errorcode=404, status=200)
+    return expect_empty_map_return_error_as_json(retval)
     
 @app.route('/task/type/<type>', methods = ['POST'])
 def create_task(type):
@@ -182,8 +182,7 @@ def create_task(type):
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 def delete_task(taskid):
     retval = tqs.delete_task(taskid)
-    return expect_empty_map_return_error_as_json(retval, status=200)
+    return expect_empty_map_return_error_as_json(retval)
 
 if __name__ == '__main__':
     app.run(debug = True)
-
