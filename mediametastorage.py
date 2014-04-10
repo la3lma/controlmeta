@@ -11,6 +11,7 @@ class MediaAndMetaStorage:
 
     objects = {}
     next_index = 1
+    hostname="ctrl-meta.loltel.co"
 
     def create_new_media_entry_from_metadata(self, metadata):
         contentId = str(self.next_index)
@@ -19,7 +20,7 @@ class MediaAndMetaStorage:
         # Set a couple of pieces of metadata that can't be
         # set by the setter
         # XXX The base URI is completely bogus
-        metadata['ContentURL']  = "http://server/media/id/" +  `contentId`
+        metadata['ContentURL']  = "http://${hostname}/media/id/" +  `contentId`
         metadata['ContentId']  = contentId
         object = Entry(
             contentId,
