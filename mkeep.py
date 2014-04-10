@@ -7,9 +7,6 @@ from task_queue_storage import TaskQueueStorage
 
 app = Flask(__name__)
 
-### XXX This is a bug.  State is kept between instantiations
-##      of the app instance.  That causes tests to break and it is
-##      clearly the wrong thing to do. Investigate and fix.
 
 mms = MediaAndMetaStorage()
 tqs = TaskQueueStorage()
@@ -95,6 +92,8 @@ def delete_media_and_meta(id):
 ###
 ###  Meta CRUD
 ###
+
+
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
