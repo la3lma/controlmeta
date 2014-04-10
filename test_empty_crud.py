@@ -47,7 +47,7 @@ class SimpleCrudCases(MkeepTestCase):
              "Longitude": 52.12873
              }""")
         self.assertEqual(rv.status_code, 201)
-        ## XXX Check content type
+        self.assertEqual(rv.content_type, 'application/json')
         rvj=json.loads(rv.data)
         self.assertEqual(rvj.get('Name'), "Test")
         self.assertEqual(rvj.get('Latitude'), 12.59817)
