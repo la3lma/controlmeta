@@ -14,13 +14,12 @@ app = Flask(__name__)
 mms = MediaAndMetaStorage()
 tqs = TaskQueueStorage()
 
-
 ##
 ## Helper functions to make it simpler to translate return values
 ## into response objects.
 ##
 
-def expect_non_empty_map_return_as_json(retval, errorcode=500, status=200):
+def expect_non_empty_map_return_as_json(retval, errorcode=404, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
@@ -51,7 +50,7 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=500):
 def get_all_meta():
      "Get a list of all the available media's metadata."
      retval=mms.get_all_meta()
-     return expect_non_empty_map_return_as_json(retval, errorcode=404)
+     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>', methods = ['GET'])
 def get_media(id):
@@ -100,30 +99,30 @@ def delete_media_and_meta(id):
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.get_meta_list(id, metatype)
-    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 def get_meta(id, metaid):
     retval = mms.get_metadata_from_id(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.store_new_meta(id, metatype)
-    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 def post_meta(id, metaid):
     "Post a particular metadata instance"
     retval = mms.store_meta(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, status=200, errorcode=404)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
     retval = mms.delete_metaid(id, metaid)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 ###
 ###  Accessing the task queue
@@ -132,7 +131,7 @@ def delete_meta(id, metaid):
 
 def tasklist_as_return_value(tasklist):
     retval = map(lambda x: x.as_map(), tasklist)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=200)
+    return expect_non_empty_map_return_as_json(retval, status=200)
 
 @app.route('/task/waiting', methods = ['GET'])
 def list_all_waiting_tasks():
@@ -167,7 +166,7 @@ def pick_next_waiting_task(type):
             {"Error description:" : "Agent description was not legal JSON syntax" },
             errorcode=400)
     task = tqs.pick_next_waiting_task_of_type(type, agent_description)
-    return expect_non_empty_map_return_as_json(task, errorcode=404, status=200)
+    return expect_non_empty_map_return_as_json(task, status=200)
 
 
 @app.route('/task/id/<id>/done', methods = ['POST'])
@@ -178,7 +177,7 @@ def declare_task_as_done(id):
 @app.route('/task/type/<type>', methods = ['POST'])
 def create_task(type):
     retval = tqs.create_task(type)
-    return expect_non_empty_map_return_as_json(retval, errorcode=404, status=201)
+    return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 def delete_task(taskid):
