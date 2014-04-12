@@ -193,4 +193,4 @@ def delete_task(taskid):
     return expect_empty_map_return_error_as_json(retval)
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(host='0.0.0.0', debug=True)
