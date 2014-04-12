@@ -9,7 +9,7 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import control_meta
+import application
 import unittest
 import json
 import flask.ext.testing

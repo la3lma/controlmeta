@@ -9,7 +9,7 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import control-meta
+import application
 import unittest
 import json
 
