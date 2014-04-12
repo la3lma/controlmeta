@@ -9,13 +9,13 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import mkeep
+import control_meta
 import unittest
 import json
 import flask.ext.testing
-from mkeep_test_case import MkeepTestCase
+from control_meta_test_case import Control_meta_test_case
 
-class SimpleCrudCases(MkeepTestCase):
+class SimpleCrudCases(Control_meta_test_case):
 
     ##
     ## Test CRUD for media

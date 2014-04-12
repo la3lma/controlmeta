@@ -40,6 +40,15 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
 
 
 ###
+###  Static pages
+###
+
+@app.route('/')
+def hello_world():
+    return "lol control meta!"
+
+
+###
 ### Media CRUD
 ###
 

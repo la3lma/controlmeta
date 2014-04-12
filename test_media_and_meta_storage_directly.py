@@ -9,19 +9,19 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import mkeep
+import control_meta
 import unittest
 import json
 
 from mediametastorage import MediaAndMetaStorage
 
-from mkeep_test_case import MkeepTestCase
+from control_meta_test_case import Control_meta_test_case
 
-class TestMediaAndMetaStorageDirectly(MkeepTestCase):
+class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
     def setUp(self):
         "Get a reference to the testclient"
-        self.app = mkeep.app.test_client()
+        self.app = control_meta.app.test_client()
     
     def tearDown(self):
         "Nothing to tear down yet"

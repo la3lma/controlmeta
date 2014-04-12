@@ -9,13 +9,13 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import mkeep
+import control_meta
 import unittest
 import json
 
-from mkeep_test_case import MkeepTestCase
+from control_meta_test_case import Control_meta_test_case
 
-class MediaUsecases(MkeepTestCase):
+class MediaUsecases(Control_meta_test_case):
 
     ##
     ## Create something, then read it, then delete it then fail reading

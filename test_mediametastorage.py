@@ -9,14 +9,14 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import mkeep
+import control-meta
 import unittest
 import json
 
 from mediametastorage import MediaAndMetaStorage
 
 
-class MkeepTestCase(unittest.TestCase):
+class control_meta_test_case(unittest.TestCase):
 
     def setUp(self):
         pass
