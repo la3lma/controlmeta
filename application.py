@@ -4,7 +4,8 @@ import json
 from mediametastorage import MediaAndMetaStorage
 from task_queue_storage import TaskQueueStorage
 
-app = Flask(__name__)
+application = Flask(__name__)
+app=application
 
 
 mms = MediaAndMetaStorage()
@@ -192,4 +193,4 @@ def delete_task(taskid):
     return expect_empty_map_return_error_as_json(retval)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    application.run(host='0.0.0.0', debug=True)
