@@ -1,7 +1,6 @@
 o Refactor to make things nice.
   - Introduce some directory structure doc/src
   - Separate test code into separate directory
-o Write a deployment script that deploys the whole thing to EC2 elastic beanstalk.
 o Ensure that we an add some proper parameters to the task descriptions
 o Ensure that we can upload big data objects
 o Add some kind of security (preferably oauth) that can use
