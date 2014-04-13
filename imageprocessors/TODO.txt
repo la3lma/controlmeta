@@ -1,0 +1,5 @@
+o Get OpenCV to work for python.
+o pick up the imagefrom file, do the haar-thing and print the metadata to stdout.
+o Put the image into controlmeta
+o Rewrite script to pick up from controlmeta and to add results there.
+o Refactor to make sweet.
