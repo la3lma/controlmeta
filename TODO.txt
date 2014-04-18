@@ -1,3 +1,7 @@
+o Make some more roundtrip tests.
+o Send/receive task parameters
+o Start making a proper library for submitting/picking up tasks.
+
 o Refactor to make things nice.
   - Introduce some directory structure doc/src
   - Separate test code into separate directory
