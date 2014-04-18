@@ -36,7 +36,18 @@ print "Picking."
 agent_id={'agentId':'007'}
 pickurl="%s%s" %(base_url, 'task/waiting/type/face/pick')
 pickresponse = requests.post(pickurl, data=json.dumps(agent_id), headers=json_headers)
+picked_task_id=json.loads(pickresponse.text)['taskId']
 
 print "pickresponse = ", pickresponse
 print "pickresponse.text = ", pickresponse.text
+print "picked task id", picked_task_id
+
+
+## And declare it as done
+pickurl="%s%s%s" %(base_url, 'task/id/', picked_task_id)
+deletedresponse= requests.delete(pickurl, data=json.dumps(agent_id), headers=json_headers)
+print "deletedresponse = ", deletedresponse
+print "deletedresponse.text = ", deletedresponse.text
+
+
 

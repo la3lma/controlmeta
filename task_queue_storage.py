@@ -86,10 +86,13 @@ class TaskQueueStorage:
                        self.list_all_waiting_tasks())
 
     def check_if_task_exists(self, taskid):
+        taskid=str(taskid)
+        print "self.tasks=", self.tasks
+        print "taskid=", taskid
         if not(taskid in self.tasks):
             return { "HTTP_error_code": 404,
                      "Description":
-                     "No such task"}
+                     ("No such task taskid='%s'"%taskid)}
         else:
             return {}
 
@@ -105,6 +108,7 @@ class TaskQueueStorage:
             return {}
 
     def declare_as_done(self, taskid):
+        taskid=str(taskid)
         errors=self.check_if_task_exists(taskid)
         if errors:
             return errors
@@ -113,18 +117,19 @@ class TaskQueueStorage:
             return task.done();
 
     def create_task(self, tasktype):
-        taskid = self.next_taskid
+        taskid = str(self.next_taskid)
         self.next_taskid = self.next_taskid + 1
         task = Task(taskid, "waiting", tasktype)
         self.tasks[taskid] = task
         return task.as_map()
 
     def delete_task(self, taskid):
+        taskid=str(taskid)
         errors=self.check_if_task_exists(taskid)
         if errors:
             return errors
         else:
-            del tasks[taskid]
+            del self.tasks[taskid]
             return {}        
         
 
