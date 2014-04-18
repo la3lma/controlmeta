@@ -21,6 +21,8 @@ fi
 # Then copy all python scripts that are not for testing to the deploydir
 cp $(ls $HOMEDIR/*.py | grep -v test) "$DEPLOYDIR"
 
+(cd $DEPLOYDIR && git commit -a -m "New version")
+
 # Finally push the new files to the application server
 (cd $DEPLOYDIR && git aws.push && eb status)
 
