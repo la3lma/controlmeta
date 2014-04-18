@@ -171,7 +171,7 @@ def pick_next_waiting_task(type):
     agent_description=request.json
     if not agent_description:
         return expect_non_empty_map_return_as_json(
-            {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(request)) },
+            {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(request.data)) },
             errorcode=400)
     task = tqs.pick_next_waiting_task_of_type(type, agent_description)
     return expect_non_empty_map_return_as_json(task)
