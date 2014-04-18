@@ -20,7 +20,9 @@ posturl="%s%s" %(base_url, tasktypepath)
 print "posturl = ", posturl
 payload={'parameter1':'Value 1'}
 
-response = requests.post(posturl, payload)
+json_headers = {'content-type': 'application/json'}
+
+response = requests.post(posturl, data=json.dumps(payload), headers=json_headers)
 print response
 print response.text
 
@@ -33,7 +35,7 @@ print "taskId=",task_id
 print "Picking."
 agent_id={'agentId':'007'}
 pickurl="%s%s" %(base_url, 'task/waiting/type/face/pick')
-pickresponse = requests.post(pickurl, agent_id)
+pickresponse = requests.post(pickurl, data=json.dumps(agent_id), headers=json_headers)
 
 print "pickresponse = ", pickresponse
 print "pickresponse.text = ", pickresponse.text
