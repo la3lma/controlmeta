@@ -12,5 +12,5 @@ TESTS="test_empty_crud.py \
 for test in $TESTS ; do
   echo "======"
   echo "Running tests in ${test}"
-  $PYTHON "${test}"
+  $PYTHON "tests/${test}"
 done
