@@ -1,4 +1,7 @@
 o Make some more roundtrip tests.
+  o Make one of them  into an acceptance test that is run before a
+     deployment is made.
+    
 o Send/receive task parameters
 o Start making a proper library for submitting/picking up tasks.
 
