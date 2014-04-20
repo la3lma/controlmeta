@@ -3,7 +3,7 @@ import unittest
 import json
 import flask.ext.testing
 from mediametastorage import MediaAndMetaStorage
-from task_queue_storage import TaskQueueStorage
+from tasks.task_queue_storage import TaskQueueStorage
 
 
 class Control_meta_test_case(unittest.TestCase):

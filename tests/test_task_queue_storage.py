@@ -12,7 +12,7 @@ import os
 import unittest
 import json
 
-from task_queue_storage import TaskQueueStorage
+from tasks.task_queue_storage import TaskQueueStorage
 
 class MkeepTestCase(unittest.TestCase):
 
