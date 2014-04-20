@@ -7,7 +7,7 @@
 # It feels clunky, so probably it is.
 
 HOMEDIR=$(dirname  "$0")
-DEPLOYDIR="$HOMEDIR/../controlmeta.aws"
+DEPLOYDIR="$HOMEDIR/../../controlmeta.aws"
 UPLOADPY="$HOMEDIR/test-upload-task.py"
 
 if [  -z "$(type eb)" ]  ; then
