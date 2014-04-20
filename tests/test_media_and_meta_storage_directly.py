@@ -13,7 +13,7 @@ import application
 import unittest
 import json
 
-from mediametastorage import MediaAndMetaStorage
+from mediameta.mediametastorage import MediaAndMetaStorage
 
 from control_meta_test_case import Control_meta_test_case
 

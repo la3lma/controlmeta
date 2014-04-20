@@ -2,7 +2,7 @@ import application
 import unittest
 import json
 import flask.ext.testing
-from mediametastorage import MediaAndMetaStorage
+from mediameta.mediametastorage import MediaAndMetaStorage
 from tasks.task_queue_storage import TaskQueueStorage
 
 

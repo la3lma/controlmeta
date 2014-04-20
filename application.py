@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from flask import Flask, jsonify, Response, request, abort
 import json
-from mediametastorage import MediaAndMetaStorage
+from mediameta.mediametastorage import MediaAndMetaStorage
 from tasks.task_queue_storage import TaskQueueStorage
 
 application = Flask(__name__)
