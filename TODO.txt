@@ -1,6 +1,7 @@
 o Make some more roundtrip tests.
   o Make one of them  into an acceptance test that is run before a
-     deployment is made.
+    deployment is made and after a deployment has been made.
+    If it fails, then automatically roll back to previous version? 
     
 o Send/receive task parameters
 o Start making a proper library for submitting/picking up tasks.
