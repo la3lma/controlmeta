@@ -20,8 +20,8 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         # Add a task
         rv = self.app.post(
             '/task/type/face',
-            headers={'Content-Type': 'text/plain'},
-            data='this is amazing')
+            headers={'Content-Type': 'application/json'},
+            data='{"parameter": "parameter-value"}')
         self.assertEqual(rv.status_code, 201)
 
         rv = self.app.get('/task/waiting')
@@ -39,6 +39,14 @@ class FullTaskLifecycleTest(Control_meta_test_case):
                            headers={'Content-Type': 'application/json'},
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 200)
+        taskdesc=json.loads(rv.data)
+        print "taskdesc=", taskdesc
+        params=taskdesc['params']
+        print "params=", params
+        parameter_value=params['parameter']
+        self.assertEquals("parameter-value", parameter_value )
+    
+        
 
         rv = self.app.get('/task/waiting')
         self.assertEqual(rv.status_code, 404)

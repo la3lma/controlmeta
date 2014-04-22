@@ -134,9 +134,10 @@ class SimpleCrudCases(Control_meta_test_case):
     def test_create_task(self):
         rv = self.app.post(
             '/task/type/face',
-            headers={'Content-Type': 'text/plain'},
-            data='this is amazing')
+            headers={'Content-Type': 'application/json'},
+            data='{"parameter":"value"}')
         self.assertEqual(rv.status_code, 201)
+        print "rv=", rv
 
     def test_delete_task(self):
         rv = self.app.delete('/task/id/1')

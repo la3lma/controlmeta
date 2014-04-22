@@ -7,11 +7,12 @@ class Task:
     RUNNING="running"
     DONE="done"
 
-    def __init__(self, id, status, tasktype):
+    def __init__(self, id, status, tasktype, params=None):
       self.id = id
       self.status = status
       self.runner=None
       self.tasktype = tasktype
+      self.params = params
 
     ##
     ## Represent the task as a map.  To be used when moving it
@@ -20,7 +21,8 @@ class Task:
     def as_map(self):
         return {"taskId": self.id,
                 "status": self.status,
-                "taskType": self.tasktype}
+                "taskType": self.tasktype,
+                "params": self.params }
 
     ##
     ## The start stae needs some special case handling
@@ -54,7 +56,6 @@ class Task:
         else:
             self.status = destination
             return {}
-
 
 
     def done(self):
@@ -102,8 +103,6 @@ class TaskQueueStorage:
 
     def check_if_task_exists(self, taskid):
         taskid=str(taskid)
-        print "self.tasks=", self.tasks
-        print "taskid=", taskid
         if not(taskid in self.tasks):
             return { "HTTP_error_code": 404,
                      "Description":
@@ -131,10 +130,10 @@ class TaskQueueStorage:
             task=self.tasks[taskid]
             return task.done();
 
-    def create_task(self, tasktype):
+    def create_task(self, tasktype, params):
         taskid = str(self.next_taskid)
         self.next_taskid = self.next_taskid + 1
-        task = Task(taskid, "waiting", tasktype)
+        task = Task(taskid, "waiting", tasktype, params)
         self.tasks[taskid] = task
         return task.as_map()
 

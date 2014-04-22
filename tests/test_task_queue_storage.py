@@ -27,10 +27,20 @@ class MkeepTestCase(unittest.TestCase):
     def get_empty_list(self):
         pass
 
-    def test_create_task(self):
-        task = self.tqs.create_task("rubberduck")
+    def test_create_task_with_no_params(self):
+        task = self.tqs.create_task("rubberduck", {})
         self.assertTrue(task)
+        print "task =", task
+        self.assertEqual("rubberduck", task['taskType'])
+        self.assertEqual({}, task['params'])
 
+    def test_create_task_with_params(self):
+        params={"apple":"fruit"}
+        task = self.tqs.create_task("rubberduck", params)
+        self.assertTrue(task)
+        self.assertEquals(params,  task['params'])
+
+        
     def test_list_empty_waiting_tasks_list(self):
         tasktype="rubberduck"
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
@@ -39,7 +49,7 @@ class MkeepTestCase(unittest.TestCase):
         tasktype="rubberduck"
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertFalse(tasklist)
-        task = self.tqs.create_task(tasktype)
+        task = self.tqs.create_task(tasktype, {})
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertTrue(tasklist)
 

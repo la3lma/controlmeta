@@ -186,7 +186,18 @@ def declare_task_as_done(id):
     
 @app.route('/task/type/<type>', methods = ['POST'])
 def create_task(type):
-    retval = tqs.create_task(type)
+    # Not sure about the semantics of this one.
+    print "request.data=", request.data
+    params=request.json
+    print "incoming params = ", params
+    if not params:
+        params = request.stream.read()
+        return expect_non_empty_map_return_as_json(
+            {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
+            errorcode=400)
+    print "before sending request to storage"
+    retval = tqs.create_task(type, params)
+    print "Received retval from storage", retval
     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])

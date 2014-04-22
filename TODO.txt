@@ -1,7 +1,17 @@
+o Make it possible to send and retrieve parameters associated with
+   tasks.
 o Make some more roundtrip tests.
+  o One that access state associated with a particular document, then
+     first reads from  then writes a result to the media storage.
+  
   o Make one of them  into an acceptance test that is run before a
-    deployment is made and after a deployment has been made.
-    If it fails, then automatically roll back to previous version? 
+     deployment is made and after a deployment has been made.
+     If it fails, then automatically roll back to previous version? 
+
+o Make a minimal library for managing access to the service, based
+   on code in the roundtrip tests.
+
+o Make a small worker that does something to an image.
     
 o Send/receive task parameters
 o Start making a proper library for submitting/picking up tasks.
