@@ -1,5 +1,6 @@
 
 
+
 class Task:
 
     WAITING="waiting"
@@ -12,22 +13,19 @@ class Task:
       self.runner=None
       self.tasktype = tasktype
 
+    ##
+    ## Represent the task as a map.  To be used when moving it
+    ## as a json representation.
+    ##
     def as_map(self):
         return {"taskId": self.id,
                 "status": self.status,
                 "taskType": self.tasktype}
 
-    def state_transition(self, source, destination):
-        if (self.status != source):
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     (("Attempt to change status to state '%s' " +
-                       "of a task that wasn't in state " +
-                       "'%s' but in state %s") % (destination, source, self.status)) }
-        else:
-            self.status = destination
-            return {}
-
+    ##
+    ## The start stae needs some special case handling
+    ##
+    
     def start(self, runner):
         if (not runner):
             return { "HTTP_error_code": 400,
@@ -40,6 +38,23 @@ class Task:
             return error_desc
         self.runner = runner
         return {}
+
+    
+    ##
+    ## State transition model
+    ##
+    
+    def state_transition(self, source, destination):
+        if (self.status != source):
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     (("Attempt to change status to state '%s' " +
+                       "of a task that wasn't in state " +
+                       "'%s' but in state %s") % (destination, source, self.status)) }
+        else:
+            self.status = destination
+            return {}
+
 
 
     def done(self):
