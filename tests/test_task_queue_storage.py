@@ -30,7 +30,6 @@ class MkeepTestCase(unittest.TestCase):
     def test_create_task_with_no_params(self):
         task = self.tqs.create_task("rubberduck", {})
         self.assertTrue(task)
-        print "task =", task
         self.assertEqual("rubberduck", task['taskType'])
         self.assertEqual({}, task['params'])
 

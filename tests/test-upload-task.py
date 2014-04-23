@@ -13,11 +13,14 @@ tasktypepath="task/type/face"
 
 print "Testing against base-url = ", base_url
 
+def upload_document(content_type, parameters):
+    posturl="%s%s" %(base_url, tasktypepath)
+    json_headers = {'content-type': 'application/json'}
+    response = requests.post(posturl, data=json.dumps(parameters), headers=json_headers)
+    return response
 
 ## First upload a task with some parameters
-print "Uploading."
 posturl="%s%s" %(base_url, tasktypepath)
-print "posturl = ", posturl
 payload={'parameter1':'Value 1'}
 
 json_headers = {'content-type': 'application/json'}

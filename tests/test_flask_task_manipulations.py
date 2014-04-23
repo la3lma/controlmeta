@@ -40,9 +40,7 @@ class FullTaskLifecycleTest(Control_meta_test_case):
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 200)
         taskdesc=json.loads(rv.data)
-        print "taskdesc=", taskdesc
         params=taskdesc['params']
-        print "params=", params
         parameter_value=params['parameter']
         self.assertEquals("parameter-value", parameter_value )
     

@@ -1,5 +1,3 @@
-o Make it possible to send and retrieve parameters associated with
-   tasks.
 o Make some more roundtrip tests.
   o One that access state associated with a particular document, then
      first reads from  then writes a result to the media storage.

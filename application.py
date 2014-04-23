@@ -168,7 +168,6 @@ def pick_next_waiting_task(type):
     #         errorcode=400)
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
-    print "request " , request
     agent_description=request.json
     if not agent_description:
         data = request.stream.read()
@@ -187,17 +186,13 @@ def declare_task_as_done(id):
 @app.route('/task/type/<type>', methods = ['POST'])
 def create_task(type):
     # Not sure about the semantics of this one.
-    print "request.data=", request.data
     params=request.json
-    print "incoming params = ", params
     if not params:
         params = request.stream.read()
         return expect_non_empty_map_return_as_json(
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
-    print "before sending request to storage"
     retval = tqs.create_task(type, params)
-    print "Received retval from storage", retval
     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
