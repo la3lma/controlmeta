@@ -12,24 +12,29 @@ base_url=str(sys.argv[1])
 tasktypepath="task/type/face"
 
 print "Testing against base-url = ", base_url
-
-def upload_document(content_type, parameters):
-    posturl="%s%s" %(base_url, tasktypepath)
-    json_headers = {'content-type': 'application/json'}
-    response = requests.post(posturl, data=json.dumps(parameters), headers=json_headers)
-    return response
-
-## First upload a task with some parameters
-posturl="%s%s" %(base_url, tasktypepath)
-payload={'parameter1':'Value 1'}
-
 json_headers = {'content-type': 'application/json'}
 
-response = requests.post(posturl, data=json.dumps(payload), headers=json_headers)
-print response
-print response.text
 
-data = json.loads(response.text)
+def upload_task(type, parameters):
+    tasktypepath = "task/type/%s" % type
+    posturl = "%s%s" %(base_url, tasktypepath)
+    print "posturl = ", posturl
+    response = requests.post(posturl, data=json.dumps(parameters), headers=json_headers)
+    print response
+    print response.text
+    return json.loads(response.text)
+
+## First upload a task with some parameters
+# posturl="%s%s" %(base_url, tasktypepath)
+parameters={'parameter1':'Value 1'}
+
+# json_headers = {'content-type': 'application/json'}
+
+# response = requests.post(posturl, data=json.dumps(payload), headers=json_headers)
+# print response
+# print response.text
+
+data = upload_task("face", parameters)
 task_id=data['taskId']
 
 print "taskId=",task_id
