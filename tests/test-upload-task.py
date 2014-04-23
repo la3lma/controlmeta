@@ -4,18 +4,19 @@ import sys
 import client
 
     
-
+# Pick a base url from the command line
 base_url=str(sys.argv[1])
 
+# Then set up a client against that server
 cmc = client.ControlMetaClient(base_url)
 
+# Upload a task of type "face" with some parameters.
 print "Testing against base-url = ", base_url
-json_headers = {'content-type': 'application/json'}
-
 parameters={'parameter1':'Value 1'}
 data = cmc.upload_task("face", parameters)
-task_id=data['taskId']
 
+# pick up the task ID from the response
+task_id=data['taskId']
 print "taskId=",task_id
 
 ## Then pick a task
