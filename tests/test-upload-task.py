@@ -24,15 +24,8 @@ def upload_task(type, parameters):
     print response.text
     return json.loads(response.text)
 
-## First upload a task with some parameters
-# posturl="%s%s" %(base_url, tasktypepath)
 parameters={'parameter1':'Value 1'}
 
-# json_headers = {'content-type': 'application/json'}
-
-# response = requests.post(posturl, data=json.dumps(payload), headers=json_headers)
-# print response
-# print response.text
 
 data = upload_task("face", parameters)
 task_id=data['taskId']
