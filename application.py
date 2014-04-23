@@ -76,14 +76,13 @@ def get_requests_json(request):
     json_value  = request.json
     return None, json_value
 
+## XXX This is bogus.   Here we should make media content, not
+##     metadata!
 @app.route('/media/', methods = ['POST'])
-def create_new_media_entry_from_metadata():
-     "Write the media representation an identified asset"
-     error, json_value = get_requests_json(request)
-     if error:
-         return error
-     retval = mms.create_new_media_entry_from_metadata(json_value)
-     return allow_empty_map_return_as_json(retval, status=201)
+def create_new_media_entry_from_upload():
+     "Write the media representation an unidentified asset, returns the asset ID"
+     retval = mms.create_new_media_entry(request.mimetype, request.data)
+     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
 def post_media_to_id(id):

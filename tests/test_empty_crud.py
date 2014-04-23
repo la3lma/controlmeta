@@ -33,33 +33,15 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.post(
             '/media/',
             headers={'Content-Type': 'application/json'},
-            # Syntactically erronous json to provoke an error
-            data='{"Name": "Test","' )
-        self.assertEqual(rv.status_code, 400)
+            data='{"Name": "Test"}' )
+        self.assertEqual(rv.status_code, 201)
+
+    # Post to a nonspecified metadata location, get an
+    # content ID back
 
     def test_post_content_metadata_upload(self):
         rv = self.app.post(
             '/media/',
-            headers={'Content-Type': 'application/json'},
-            data="""{
-             "Name": "Test",
-             "Latitude": 12.59817,
-             "Longitude": 52.12873
-             }""")
-        self.assertEqual(rv.status_code, 201)
-        self.assertEqual(rv.content_type, 'application/json')
-        rvj=json.loads(rv.data)
-        self.assertEqual(rvj.get('Name'), "Test")
-        self.assertEqual(rvj.get('Latitude'), 12.59817)
-        self.assertEqual(rvj.get('Longitude'), 52.12873)
-        contentid=rvj.get('ContentId')
-        contenturl=rvj.get('ContentURL')
-        # XXX This doesn't work. Ask someone with more fu.
-        # self.assertTrue(contenturl.endswith(""+`contentid`))
-
-    def test_post_content_media_upload(self):
-        rv = self.app.post(
-            '/media/id/1',
             headers={'Content-Type': 'text/plain'},
             data='this is amazing')
         self.assertEqual(rv.status_code, 201)

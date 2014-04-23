@@ -1,3 +1,14 @@
+o Necessary refactoring:
+  o Make the metadata contain some automatically generated fields,
+     and then a separate namespace for the user-provided data.  This
+     will be -exactly- the same schema we need to use for tasks.
+     That is a symmetry we may be able to use in some way. 
+   o The content/metadata  API is a bit screwed.  It needs to be
+       refactored into prettiness asap.
+   o Then the whole test infrastructure needs to be brought
+      in line with this refactoring, then we can proceed.
+
+
 o Make some more roundtrip tests.
   o One that access state associated with a particular document, then
      first reads from  then writes a result to the media storage.

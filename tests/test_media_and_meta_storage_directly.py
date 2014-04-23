@@ -44,21 +44,13 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
     def test_create_meta_then_data(self):
         mms = MediaAndMetaStorage()
-
-        # Upload some metadata
-        metadata={"gazonk": "foo"}
-        return_metadata=mms.create_new_media_entry_from_metadata(metadata)
-        self.assertTrue(("gazonk" in metadata)  and return_metadata['gazonk'] is 'foo')
-
+        return_metadata=mms.create_new_media_entry('text/plain', 'foo')
         contentid = return_metadata['ContentId']
-        
+
+        # XXX VERY BOGUS!
         keys = mms.get_all_meta()
         self.assertTrue(keys)        
-        mms.post_media_to_id(contentid, "text/plain", "foo")
-
-        pass 
-    
-        
+        mms.post_media_to_id(contentid, "text/plain", "zor")
 
 if __name__ == '__main__':
     unittest.main()
