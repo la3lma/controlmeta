@@ -14,7 +14,6 @@ class  ControlMetaClient:
     def __init__(self, base_url=None):
       self.base_url=base_url
 
-
     def post_dictionary_as_json(self, url, dictionary):
         raw_response = requests.post(
             url,
@@ -25,16 +24,15 @@ class  ControlMetaClient:
     def upload_task(self, type, parameters):
         tasktypepath = "task/type/%s" % type
         url = "%s%s" %(self.base_url, tasktypepath)
-        return post_dictionary_as_json(
+        return self.post_dictionary_as_json(
             url,
             parameters)
 
     def pick_task(self, type, agent_id):
-        print "Picking."
         parameters={'agentId':agent_id}
         url="%stask/waiting/type/%s/pick" %(self.base_url, type)
-        return post_dicctionary_as_json(
-            pickurl,
+        return self.post_dictionary_as_json(
+            url,
             parameters)
 
     def declare_task_done(self, task_id, agent_id):
