@@ -21,7 +21,8 @@ class MediaAndMetaStorage:
         # set by the setter
         # XXX The base URI is completely bogus
         metadata = {}
-        metadata['ContentURL']  = "http://${hostname}/media/id/" +  `contentId`
+        url = ("http://%s/media/id/%s"%(self.hostname, contentId))
+        metadata['ContentURL']  = url
         metadata['ContentId']  = contentId
         object = Entry(
             contentId,
@@ -57,8 +58,8 @@ class MediaAndMetaStorage:
     def get_media(self, id):
         id=str(id)
         if  id in self.objects:
-            ob = objects.get(id)
-            return ob.contenttype, ob.content
+            ob = self.objects.get(id)
+            return ob.content_type, ob.content
         else:
             return None, None
 
