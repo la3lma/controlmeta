@@ -55,13 +55,19 @@ class  ControlMetaClient:
         # XXX return value not correctly parsed
         return raw_response
 
+    def  upload_media_from_file(self, type, filepath):
+        url="%smedia/" %(self.base_url)
+        with open(filepath, 'r') as content_file:
+            content = content_file.read()
+            return self.upload_media(type, content)
+    
     # Upload unidentified metadata, get a data ID back
     def  upload_media(self, type, data):
         url="%smedia/" %(self.base_url)
         raw_response = requests.post(
             url,
             data=data,
-            headers= {'content-type': 'application/json'})
+            headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
         return UploadResult(jrv['ContentId'], jrv['ContentURL'])
     

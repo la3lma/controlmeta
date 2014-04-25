@@ -81,6 +81,7 @@ def get_requests_json(request):
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
+     print "creatnig new media entry with mimetype = ", request.mimetype
      retval = mms.create_new_media_entry(request.mimetype, request.data)
      return expect_non_empty_map_return_as_json(retval, status=201)
 
