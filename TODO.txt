@@ -1,3 +1,15 @@
+
+o Make some more roundtrip tests.
+
+  o Make a regression suite that starts a separate server and then
+    runs a suite of tests against it.
+  
+  o Make one of them  into an acceptance test that is run before a
+     deployment is made and after a deployment has been made.
+     If it fails, then automatically roll back to previous version?
+
+
+
 o Necessary refactoring:
   o Make the metadata contain some automatically generated fields,
      and then a separate namespace for the user-provided data.  This
@@ -8,17 +20,11 @@ o Necessary refactoring:
    o Then the whole test infrastructure needs to be brought
       in line with this refactoring, then we can proceed.
 
+o Write a backend for postgresql.
 
-o Make some more roundtrip tests.
-  o One that access state associated with a particular document, then
-     first reads from  then writes a result to the media storage.
-  
-  o Make one of them  into an acceptance test that is run before a
-     deployment is made and after a deployment has been made.
-     If it fails, then automatically roll back to previous version? 
+o Write a simple http authentication piece and hook it into the client
+  username/password, statically encoded, to keep the riffraff out.
 
-o Make a minimal library for managing access to the service, based
-   on code in the roundtrip tests.
 
 o Make a small worker that does something to an image.
     
@@ -34,7 +40,7 @@ o Ensure that we an add some proper parameters to the task descriptions
 o Ensure that we can upload big data objects
 o Add some kind of security (preferably oauth) that can use
   e.g. google IDs.
-o Write a backend for postgresql.
+
 o Write some code that actually uses the ting to do something useful,
    such as identifying images with faces.
 
