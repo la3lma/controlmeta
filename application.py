@@ -3,12 +3,22 @@ from flask import Flask, jsonify, Response, request, abort
 import json
 from mediameta.mediametastorage import MediaAndMetaStorage
 from tasks.task_queue_storage import TaskQueueStorage
+import sys
 
 application = Flask(__name__)
 app=application
 
 
-mms = MediaAndMetaStorage()
+# Bogus initiation procedure, but better than
+# what was there.
+
+base_url="http://ctrl-meta.loltel.co"
+if (len(sys.argv) > 1):
+    base_url=str(sys.argv[1])
+
+print "base_url = ", base_url
+
+mms = MediaAndMetaStorage(base_url)
 tqs = TaskQueueStorage()
 
 ##

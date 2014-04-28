@@ -9,9 +9,12 @@ class Entry:
 
 class MediaAndMetaStorage:
 
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+
     objects = {}
     next_index = 1
-    hostname="ctrl-meta.loltel.co"
 
     def create_new_media_entry(self, mimetype, data):
         contentId = str(self.next_index)
@@ -21,7 +24,7 @@ class MediaAndMetaStorage:
         # set by the setter
         # XXX The base URI is completely bogus
         metadata = {}
-        url = ("http://%s/media/id/%s"%(self.hostname, contentId))
+        url = ("%smedia/id/%s"%(self.base_url, contentId))
         metadata['ContentURL']  = url
         metadata['ContentId']  = contentId
         object = Entry(
