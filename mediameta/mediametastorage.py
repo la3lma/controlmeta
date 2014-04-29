@@ -9,12 +9,13 @@ class Entry:
 
 class MediaAndMetaStorage:
 
+    def clear(self):
+        self.objects = {}
+        self.next_index = 1
+
     def __init__(self, base_url):
         self.base_url = base_url
-
-
-    objects = {}
-    next_index = 1
+        self.clear()
 
     def create_new_media_entry(self, mimetype, data):
         contentId = str(self.next_index)
@@ -69,9 +70,10 @@ class MediaAndMetaStorage:
     def delete_media(self, id):
         id=str(id)
 
-        if (id in self.objects): 
+        if (id in self.objects):
             del self.objects[id]
             ## Empty map means no errors
+            
             return {}
         else:
             retval = {"Unknown_media_id": id}

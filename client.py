@@ -11,12 +11,16 @@ class  UploadResult:
     
 class  ControlMetaClient:
     JSON_HEADERS = {'content-type': 'application/json'}
-    def __init__(self, base_url=None):
-      self.base_url=base_url
+    def __init__(self,
+                 base_url=None,
+                 auth=None):
+      self.base_url = base_url
+      self.auth = auth
 
     def post_dictionary_as_json(self, url, dictionary):
         raw_response = requests.post(
             url,
+            auth=self.auth,
             data=json.dumps(dictionary),
             headers=self.JSON_HEADERS)
         return json.loads(raw_response.text)
@@ -40,6 +44,7 @@ class  ControlMetaClient:
         parameters={'agentId': agent_id}
         raw_response = requests.delete(
                 pickurl,
+                auth=self.auth,
                 data=json.dumps(parameters),
                 headers=self.JSON_HEADERS)
         # XXX Return value
@@ -50,6 +55,7 @@ class  ControlMetaClient:
         ## This is fXed up
         raw_response = requests.post(
             url,
+            auth=self.auth,
             headers=self.JSON_HEADERS,
             data=json.dumps(data))
         # XXX return value not correctly parsed
@@ -66,12 +72,8 @@ class  ControlMetaClient:
         url="%smedia/" %(self.base_url)
         raw_response = requests.post(
             url,
+            auth=self.auth,
             data=data,
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
         return UploadResult(jrv['ContentId'], jrv['ContentURL'])
-    
-    def  upload_media_file(self, type, filename):
-        print "uploading data type", type
-        print "uploading data filename", filename
-        

@@ -82,10 +82,12 @@ class Task:
 
 class TaskQueueStorage:
 
-
-    def __init__(self):
+    def clear(self):
       self.next_taskid = 1
       self.tasks = {}
+      
+    def __init__(self):
+      self.clear()
 
     def list_all_waiting_tasks(self):
         return filter(lambda x: x.is_waiting(), self.tasks.values())

@@ -25,7 +25,7 @@ class MediaUsecases(Control_meta_test_case):
 
 
         # First there should be nothing there
-        rv = self.app.get('/media')
+        rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 404)
 
         # Then we upload some mediadata
@@ -49,7 +49,7 @@ class MediaUsecases(Control_meta_test_case):
         contenturl=rvj.get('ContentURL')
 
         # Now there should be something here
-        rv = self.app.get('/media')
+        rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
 
         # XXX Here we should look at the json and add some more
@@ -71,7 +71,7 @@ class MediaUsecases(Control_meta_test_case):
         self.assertEqual(rv.status_code, 204)
 
         # Finally we check if it's gone
-        rv = self.app.get('/media')
+        rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 404)
     
 if __name__ == '__main__':

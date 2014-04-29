@@ -28,7 +28,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         pass
 
     def test_create_media_only_delete_roundtrip(self):
-        mms = MediaAndMetaStorage()                
+        mms = MediaAndMetaStorage("")                
         keys = mms.get_all_meta()
         self.assertTrue(not keys)        
         mms.post_media_to_id("1", "text/plain", "foo")
@@ -43,7 +43,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
 
     def test_create_meta_then_data(self):
-        mms = MediaAndMetaStorage()
+        mms = MediaAndMetaStorage("")
         return_metadata=mms.create_new_media_entry('text/plain', 'foo')
         contentid = return_metadata['ContentId']
 

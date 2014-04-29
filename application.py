@@ -12,14 +12,14 @@ app=application
 # Bogus initiation procedure, but better than
 # what was there.
 
-base_url="http://ctrl-meta.loltel.co"
-if (len(sys.argv) > 1):
-    base_url=str(sys.argv[1])
 
-print "base_url = ", base_url
-
-mms = MediaAndMetaStorage(base_url)
-tqs = TaskQueueStorage()
+def initialise_storage():
+    base_url="http://ctrl-meta.loltel.co"
+    if (len(sys.argv) > 1):
+        base_url=str(sys.argv[1])
+    
+    mms = MediaAndMetaStorage(base_url)
+    tqs = TaskQueueStorage()
 
 ##
 ## Helper functions to make it simpler to translate return values
@@ -48,7 +48,37 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
         retvaldump=json.dumps(retval)
         return Response(retvaldump, status=errorcode, mimetype="application/json")
 
+##
+##   Authentication
+##
+from functools import wraps
+from flask import request, Response
 
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'admin' and password == 'secret'
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+
+    
 ###
 ###  Static pages
 ###
@@ -62,13 +92,16 @@ def hello_world():
 ### Media CRUD
 ###
 
+
 @app.route('/media', methods = ['GET'])
+@requires_auth
 def get_all_meta():
      "Get a list of all the available media's metadata."
      retval=mms.get_all_meta()
      return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>', methods = ['GET'])
+@requires_auth
 def get_media(id):
      "Get the media representation of identified asset"
      mimetype, data = mms.get_media(id)
@@ -91,7 +124,6 @@ def get_requests_json(request):
 @app.route('/media/', methods = ['POST'])
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
-     print "creatnig new media entry with mimetype = ", request.mimetype
      retval = mms.create_new_media_entry(request.mimetype, request.data)
      return expect_non_empty_map_return_as_json(retval, status=201)
 
@@ -212,3 +244,4 @@ def delete_task(taskid):
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0', debug=True)
+    application.initialise_storage()

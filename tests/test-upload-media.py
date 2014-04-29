@@ -2,11 +2,29 @@
 
 import sys
 import client
+import logging
 import requests
-    
+from requests.auth import HTTPDigestAuth
+from requests.auth import HTTPBasicAuth
+
+
 # Pick a base url from the command line
 base_url=str(sys.argv[1])
 
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
+    
+httplib.HTTPConnection.debuglevel = 1
+
+logging.basicConfig(level=logging.DEBUG) # you need to initialize logging, 
+                      # otherwise you will not see anything from requests
+
+#
+
+# Use the very secret admin password for testing
+auth=HTTPBasicAuth('admin','secret')
 
 # Then set up a client against that server
 cmc = client.ControlMetaClient(base_url)
@@ -31,7 +49,7 @@ image_url = file_upload_result.document_url
 print "image ID = ", image_id
 print "image document url = ", image_url
 
-image_result=requests.get(image_url)
+image_result=requests.get(image_url, auth=auth)
 
 print "image result = ", image_result
 
