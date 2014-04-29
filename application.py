@@ -122,18 +122,21 @@ def get_requests_json(request):
 ## XXX This is bogus.   Here we should make media content, not
 ##     metadata!
 @app.route('/media/', methods = ['POST'])
+@requires_auth
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
      retval = mms.create_new_media_entry(request.mimetype, request.data)
      return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
+@requires_auth
 def post_media_to_id(id):
     "Write the media representation an identified asset"
     errors = mms.post_media_to_id(id, request.mimetype, request.data)
     return expect_empty_map_return_error_as_json(errors, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
+@requires_auth
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
     errors = mms.delete_media(id)
@@ -146,29 +149,34 @@ def delete_media_and_meta(id):
 
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
+@requires_auth
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.get_meta_list(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
+@requires_auth
 def get_meta(id, metaid):
     retval = mms.get_metadata_from_id(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
+@requires_auth
 def post_new_meta(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = mms.store_new_meta(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
+@requires_auth
 def post_meta(id, metaid):
     "Post a particular metadata instance"
     retval = mms.store_meta(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
+@requires_auth
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
     retval = mms.delete_metaid(id, metaid)
@@ -184,23 +192,28 @@ def tasklist_as_return_value(tasklist):
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/task/waiting', methods = ['GET'])
+@requires_auth
 def list_all_waiting_tasks():
     return tasklist_as_return_value(tqs.list_all_waiting_tasks())
 
 @app.route('/task/running', methods = ['GET'])
+@requires_auth
 def get_in_progress_task_list():
     tasks = tqs.list_all_running_tasks()
     return tasklist_as_return_value(tasks)
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
+@requires_auth
 def get_done_task_list(type):
     return task_list_as_return_value(tqs.list_all_done_tasks())
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
+@requires_auth
 def list_waiting_task_of_type(type):
     return tasklist_as_return_value(tqs.list_all_waiting_tasks_of_type(type))
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
+@requires_auth
 def pick_next_waiting_task(type):
     # XXX This code crashes, why?  
     # if not request.is_json():
@@ -221,11 +234,13 @@ def pick_next_waiting_task(type):
 
 
 @app.route('/task/id/<id>/done', methods = ['POST'])
+@requires_auth
 def declare_task_as_done(id):
     retval = tqs.declare_as_done(id)
     return expect_empty_map_return_error_as_json(retval)
     
 @app.route('/task/type/<type>', methods = ['POST'])
+@requires_auth
 def create_task(type):
     # Not sure about the semantics of this one.
     params=request.json
@@ -238,6 +253,7 @@ def create_task(type):
     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
+@requires_auth
 def delete_task(taskid):
     retval = tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)

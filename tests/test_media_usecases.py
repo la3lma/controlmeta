@@ -31,7 +31,7 @@ class MediaUsecases(Control_meta_test_case):
         # Then we upload some mediadata
         rv = self.app.post(
             '/media/',
-            headers={'Content-Type': 'application/json'},
+            headers=self.json_headers,
             data="""{
              "Name": "Test",
              "Latitude": 12.59817,
@@ -59,7 +59,7 @@ class MediaUsecases(Control_meta_test_case):
         # content
         rv = self.app.post(
             '/media/id/1', # XXX Should substitute in contentid here
-            headers={'Content-Type': 'text/plain'},
+            headers=self.plain_headers,
             data='this is amazing')
         self.assertEqual(rv.status_code, 201)
 
@@ -67,7 +67,7 @@ class MediaUsecases(Control_meta_test_case):
         # see what we can do roundtripping for.
 
         # Then we nuke everything
-        rv = self.app.delete('/media/id/1')
+        rv = self.app.delete('/media/id/1', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 204)
 
         # Finally we check if it's gone

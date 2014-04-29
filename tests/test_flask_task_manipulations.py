@@ -20,15 +20,15 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         # Add a task
         rv = self.app.post(
             '/task/type/face',
-            headers={'Content-Type': 'application/json'},
+            headers=self.json_headers,
             data='{"parameter": "parameter-value"}')
         self.assertEqual(rv.status_code, 201)
 
-        rv = self.app.get('/task/waiting')
+        rv = self.app.get('/task/waiting', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
 
-        # XXX in-progress is a stupid name.  Use "running" instead.
-        rv = self.app.get('/task/running')
+
+        rv = self.app.get('/task/running', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 404)
 
         rv = self.app.get('/task/done')
@@ -36,7 +36,7 @@ class FullTaskLifecycleTest(Control_meta_test_case):
 
         # Pick the task up
         rv = self.app.post('/task/waiting/type/face/pick',
-                           headers={'Content-Type': 'application/json'},
+                           headers=self.json_headers,
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 200)
         taskdesc=json.loads(rv.data)
@@ -44,15 +44,13 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         parameter_value=params['parameter']
         self.assertEquals("parameter-value", parameter_value )
     
-        
-
-        rv = self.app.get('/task/waiting')
+        rv = self.app.get('/task/waiting', headers=self.json_headers)
         self.assertEqual(rv.status_code, 404)
 
-        rv = self.app.get('/task/running')
+        rv = self.app.get('/task/running', headers=self.json_headers)
         self.assertEqual(rv.status_code, 200)
 
-        rv = self.app.get('/task/done')
+        rv = self.app.get('/task/done', headers=self.json_headers)
         self.assertEqual(rv.status_code, 404)
 
         # XXX Then finish the task off and check all the lists
