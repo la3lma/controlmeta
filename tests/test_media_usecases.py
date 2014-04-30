@@ -23,7 +23,6 @@ class MediaUsecases(Control_meta_test_case):
     ##
     def test_media_and_meta_roundtrip(self):
 
-
         # First there should be nothing there
         rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 404)
@@ -58,7 +57,7 @@ class MediaUsecases(Control_meta_test_case):
         # Then upload some real content to go with that
         # content
         rv = self.app.post(
-            '/media/id/1', # XXX Should substitute in contentid here
+            '/media/id/1',
             headers=self.plain_headers,
             data='this is amazing')
         self.assertEqual(rv.status_code, 201)

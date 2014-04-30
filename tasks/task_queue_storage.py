@@ -57,9 +57,8 @@ class Task:
             self.status = destination
             return {}
 
-
     def done(self):
-        return state_transition(self.RUNNING, self.DONE)
+        return self.state_transition(self.RUNNING, self.DONE)
 
     def has_status(self, taskType):
         return self.taskType == taskType

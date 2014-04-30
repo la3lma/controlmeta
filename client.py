@@ -11,6 +11,7 @@ class  UploadResult:
     
 class  ControlMetaClient:
     JSON_HEADERS = {'content-type': 'application/json'}
+
     def __init__(self,
                  base_url=None,
                  auth=None):

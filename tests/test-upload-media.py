@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.DEBUG) # you need to initialize logging,
 auth=HTTPBasicAuth('admin','secret')
 
 # Then set up a client against that server
-cmc = client.ControlMetaClient(base_url)
+cmc = client.ControlMetaClient(base_url, auth=auth)
 
 # Upload a piece of text
 upload_result=cmc.upload_media("text/plain", "jalla")

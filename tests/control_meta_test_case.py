@@ -15,13 +15,7 @@ class Control_meta_test_case(unittest.TestCase):
         self.app = application.app.test_client()
 
         # Injecting dependencies on storage
-        application.mms = MediaAndMetaStorage("http://localhost:4711/")
-        application.tqs = TaskQueueStorage()
-
-        # XXX This is a kludge.  It seems that the steps above are not
-        #     properly clearing existing instances, so this is a workaround.
-        application.mms.clear()
-        application.tqs.clear()
+        application.state = application.State()
         
         self.username = "admin"
         self.password = "secret"
