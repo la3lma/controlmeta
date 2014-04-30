@@ -1,9 +1,15 @@
 #!/bin/bash
 
 WD=$(dirname $0)
-# First we run all unit tests
+
+echo "================="
+echo "UNIT TESTS"
+echo
 $WD/tests-unit.sh
 
-# Then we run the acceptance tests
+
+echo "================="
+echo "ACCEPTANCE TESTS"
+echo
 $WD/tests-acceptance.sh
 

@@ -162,7 +162,6 @@ def delete_media_and_meta(id):
 @requires_auth
 def get_meta_list(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    print "in get_meta_list"
     retval = state.mms.get_meta_list(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 

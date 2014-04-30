@@ -73,7 +73,17 @@ echo "Acceptance tests run against the server at $BASE_URL succeded."
 # Finally shut down the server
 sleep 2
 kill  $SERVER_PID
-sleep 3 
-kill -KILL  $SERVER_PID
+for  pid in $(pgrep -P "$SERVER_PID" ) ; do 
+  kill $pid
+done
+
+if pgrep "$SERVER_PID" ; then 
+    kill -KILL  $SERVER_PID
+fi
+for pid in $(pgrep -P $SERVER_PID) ; do 
+  kill -KILL $pid
+done
+
+
 
 exit 0
