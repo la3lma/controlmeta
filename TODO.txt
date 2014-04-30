@@ -1,9 +1,6 @@
-
-o  Unit tests with authentication
-   o look at https://github.com/twilio/flask-restful/issues/142
-   o Or this
-   http://stackoverflow.com/questions/16416001/set-http-headers-for-all-requests-in-a-flask-test
-   o Or even this http://stackoverflow.com/questions/19524069/how-to-send-usernamepassword-to-unittests-app-get-request
+o Write backends for postgresql and the serverless SQLite database
+  - Run regression tests against the SQLite database on the
+    developer workstation, perhaps also the unit tests?
 
 o Necessary refactoring:
   o Make the metadata contain some automatically generated fields,
@@ -15,14 +12,8 @@ o Necessary refactoring:
    o Then the whole test infrastructure needs to be brought
       in line with this refactoring, then we can proceed.
 
-o Write a backend for postgresql.
-
-o Write a simple http authentication piece and hook it into the client
-  username/password, statically encoded, to keep the riffraff out.
-
-
+o Oauth?
 o Make a small worker that does something to an image.
-    
 o Send/receive task parameters
 o Start making a proper library for submitting/picking up tasks.
 
@@ -35,7 +26,6 @@ o Ensure that we an add some proper parameters to the task descriptions
 o Ensure that we can upload big data objects
 o Add some kind of security (preferably oauth) that can use
   e.g. google IDs.
-
 o Write some code that actually uses the ting to do something useful,
    such as identifying images with faces.
 
