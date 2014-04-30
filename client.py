@@ -2,11 +2,20 @@ import requests
 import json
 
 class  UploadResult:
-
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
+
     
+class ClientException(Exception):
+
+    httpcode=None
+    def __init__(self, httpcode, message):
+        self.httpcode=httpcode
+        self.value = "HTTP return code %s: %s" % (str(httpcode), message)
+
+    def __str__(self):
+        return repr(self.value)
 
     
 class  ControlMetaClient:
@@ -24,7 +33,12 @@ class  ControlMetaClient:
             auth=self.auth,
             data=json.dumps(dictionary),
             headers=self.JSON_HEADERS)
-        return json.loads(raw_response.text)
+        if raw_response.status_code == 500:
+            raise ClientException(500, "Unable to post a dictionary to url = %s"%url)
+        if raw_response.status_code == 401:
+            raise ClientException(401, raw_response.text)
+        else:
+            return json.loads(raw_response.text)
         
     def upload_task(self, type, parameters):
         tasktypepath = "task/type/%s" % type

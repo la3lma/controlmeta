@@ -2,13 +2,16 @@
 
 import sys
 import client
-
+from requests.auth import HTTPBasicAuth
     
 # Pick a base url from the command line
 base_url=str(sys.argv[1])
 
+# Use the very secret admin password for testing
+auth=HTTPBasicAuth('admin','secret')
+
 # Then set up a client against that server
-cmc = client.ControlMetaClient(base_url)
+cmc = client.ControlMetaClient(base_url, auth=auth)
 
 # Upload a task of type "face" with some parameters.
 print "Testing against base-url = ", base_url
