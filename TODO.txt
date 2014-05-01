@@ -1,8 +1,16 @@
+
 o Write backends for postgresql and the serverless SQLite database
   - Run regression tests against the SQLite database on the
     developer workstation, perhaps also the unit tests?
 
 o Necessary refactoring:
+  o Esthetics
+      - Read throught the coding standards for Python and become
+        more compliant
+      - Better esthetics, documentation and readability
+      - Get someone with practice in python programming to critique the code
+      - Get some gerrit-like service to use for that?
+
   o Make the metadata contain some automatically generated fields,
      and then a separate namespace for the user-provided data.  This
      will be -exactly- the same schema we need to use for tasks.
