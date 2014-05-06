@@ -9,13 +9,11 @@
     :license: All rights reserved (at least for now)
 """
 import unittest
-from   persistence.media_meta_proc_persistence import Task
-from   persistence.media_meta_proc_persistence import create
+from persistence.media_meta_proc_persistence import Task
+from persistence.media_meta_proc_persistence import create
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
-
 
 class SimpleCrudCases(unittest.TestCase):
 
