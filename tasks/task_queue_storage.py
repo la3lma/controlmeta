@@ -1,6 +1,4 @@
 
-
-
 class Task:
 
     WAITING="waiting"
