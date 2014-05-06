@@ -1,3 +1,7 @@
+o Create tables for the persistence thingy
+  - Tests.
+  - Deploymement scenarios.
+
 
 o Write backends for postgresql and the serverless SQLite database
   - Run regression tests against the SQLite database on the

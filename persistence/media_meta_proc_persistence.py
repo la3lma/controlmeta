@@ -17,6 +17,10 @@ class Task(Base):
     tasktype = Column(String)
     params = Column(String)
 
+def create(engine):
+        Base.metadata.create_all(engine) 
+
+
 # def __repr__(self):
 #     return "<User(name='%s', fullname='%s', password='%s')>" % (
 #         self.name, self.fullname, self.password)
