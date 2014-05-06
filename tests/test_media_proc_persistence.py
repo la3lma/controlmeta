@@ -17,7 +17,7 @@ class SimpleCrudCases(unittest.TestCase):
     # Set up an ephemeral sqlite-database.
     def setUp(self):
         self.engine = create_engine('sqlite:///:memory:', echo=True)
-
+        self.connection = self.engine.connect()
     
     def tearDown(self):
         "Nothing to tear down yet"
