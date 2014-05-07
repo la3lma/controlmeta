@@ -47,7 +47,8 @@ class SimpleCrudCases(unittest.TestCase):
             tasktype = 'test task',
             params = '{"foo":"bar"}')
         self.session.add(new_task)
-        self.commit_session()
+        self.session.commit()
+        self.session.flush()
         return new_task
 
 
@@ -86,14 +87,27 @@ class SimpleCrudCases(unittest.TestCase):
         self.session.delete(retrieved_task)
         self.session.commit()
         self.session.flush()
-
+        
+        self.session = self.Session()
         retrieved_task = self.session.query(Task).get(id)
+
         self.assertEqual(None, retrieved_task)
 
-
-
     def test_update_task(self):
-        pass
+        new_task = self.store_new_task()
+        id = new_task.id
+        self.session = self.Session()
+        retrieved_task = self.session.query(Task).get(id)
+        retrieved_task.tasktype = 'bananapicking'
+        self.session.commit()
+        self.session.flush()
+
+        self.session = self.Session()
+        updated_task = self.session.query(Task).get(id)
+
+        self.assertTrue(None != updated_task)
+        
+        self.assertEqual('bananapicking', updated_task.tasktype)
 
 
 if __name__ == '__main__':
