@@ -33,9 +33,10 @@ class SimpleCrudCases(unittest.TestCase):
 
     def new_session(self):
         self.session = self.Session()
+        return self.session
 
     def commit_session(self):
-        self.session.commit()
+        return self.session.commit()
 
 
     def store_new_task(self):
@@ -78,7 +79,18 @@ class SimpleCrudCases(unittest.TestCase):
         
 
     def test_delete_task(self):
-        pass
+        new_task = self.store_new_task()
+        id = new_task.id
+        self.session = self.Session()
+        retrieved_task = self.session.query(Task).get(id)
+        self.session.delete(retrieved_task)
+        self.session.commit()
+        self.session.flush()
+
+        retrieved_task = self.session.query(Task).get(id)
+        self.assertEqual(None, retrieved_task)
+
+
 
     def test_update_task(self):
         pass
