@@ -18,7 +18,8 @@ class Control_meta_test_case(unittest.TestCase):
         self.username = "admin"
         self.password = "secret"
         self.auth_headers = {
-            'Authorization': 'Basic ' + b64encode("{0}:{1}".format(self.username, self.password))
+            'Authorization': 'Basic ' +
+            b64encode("{0}:{1}".format(self.username, self.password))
         }
 
         self.headers = self.auth_headers
