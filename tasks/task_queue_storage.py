@@ -1,5 +1,26 @@
 
-class Task:
+# XXX This list of imports is more than a little bit too agressive.
+
+from persistence.media_meta_proc_persistence import Task
+from persistence.media_meta_proc_persistence import create
+from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import schema, types
+
+# XXX This is a kludge unlesss it can be treated
+#     as a singleton across packages.
+
+Base = declarative_base()
+
+class Task(Base):
+
+    id = schema.Column(Integer, primary_key=True)
+    runner = Column(String)
+    tasktype = Column(String)
+    params = Column(String)
+
+    __tablename__ = 'tasks'
 
     WAITING="waiting"
     RUNNING="running"
