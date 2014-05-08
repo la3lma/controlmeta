@@ -1,7 +1,10 @@
-o Create tables for the persistence thingy
-  - Tests.
-  - Deploymement scenarios.
-
+o Rewrite the task storage to use the sql-based persistence.
+  o Make the the unit tests for the whole thing use the simple memory based sql thing.
+  o First do the task storage, then do the media storage.
+  o Then deploy to the service@amazon.
+  o Then create a mysql db and start using that instead of the in-memory thing.
+    - Think hard about how to test that.  
+    - This should be something that is tested/changed only very rarely
 
 o Write backends for postgresql and the serverless SQLite database
   - Run regression tests against the SQLite database on the
