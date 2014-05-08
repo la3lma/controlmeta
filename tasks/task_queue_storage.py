@@ -1,16 +1,10 @@
-
-# XXX This list of imports is more than a little bit too agressive.
-
-from persistence.media_meta_proc_persistence import Task
-from persistence.media_meta_proc_persistence import create
+# Too aggressive import list
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
+from database import Base
 
-# XXX This is a kludge unlesss it can be treated
-#     as a singleton across packages.
-Base = declarative_base()
 
 class Task(Base):
 
@@ -143,7 +137,14 @@ class RDBQueueStorage(TaskQueueStorage):
         pass
 
     def check_if_task_exists(self, taskid):
-        pass
+        taskid=str(taskid)
+        if not(taskid in self.tasks):
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     ("No such task taskid='%s'"%taskid)}
+        else:
+            return {}
+
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
         pass

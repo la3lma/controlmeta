@@ -2,8 +2,11 @@
 from flask import Flask, jsonify, Response, request, abort
 import json
 from mediameta.mediametastorage import MediaAndMetaStorage
+from database import db_session
 from tasks.task_queue_storage import InMemoryTaskQueueStorage
 import sys
+
+
 
 # This weirdness seems to be necessary for elastic beanstalk to 
 # be able to recognize the application.
@@ -57,6 +60,14 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
             errorcode= retval["HTTP_error_code"]
         retvaldump=json.dumps(retval)
         return Response(retvaldump, status=errorcode, mimetype="application/json")
+
+##
+## Application lifecycle
+##
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
+
 
 ##
 ##   Authentication

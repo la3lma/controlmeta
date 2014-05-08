@@ -1,12 +1,10 @@
 from datetime import datetime
 
-
 from sqlalchemy.ext.declarative import declarative_base
 #from sqlalchemy import orm
 from sqlalchemy import *
 from sqlalchemy import schema, types
-
-Base = declarative_base()
+from database import Base
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -15,6 +13,9 @@ class Task(Base):
     runner = Column(String)
     tasktype = Column(String)
     params = Column(String)
+
+
+## XXX SHould we nuke this?
 
 def create(engine):
         Base.metadata.create_all(engine) 
