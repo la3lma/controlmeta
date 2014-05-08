@@ -12,13 +12,13 @@ import os
 import unittest
 import json
 
-from tasks.task_queue_storage import TaskQueueStorage
+from tasks.task_queue_storage import InMemoryTaskQueueStorage
 
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
         "Get a reference to the testclient"
-        self.tqs = TaskQueueStorage()
+        self.tqs = InMemoryTaskQueueStorage()
     
     def tearDown(self):
         "Nothing to tear down yet"

@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, Response, request, abort
 import json
 from mediameta.mediametastorage import MediaAndMetaStorage
-from tasks.task_queue_storage import TaskQueueStorage
+from tasks.task_queue_storage import InMemoryTaskQueueStorage
 import sys
 
 # This weirdness seems to be necessary for elastic beanstalk to 
@@ -21,7 +21,7 @@ class State:
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = MediaAndMetaStorage(base_url)
-        self.tqs = TaskQueueStorage()
+        self.tqs = InMemoryTaskQueueStorage()
 
     def clear(self):
         self.mms.clear();

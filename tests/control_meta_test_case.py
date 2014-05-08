@@ -2,8 +2,6 @@ import application
 import unittest
 import json
 import flask.ext.testing
-from mediameta.mediametastorage import MediaAndMetaStorage
-from tasks.task_queue_storage import TaskQueueStorage
 from base64 import b64encode
 
 class Control_meta_test_case(unittest.TestCase):

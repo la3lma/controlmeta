@@ -10,7 +10,6 @@ from sqlalchemy import schema, types
 
 # XXX This is a kludge unlesss it can be treated
 #     as a singleton across packages.
-
 Base = declarative_base()
 
 class Task(Base):
@@ -44,9 +43,8 @@ class Task(Base):
                 "params": self.params }
 
     ##
-    ## The start stae needs some special case handling
+    ## The start state needs some special case handling
     ##
-    
     def start(self, runner):
         if (not runner):
             return { "HTTP_error_code": 400,
@@ -59,12 +57,10 @@ class Task(Base):
             return error_desc
         self.runner = runner
         return {}
-
     
     ##
     ## State transition model
     ##
-    
     def state_transition(self, source, destination):
         if (self.status != source):
             return { "HTTP_error_code": 404,
@@ -99,6 +95,71 @@ class Task(Base):
 
 
 class TaskQueueStorage:
+    def clear(self):
+        pass
+
+    def list_all_waiting_tasks(self):
+        pass
+
+    def list_all_running_tasks(self):
+        pass
+
+    def list_all_done_tasks(self):
+        pass
+
+    def list_all_waiting_tasks_of_type(self, tasktype):
+        pass
+
+    def check_if_task_exists(self, taskid):
+        pass
+
+    def pick_next_waiting_task_of_type(self, tasktype, runner):
+        pass
+
+    def declare_as_done(self, taskid):
+        pass
+
+    def create_task(self, tasktype, params):
+        pass
+
+    def delete_task(self, taskid):
+        pass
+        
+
+class RDBQueueStorage(TaskQueueStorage):
+    def clear(self):
+        pass
+
+    def list_all_waiting_tasks(self):
+        pass
+
+    def list_all_running_tasks(self):
+        pass
+
+    def list_all_done_tasks(self):
+        pass
+
+    def list_all_waiting_tasks_of_type(self, tasktype):
+        pass
+
+    def check_if_task_exists(self, taskid):
+        pass
+
+    def pick_next_waiting_task_of_type(self, tasktype, runner):
+        pass
+
+    def declare_as_done(self, taskid):
+        pass
+
+    def create_task(self, tasktype, params):
+        pass
+
+    def delete_task(self, taskid):
+        pass
+        
+
+
+class InMemoryTaskQueueStorage(TaskQueueStorage):
 
     def clear(self):
       self.next_taskid = 1
