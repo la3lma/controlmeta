@@ -9,7 +9,7 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import application
+import app
 import unittest
 import json
 
@@ -24,8 +24,13 @@ class control_meta_test_case(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_create_new_media_entry_from_upload(self):
+        mms=MediaAndMetaStorage("http://namuu/")
+        retval = mms.create_new_media_entry("text/plain", "jiha")
+        self.assertTrue(retval)
+
     def test_create_delete_roundtrip(self):
-        mms=MediaAndMetaStorage()
+        mms=MediaAndMetaStorage("http://namuu/")
 
         keys = mms.get_all_meta()
         self.assertTrue(not keys)        

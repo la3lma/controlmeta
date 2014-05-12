@@ -112,8 +112,7 @@ def get_requests_json(request):
     json_value  = request.json
     return None, json_value
 
-## XXX This is bogus.   Here we should make media content, not
-##     metadata!
+
 @app.route('/media/', methods = ['POST'])
 @requires_auth
 def create_new_media_entry_from_upload():

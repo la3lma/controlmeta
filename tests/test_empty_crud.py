@@ -29,7 +29,7 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.get('/media/id/1', headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
-    def test_bogus_json_post_content_metadata_upload(self):
+    def test_json_post_content_metadata_upload(self):
         rv = self.app.post(
             '/media/',
             headers= self.json_headers,
