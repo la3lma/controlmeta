@@ -1,4 +1,4 @@
-import application
+import app
 import unittest
 import json
 import flask.ext.testing
@@ -10,10 +10,7 @@ class Control_meta_test_case(unittest.TestCase):
     def setUp(self):
         "Get a reference to the testclient"
         
-        self.app = application.app.test_client()
-
-        # Injecting dependencies on storage
-        application.state = application.State()
+        self.app = app.application.test_client()
         
         self.username = "admin"
         self.password = "secret"

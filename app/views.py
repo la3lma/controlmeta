@@ -1,38 +1,10 @@
-#!/usr/bin/python
-from flask import Flask, jsonify, Response, request, abort
+from flask import  jsonify, Response, request, abort
 import json
-from mediameta.mediametastorage import MediaAndMetaStorage
 from database import db_session
-from tasks.task_queue_storage import InMemoryTaskQueueStorage
-import sys
+from mediameta.mediametastorage import MediaAndMetaStorage
+from tasks.model import InMemoryTaskQueueStorage
 
 
-
-# This weirdness seems to be necessary for elastic beanstalk to 
-# be able to recognize the application.
-application = Flask(__name__)
-app=application
-
-
-# A class to hold a singleton instance. That instance
-# holds the state of the application.
-
-class State:
-
-    def __init__(self):
-        base_url="http://ctrl-meta.loltel.co"
-        if (len(sys.argv) > 1):
-            base_url=str(sys.argv[1])
-        self.mms = MediaAndMetaStorage(base_url)
-        self.tqs = InMemoryTaskQueueStorage()
-
-    def clear(self):
-        self.mms.clear();
-        self.tqs.clear();
-
-
-state = State()
-state.clear()
 
 ##
 ## Helper functions to make it simpler to translate return values
@@ -279,7 +251,3 @@ def create_task(type):
 def delete_task(taskid):
     retval = state.tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)
-
-if __name__ == '__main__':
-    application.run(host='0.0.0.0', debug=True)
-    state.clear()

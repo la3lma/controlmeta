@@ -1,3 +1,8 @@
+o Break everything!
+  o Mold everything intto a large-scale flask app, modelled
+    after https://github.com/mitsuhiko/flask/wiki/Large-app-how-to
+  o Make it work, goddamit!
+  o Make it nice.
 o Rewrite the task storage to use the sql-based persistence.
   o Make the the unit tests for the whole thing use the simple memory based sql thing.
      o  Follow through on unit tests
