@@ -9,7 +9,7 @@
     :license: All rights reserved (at least for now)
 """
 import os
-import application
+import app
 import unittest
 import json
 
@@ -21,7 +21,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
     def setUp(self):
         "Get a reference to the testclient"
-        self.app = application.app.test_client()
+        self.app = app.app.test_client()
     
     def tearDown(self):
         "Nothing to tear down yet"

@@ -3,7 +3,32 @@ import json
 from database import db_session
 from mediameta.mediametastorage import MediaAndMetaStorage
 from tasks.model import InMemoryTaskQueueStorage
+import app
+import sys 
 
+## Is this a kludge? XXX
+app = app.app
+
+
+# A class to hold a singleton instance. That instance                                  
+# holds the state of the application.                                                  
+
+class State:
+
+    def __init__(self):
+        base_url="http://ctrl-meta.loltel.co"
+        if (len(sys.argv) > 1):
+            base_url=str(sys.argv[1])
+        self.mms = MediaAndMetaStorage(base_url)
+        self.tqs = InMemoryTaskQueueStorage()
+
+    def clear(self):
+        self.mms.clear();
+        self.tqs.clear();
+
+
+state = State()
+state.clear()
 
 
 ##
