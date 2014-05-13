@@ -1,10 +1,15 @@
 
-
 o Break everything!
   o Mold everything intto a large-scale flask app, modelled
     after https://github.com/mitsuhiko/flask/wiki/Large-app-how-to
 
 o Make it work, goddamit!
+  o make tests/test_task_queue_storage.py  work.
+     - Figure out how to avoid circular dependencies so that the
+       test can actually be run.   Need to read some docs on how
+       to do sqlalchemy-persistence in order to make that happen.
+  o Should "app" be called "app", and what's wrong with 
+    the "application.py" thing. Why isn't that replicated anywhere?
   o Unit tests
   o Running application
   o Make it nice.
