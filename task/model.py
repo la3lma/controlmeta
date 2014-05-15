@@ -10,3 +10,7 @@ class Task(Base):
     __tablename__ = 'tasks'
     id = schema.Column(Integer, primary_key=True)
     tasktype = Column(String)
+
+    def __init__(self, tasktype):
+        self.tasktype = tasktype
+

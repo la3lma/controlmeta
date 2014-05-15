@@ -1,18 +1,20 @@
 from flask import  jsonify, Response, request, abort
 import json
-import app
+import ctlm
 import sys 
+from task.model import Task
+# from database import db_session
 
-from database import db_session
+db  = ctlm.db
+app = ctlm.app
 
-app = app.app
 
 ##
 ## Application lifecycle
 ##
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    app.db.session.remove()
 
 
 ##
@@ -44,5 +46,10 @@ def hello_world():
 # spike works out.
 @app.route('/newtask')
 def newtask():
-    return "lol control meta!"
+    new_task = Task("jalla")
+    print "new_task", new_task    
+    db.session.add(new_task)
+    db.session.commit()
+    print "new_task committed", new_task    
+    return "New task generated!"
 
