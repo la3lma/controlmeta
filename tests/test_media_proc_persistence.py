@@ -10,29 +10,35 @@
 """
 import unittest
 from tasks.model import Task
-from tasks.model import create
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import app
 
 class SimpleCrudCases(unittest.TestCase):
 
     # Set up an ephemeral sqlite-database.
     def setUp(self):
-        self.engine = create_engine('sqlite:///:memory:', echo=True)
-        self.connection = self.engine.connect()
+        self.db = app.db
+        self.db.create_all()
+        self.session = self.db.session
 
-        create(self.engine)
+
+#        self.engine = create_engine('sqlite:///:memory:', echo=True)
+#        self.connection = self.engine.connect()
+
+        # create(self.engine)
         # create a configured "Session" class
-        self.Session = sessionmaker(bind=self.engine)
+#        self.Session = sessionmaker(bind=self.engine)
 
-    def tearDown(self):
-        "Nothing to tear down yet"
-        pass
+#     def tearDown(self):
+#         "Nothing to tear down yet"
+#         pass
 
 
+        # XXX???
     def new_session(self):
-        self.session = self.Session()
+        self.session = self.session()
         return self.session
 
     def commit_session(self):
@@ -52,14 +58,11 @@ class SimpleCrudCases(unittest.TestCase):
         return new_task
 
 
-
     def task_equal(self, t1, t2):
         return  (t1.id == t2.id and
                  t1.runner == t2.runner and
                  t1.tasktype == t2.tasktype and
                  t1.params == t2.params)
-
-
 
     ##
     ## Test CRUD for tasks. 
@@ -73,7 +76,7 @@ class SimpleCrudCases(unittest.TestCase):
         
         # Then retrieve the task with that id
         # Kick off a new session
-        self.session = self.Session()
+        self.session = self.session()
         retrieved_task = self.session.query(Task).get(id)
 
         self.assertTrue(self.task_equal(new_task, retrieved_task))
@@ -82,13 +85,13 @@ class SimpleCrudCases(unittest.TestCase):
     def test_delete_task(self):
         new_task = self.store_new_task()
         id = new_task.id
-        self.session = self.Session()
+        self.session = self.session()
         retrieved_task = self.session.query(Task).get(id)
         self.session.delete(retrieved_task)
         self.session.commit()
         self.session.flush()
         
-        self.session = self.Session()
+        self.session = self.session()
         retrieved_task = self.session.query(Task).get(id)
 
         self.assertEqual(None, retrieved_task)
@@ -96,13 +99,13 @@ class SimpleCrudCases(unittest.TestCase):
     def test_update_task(self):
         new_task = self.store_new_task()
         id = new_task.id
-        self.session = self.Session()
+        self.session = self.session()
         retrieved_task = self.session.query(Task).get(id)
         retrieved_task.tasktype = 'bananapicking'
         self.session.commit()
         self.session.flush()
 
-        self.session = self.Session()
+        self.session = self.session()
         updated_task = self.session.query(Task).get(id)
 
         self.assertTrue(None != updated_task)

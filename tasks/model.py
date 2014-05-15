@@ -19,10 +19,10 @@ class Task(Base):
     RUNNING="running"
     DONE="done"
 
-    def __init__(self, id, status, tasktype, params=None):
+    def __init__(self, id, status, tasktype, params=None, runner=None):
       self.id = id
       self.status = status
-      self.runner=None
+      self.runner=runner
       self.tasktype = tasktype
       self.params = params
 

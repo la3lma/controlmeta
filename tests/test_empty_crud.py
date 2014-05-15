@@ -34,6 +34,7 @@ class SimpleCrudCases(Control_meta_test_case):
             '/media/',
             headers= self.json_headers,
             data='{"Name": "Test"}' )
+        print "rv=",rv
         self.assertEqual(rv.status_code, 201)
 
     # Post to a nonspecified metadata location, get an

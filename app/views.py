@@ -6,12 +6,12 @@ from tasks.model import InMemoryTaskQueueStorage
 import app
 import sys 
 
-## Is this a kludge? XXX
-app = app.app
 
+app = app.app
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
+# This is a kludge, for sure.
 
 class State:
 
@@ -25,7 +25,6 @@ class State:
     def clear(self):
         self.mms.clear();
         self.tqs.clear();
-
 
 state = State()
 state.clear()
@@ -199,10 +198,11 @@ def delete_meta(id, metaid):
     retval = state.mms.delete_metaid(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
 
+
+
 ###
 ###  Accessing the task queue
 ###
-
 
 def tasklist_as_return_value(tasklist):
     retval = map(lambda x: x.as_map(), tasklist)
@@ -260,6 +260,7 @@ def declare_task_as_done(id):
 @app.route('/task/type/<type>', methods = ['POST'])
 @requires_auth
 def create_task(type):
+    print "Creating task type=", type
     # Not sure about the semantics of this one.
     params=request.json
     if not params:
