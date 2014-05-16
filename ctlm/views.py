@@ -28,7 +28,7 @@ def hello_world():
 def newtask():
     # This creates all the tables. This is absolutely not right.
     db.create_all()
-    new_task = Task("jalla")
+    new_task = Task(200, "foo", "bar")
     db.session.add(new_task)
     db.session.commit()
     return "New task generated!"
