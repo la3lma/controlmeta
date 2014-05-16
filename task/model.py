@@ -1,12 +1,10 @@
 # Too aggressive import list
-from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Integer, Column, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from app.database import Base
+import ctlm
 
-
-class Task(Base):
+class Task(ctlm.db.Model):
     __tablename__ = 'tasks'
     id = schema.Column(Integer, primary_key=True)
     tasktype = Column(String)

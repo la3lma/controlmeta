@@ -1,28 +1,8 @@
 from flask import  jsonify, Response, request, abort
 import json
-import ctlm
+from ctlm import *
 import sys 
-from task.model import Task
-# from database import db_session
-
-db  = ctlm.db
-app = ctlm.app
-
-
-##
-## Application lifecycle
-##
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    app.db.session.remove()
-
-
-##
-##   Authentication
-##
-
-from functools import wraps
-from flask import request, Response
+# from task.model import Task
 
     
 ##
@@ -44,12 +24,14 @@ def hello_world():
 # run the persistence ting down, and then we'll add the
 # rest when we know how this vertical architectural
 # spike works out.
-@app.route('/newtask')
+@app.route('/newtask/')
 def newtask():
-    new_task = Task("jalla")
-    print "new_task", new_task    
-    db.session.add(new_task)
-    db.session.commit()
-    print "new_task committed", new_task    
+    # This creates all the tables. This is absolutely not right.
+#    db.create_all()
+#    new_task = Task("jalla")
+#    print "new_task", new_task    
+#    db.session.add(new_task)
+#    db.session.commit()
+#    print "new_task committed", new_task    
     return "New task generated!"
 
