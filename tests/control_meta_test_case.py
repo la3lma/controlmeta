@@ -17,7 +17,6 @@ class Control_meta_test_case(unittest.TestCase):
     def setUp(self):
         "Talking to a temporary file database"
         self.app = ctlm.app.test_client()
-        print "client = ", self.app
         # ctlm.db.create_all()
     
     def tearDown(self):

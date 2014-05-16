@@ -7,7 +7,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 application = Flask(__name__)
 app=application
 
-# app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
 db  = SQLAlchemy(app)
 import ctlm.views 
 
