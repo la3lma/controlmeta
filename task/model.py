@@ -88,39 +88,8 @@ class Task(ctlm.db.Model):
         return self.tasktype == tasktype
 
 
-class TaskQueueStorage:
-    def clear(self):
-        pass
 
-    def list_all_waiting_tasks(self):
-        pass
-
-    def list_all_running_tasks(self):
-        pass
-
-    def list_all_done_tasks(self):
-        pass
-
-    def list_all_waiting_tasks_of_type(self, tasktype):
-        pass
-
-    def check_if_task_exists(self, taskid):
-        pass
-
-    def pick_next_waiting_task_of_type(self, tasktype, runner):
-        pass
-
-    def declare_as_done(self, taskid):
-        pass
-
-    def create_task(self, tasktype, params):
-        pass
-
-    def delete_task(self, taskid):
-        pass
-
-
-class RDBQueueStorage(TaskQueueStorage):
+class RDBQueueStorage():
     def clear(self):
         pass
 
@@ -159,7 +128,7 @@ class RDBQueueStorage(TaskQueueStorage):
         pass
 
 
-class InMemoryTaskQueueStorage(TaskQueueStorage):
+class InMemoryTaskQueueStorage():
 
     def clear(self):
       self.next_taskid = 1
@@ -220,6 +189,7 @@ class InMemoryTaskQueueStorage(TaskQueueStorage):
 
     def delete_task(self, taskid):
         taskid=str(taskid)
+        print "Deleting task with taskid", taskid
         errors=self.check_if_task_exists(taskid)
         if errors:
             return errors
