@@ -17,7 +17,25 @@ class Control_meta_test_case(unittest.TestCase):
     def setUp(self):
         "Talking to a temporary file database"
         self.app = ctlm.app.test_client()
+
         # ctlm.db.create_all()
+
+        self.username = "admin"
+        self.password = "secret"
+        self.auth_headers = {
+            'Authorization': 'Basic ' +
+            b64encode("{0}:{1}".format(self.username, self.password))
+        }
+
+        self.headers = self.auth_headers
+        
+        json_headers = {'Content-Type': 'application/json'}
+        self.json_headers = dict(self.auth_headers.items() + json_headers.items())
+
+        plain_headers = {'Content-Type': 'text/plain'}
+        self.plain_headers =  dict(self.auth_headers.items() + plain_headers.items())
+        
+
     
     def tearDown(self):
         "Tear down the tmpfile database"
