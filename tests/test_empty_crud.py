@@ -16,9 +16,6 @@ from control_meta_test_case import Control_meta_test_case
 
 class SimpleCrudCases(Control_meta_test_case):
 
-    def setUp(self):
-        "Talking to a temporary file database"
-        self.app = ctlm.app.test_client()
 
     def test_get_root(self):
         rv = self.app.get('/')
