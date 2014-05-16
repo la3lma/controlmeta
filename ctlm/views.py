@@ -2,7 +2,7 @@ from flask import  jsonify, Response, request, abort
 import json
 from ctlm import *
 import sys 
-# from task.model import Task
+from task.model import Task
 
     
 ##
@@ -27,11 +27,9 @@ def hello_world():
 @app.route('/newtask/')
 def newtask():
     # This creates all the tables. This is absolutely not right.
-#    db.create_all()
-#    new_task = Task("jalla")
-#    print "new_task", new_task    
-#    db.session.add(new_task)
-#    db.session.commit()
-#    print "new_task committed", new_task    
+    db.create_all()
+    new_task = Task("jalla")
+    db.session.add(new_task)
+    db.session.commit()
     return "New task generated!"
 
