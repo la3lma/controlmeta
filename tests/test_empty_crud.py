@@ -12,8 +12,9 @@ import os
 import ctlm
 import unittest
 import flask.ext.testing
+from control_meta_test_case import Control_meta_test_case
 
-class SimpleCrudCases(unittest.TestCase):
+class SimpleCrudCases(Control_meta_test_case):
 
     def setUp(self):
         "Talking to a temporary file database"
