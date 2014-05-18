@@ -34,7 +34,7 @@ class Task(Base):
         return {"taskId": self.id,
                 "status": self.status,
                 "taskType": self.tasktype,
-                "params": self.params }
+                "params": json.loads(self.params) }
 
     ##
     ## The start state needs some special case handling
