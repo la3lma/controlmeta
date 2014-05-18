@@ -1,14 +1,10 @@
 from flask import  jsonify, Response, request, abort
 import json
 from mediameta.mediametastorage import MediaAndMetaStorage
-from task.model import InMemoryTaskQueueStorage
 import sys
-import ctlm 
-
-
-app = ctlm.app
-db=ctlm.db
-
+from  database import Base, db_session, init_db
+from ctlm import app
+from task.model import RDBQueueStorage
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
@@ -21,7 +17,8 @@ class State:
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = MediaAndMetaStorage(base_url)
-        self.tqs = InMemoryTaskQueueStorage()
+        # self.tqs = InMemoryTaskQueueStorage()
+        self.tqs = RDBQueueStorage()
 
     def clear(self):
         self.mms.clear();
@@ -63,7 +60,7 @@ def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
 ##
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db.session.remove()
+    db_session.remove()
 
 
 ##
