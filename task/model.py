@@ -3,23 +3,23 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base
+from database import Base, db_session
 
 class Task(Base):
+    __tablename__ = 'tasks'
 
     id = schema.Column(Integer, primary_key=True)
-    runner = Column(String)
+    status = Column(String)
     tasktype = Column(String)
     params = Column(String)
+    runner = Column(String)
 
-    __tablename__ = 'tasks'
 
     WAITING="waiting"
     RUNNING="running"
     DONE="done"
 
-    def __init__(self, id, status, tasktype, params=None, runner=None):
-      self.id = id
+    def __init__(self, status, tasktype, params=None, runner=None):
       self.status = status
       self.runner=runner
       self.tasktype = tasktype
@@ -121,7 +121,17 @@ class RDBQueueStorage():
         pass
 
     def create_task(self, tasktype, params):
-        pass
+        print "tasktype = ",tasktype
+        print "params =", params
+        # XXX 1. No ID is generated
+        # XXX 2. No serialize the map to JSON, store as string (until postgres at least)
+        task = Task("waiting", tasktype, params)
+        db_session.add(task)
+        db_session.commit()
+        mtask =task.as_map()
+        print "mtask = ", mtask
+        return mtask
+
 
     def delete_task(self, taskid):
         pass

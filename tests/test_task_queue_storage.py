@@ -11,14 +11,18 @@
 import os
 import unittest
 import json
+from database import init_db
 
 from task.model import RDBQueueStorage
+from sqlalchemy import Table, Column, Integer, String, MetaData
+
 
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
         "Get a reference to the testclient"
         self.tqs = RDBQueueStorage()
+
     
     def tearDown(self):
         "Nothing to tear down yet"
