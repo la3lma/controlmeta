@@ -21,6 +21,7 @@ class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
         "Get a reference to the testclient"
+        # Create a new database
         init_db()
         self.tqs = RDBQueueStorage()
 
