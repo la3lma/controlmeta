@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
 from database import Base, db_session
+import json
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -123,9 +124,8 @@ class RDBQueueStorage():
     def create_task(self, tasktype, params):
         print "tasktype = ",tasktype
         print "params =", params
-        # XXX 1. No ID is generated
-        # XXX 2. No serialize the map to JSON, store as string (until postgres at least)
-        task = Task("waiting", tasktype, params)
+        json_params = json.dumps(params)
+        task = Task("waiting", tasktype, json_params)
         db_session.add(task)
         db_session.commit()
         mtask =task.as_map()
