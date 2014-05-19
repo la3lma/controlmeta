@@ -6,6 +6,8 @@ import tempfile
 from base64 import b64encode
 import ctlm
 
+import engine from database
+
 class Control_meta_test_case(unittest.TestCase):
 
 
@@ -16,9 +18,13 @@ class Control_meta_test_case(unittest.TestCase):
 
     def setUp(self):
         "Talking to a temporary file database"
-        self.app = ctlm.app.test_client()
 
         # ctlm.db.create_all()
+
+
+        self.app = ctlm.app.test_client()
+
+
 
         self.username = "admin"
         self.password = "secret"

@@ -62,9 +62,10 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(task)
 
     def test_delete_nonexisting_task(self):
-        errorDescription = self.tqs.delete_task("1")
+        errorDescription = self.tqs.delete_task("999")
         # The error description should be nonempty
         self.assertTrue(errorDescription)
+
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
         self.assertFalse(errorDescription)
