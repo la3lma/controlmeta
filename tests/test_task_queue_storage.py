@@ -51,18 +51,20 @@ class MkeepTestCase(unittest.TestCase):
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
 
     def test_get_next(self):
-        tasktype="rubberduck"
+        tasktype="snafu"
+        runner="sample runner2"
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertFalse(tasklist)
         task = self.tqs.create_task(tasktype, {})
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertTrue(tasklist)
+        task = self.tqs.pick_next_waiting_task_of_type(tasktype, runner)
+        self.assertTrue(task)
 
     def test_delete_nonexisting_task(self):
         errorDescription = self.tqs.delete_task("1")
         # The error description should be nonempty
         self.assertTrue(errorDescription)
-
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
         self.assertFalse(errorDescription)

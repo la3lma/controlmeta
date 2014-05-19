@@ -94,17 +94,29 @@ class RDBQueueStorage():
         pass
 
     def list_all_waiting_tasks(self):
-        pass
+        # XXX  Bogus static string.  Use better encapsulation
+        result = db_session.query(Task).filter(Task.status == "waiting").all()
+        mapped_result = map(lambda x: x.as_map(), result)
+        return mapped_result
 
-    def list_all_running_tasks(self):
+    def ist_all_running_tasks(self):
         pass
 
     def list_all_done_tasks(self):
         pass
 
     def list_all_waiting_tasks_of_type(self, tasktype):
-        pass
+        # XXX  Bogus static string.  Use better encapsulation
+        # XXX2 Repeated code.
+        print "Finding waiting tasks of type ", tasktype
+        result = db_session.query(Task).filter_by(status = "waiting").filter_by(tasktype = tasktype).all()
+        mapped_result = map(lambda x: x.as_map(), result)
+        print "list_all_...of type", mapped_result
+        return mapped_result
 
+
+
+    
     def check_if_task_exists(self, taskid):
         taskid=str(taskid)
         if not(taskid in self.tasks):
@@ -116,7 +128,22 @@ class RDBQueueStorage():
 
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
-        pass
+        # XXX  Bogus static string.  Use better encapsulation
+        # XXX2 Repeated code.
+        print "Finding waiting tasks of type ", tasktype
+        result = db_session.query(Task).filter_by(status = "waiting").filter_by(tasktype = tasktype).first()
+        # Handle missing object (throw 404-ish instead?)
+        if not result:
+            return None
+
+        # Update
+        result.status="running"
+        result.runner = runner
+        # XXX This probably shouldn't be done here, it should be
+        #     done once, and only in the view.py
+        db_session.commit()
+        return result
+
 
     def declare_as_done(self, taskid):
         pass
@@ -134,8 +161,17 @@ class RDBQueueStorage():
 
 
     def delete_task(self, taskid):
-        pass
+        result = db_session.query(Task, Task.id == taskid).first()
+        
+        print "Deleting task with taskid", taskid
+        print "Result of deletion was: ", result
 
+        if result:
+            return {}
+        else:
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     ("No such task taskid='%s'"%taskid)}
 
 class InMemoryTaskQueueStorage():
 
