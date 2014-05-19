@@ -5,8 +5,7 @@ import flask.ext.testing
 import tempfile
 from base64 import b64encode
 import ctlm
-
-import engine from database
+from database import init_db
 
 class Control_meta_test_case(unittest.TestCase):
 
@@ -19,13 +18,13 @@ class Control_meta_test_case(unittest.TestCase):
     def setUp(self):
         "Talking to a temporary file database"
 
-        # ctlm.db.create_all()
+        # Set updatabase tables
+        init_db()
 
-
+        # Get the test client
         self.app = ctlm.app.test_client()
 
-
-
+        # Set up authentication stuff
         self.username = "admin"
         self.password = "secret"
         self.auth_headers = {
@@ -33,6 +32,8 @@ class Control_meta_test_case(unittest.TestCase):
             b64encode("{0}:{1}".format(self.username, self.password))
         }
 
+        # Convenience headers that combine
+        # authentication info and content types.
         self.headers = self.auth_headers
         
         json_headers = {'Content-Type': 'application/json'}

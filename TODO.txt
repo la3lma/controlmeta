@@ -1,6 +1,6 @@
 
 o Make it work, goddamit!
-  o Make some simple database roundtrip tests work.
+  o Nuke content of database between tests.
   o implement pattern from http://flask.readthedocs.org/en/0.1/patterns/
   o make tests/test_task_queue_storage.py  work.
      - Figure out how to avoid circular dependencies so that the

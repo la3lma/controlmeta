@@ -93,30 +93,31 @@ class RDBQueueStorage():
     def clear(self):
         pass
 
-    def list_all_waiting_tasks(self):
+
+    def list_all_tasks_of_status(self, status):
         # XXX  Bogus static string.  Use better encapsulation
-        result = db_session.query(Task).filter(Task.status == "waiting").all()
+        result = db_session.query(Task).filter(Task.status == status).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result
 
-    def ist_all_running_tasks(self):
-        pass
+    def list_all_waiting_tasks(self):
+        return self.list_all_tasks_of_status("waiting")
+
+
+    def list_all_running_tasks(self):
+        return self.list_all_tasks_of_status("running")
+
 
     def list_all_done_tasks(self):
-        pass
+        return self.list_all_tasks_of_status("done")
 
     def list_all_waiting_tasks_of_type(self, tasktype):
-        # XXX  Bogus static string.  Use better encapsulation
-        # XXX2 Repeated code.
-        print "Finding waiting tasks of type ", tasktype
-        result = db_session.query(Task).filter_by(status = "waiting").filter_by(tasktype = tasktype).all()
+        # XXX Not doing the tastkype filtering
+        result = db_session.query(Task).filter(Task.status == status).all()
         mapped_result = map(lambda x: x.as_map(), result)
-        print "list_all_...of type", mapped_result
-        return mapped_result
+        return mapped_result        
 
 
-
-    
     def check_if_task_exists(self, taskid):
         taskid=str(taskid)
         if not(taskid in self.tasks):
@@ -131,18 +132,22 @@ class RDBQueueStorage():
         # XXX  Bogus static string.  Use better encapsulation
         # XXX2 Repeated code.
         print "Finding waiting tasks of type ", tasktype
-        result = db_session.query(Task).filter_by(status = "waiting").filter_by(tasktype = tasktype).first()
-        # Handle missing object (throw 404-ish instead?)
+        result = db_session.query(Task)\
+                .filter(Task.status == "waiting",
+                        Task.tasktype == tasktype)\
+                .first()
+
+        print "result from query ", result
+        # Handle missing object
         if not result:
             return None
 
         # Update
-        result.status="running"
+        result.status = "running"
         result.runner = runner
-        # XXX This probably shouldn't be done here, it should be
-        #     done once, and only in the view.py
-        db_session.commit()
-        return result
+
+        print "returning pick"
+        return result.as_map()
 
 
     def declare_as_done(self, taskid):
