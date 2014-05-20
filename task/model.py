@@ -112,21 +112,25 @@ class RDBQueueStorage():
         return self.list_all_tasks_of_status("done")
 
     def list_all_waiting_tasks_of_type(self, tasktype):
-        # XXX Not doing the tastkype filtering
-        result = db_session.query(Task).filter(Task.status == status).all()
+        result = db_session.query(Task).filter(
+            Task.status == "waiting",
+            Task.tasktype == tasktype).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result        
 
 
     def check_if_task_exists(self, taskid):
-        taskid=str(taskid)
-        if not(taskid in self.tasks):
+        task_id=str(taskid)
+        result = db_session.query(Task).get(task_id)
+
+        if not result :
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
         else:
             return {}
 
+            
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
         # XXX  Bogus static string.  Use better encapsulation
@@ -142,7 +146,7 @@ class RDBQueueStorage():
         if not result:
             return None
 
-        # Update
+
         result.status = "running"
         result.runner = runner
 
@@ -151,7 +155,25 @@ class RDBQueueStorage():
 
 
     def declare_as_done(self, taskid):
-        pass
+        # XXX  Bogus static string.  Use better encapsulation
+        # XXX2 Repeated code.
+        print "Finding waiting tasks of type ", tasktype
+        result = db_session.query(Task)\
+                .filter(Task.status == "running",
+                        Task.tasktype == tasktype)\
+                .first()
+
+        print "result from query ", result
+        # Handle missing object
+        if not result:
+            return None
+
+        # Update
+        result.status = "done"
+        result.runner = runner
+
+        print "returning pick"
+        return result.as_map()
 
     def create_task(self, tasktype, params):
         print "tasktype = ",tasktype
@@ -166,14 +188,18 @@ class RDBQueueStorage():
 
 
     def delete_task(self, taskid):
-        result = db_session.query(Task, Task.id == taskid).first()
-        
-        print "Deleting task with taskid", taskid
-        print "Result of deletion was: ", result
+        (result, found_it) = db_session.query(Task, Task.id == taskid).first()
 
-        if result:
+        if found_it:
+            print "Deleting task with taskid", taskid
+            print "THe result is =", result
+            print "result asmap =", result.as_map()
+            db_session.delete(result)
+            # XXX Check deletion result
+            print "delete succeeded for taskid=", taskid
             return {}
         else:
+            print "Could not find task to delete, taskidd=", taskid
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}

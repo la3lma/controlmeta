@@ -62,9 +62,33 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(task)
 
     def test_delete_nonexisting_task(self):
-        errorDescription = self.tqs.delete_task("999")
+        errorDescription = self.tqs.delete_task("9999")
+        print "errorDescription = ", errorDescription
         # The error description should be nonempty
         self.assertTrue(errorDescription)
+
+    def test_delete_existing_task(self):
+
+        # First create a new task
+        params={"apple":"fruitflie"}
+        task = self.tqs.create_task("rubberduckie", params)
+        print "task = " , task
+
+        task_id = task['taskId']
+
+        # Then check that it's there
+        # (the check is for falsehood since check_if_task_exists
+        # XXX perversely returns empty (interpreted as "no error" 
+        # if it's there)
+        self.assertFalse(self.tqs.check_if_task_exists(task_id))
+
+        # Then nuke it
+        errorDescription = self.tqs.delete_task(task_id)
+
+        # And check that it's no longer there
+        self.assertTrue(errorDescription)
+
+        
 
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")

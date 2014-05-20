@@ -111,14 +111,14 @@ class SimpleCrudCases(Control_meta_test_case):
         self.assertEqual(rv.status_code, 404)
 
     def test_pick_task_of_type(self):
-        rv = self.app.post('/task/waiting/type/face/pick',
+        rv = self.app.post('/task/waiting/type/face_pick_dummy/pick',
                            headers=self.json_headers,
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 404)
 
     def test_declare_task_done(self):
         rv = self.app.post(
-                '/task/id/1/done',
+                '/task/id/999/done',
                 headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
@@ -130,8 +130,8 @@ class SimpleCrudCases(Control_meta_test_case):
         self.assertEqual(rv.status_code, 201)
 
 
-    def test_delete_task(self):
-        rv = self.app.delete('/task/id/1', headers=self.headers)
+    def test_delete_nonexisting_task(self):
+        rv = self.app.delete('/task/id/40400', headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
 if __name__ == '__main__':
