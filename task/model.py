@@ -168,14 +168,17 @@ class RDBQueueStorage():
         print "result from query ", result
         # Handle missing object
         if not result:
-            return None
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     ("No such task taskid='%s'"%taskid)}
+
+
 
         # Update
         result.status = "running"
         result.runner = runner
 
-        print "returning pick"
-        return result.as_map()
+        return {}
         
 
     def declare_as_done(self, taskid):
@@ -223,71 +226,3 @@ class RDBQueueStorage():
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
 
-class InMemoryTaskQueueStorage():
-
-    def clear(self):
-      self.next_taskid = 1
-      self.tasks = {}
-
-    def __init__(self):
-      self.clear()
-
-    def list_all_waiting_tasks(self):
-        return filter(lambda x: x.is_waiting(), self.tasks.values())
-
-    def list_all_running_tasks(self):
-        return filter (lambda x: x.is_running(), self.tasks.values())
-
-
-    def list_all_done_tasks(self):
-        return filter(lambda x: x.is_done(), self.tasks.values())
-
-    def list_all_waiting_tasks_of_type(self, tasktype):
-        return filter (lambda x: x.has_task_type(tasktype),
-                       self.list_all_waiting_tasks())
-
-    def check_if_task_exists(self, taskid):
-        taskid=str(taskid)
-        if not(taskid in self.tasks):
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%taskid)}
-        else:
-            return {}
-
-    def pick_next_waiting_task_of_type(self, tasktype, runner):
-        waiting_tasks = self.list_all_waiting_tasks_of_type(tasktype)
-        if waiting_tasks:
-            picked_task=waiting_tasks.pop(0)
-            error_description=picked_task.start(runner)
-            if error_description:
-                return error_description
-            return picked_task.as_map()
-        else:
-            return {}
-
-    def declare_as_done(self, taskid):
-        taskid=str(taskid)
-        errors=self.check_if_task_exists(taskid)
-        if errors:
-            return errors
-        else:
-            task=self.tasks[taskid]
-            return task.done();
-
-    def create_task(self, tasktype, params):
-        taskid = str(self.next_taskid)
-        self.next_taskid = self.next_taskid + 1
-        task = Task(taskid, "waiting", tasktype, params)
-        self.tasks[taskid] = task
-        return task.as_map()
-
-    def delete_task(self, taskid):
-        taskid=str(taskid)
-        print "Deleting task with taskid", taskid
-        errors=self.check_if_task_exists(taskid)
-        if errors:
-            return errors
-        else:
-            del self.tasks[taskid]
-            return {}

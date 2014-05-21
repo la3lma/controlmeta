@@ -106,15 +106,15 @@ class MkeepTestCase(unittest.TestCase):
         task_id = task['taskId']
 
         result  = self.tqs.declare_as_running(task_id, "gazonk runner")
-        assertFalse(result)
+        self.assertFalse(result)
 
-        task = self.tqs.get_task(taskid)
+        task = self.tqs.get_task(task_id)
         self.assertEqual("running", task['status'])
 
         result  = self.tqs.declare_as_done(task_id)
-        assertFalse(result)
+        self.assertFalse(result)
 
-        task = self.tqs.get_task(taskid)
+        task = self.tqs.get_task(task_id)
         self.assertEqual("done", task['status'])
 
 
