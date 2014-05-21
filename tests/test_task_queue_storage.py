@@ -62,7 +62,6 @@ class MkeepTestCase(unittest.TestCase):
 
     def test_delete_nonexisting_task(self):
         errorDescription = self.tqs.delete_task("9999")
-        print "errorDescription = ", errorDescription
         # The error description should be nonempty
         self.assertTrue(errorDescription)
 
@@ -71,7 +70,6 @@ class MkeepTestCase(unittest.TestCase):
         # First create a new task
         params={"apple":"fruitflie"}
         task = self.tqs.create_task("rubberduckie", params)
-        print "task = " , task
 
         task_id = task['taskId']
 
