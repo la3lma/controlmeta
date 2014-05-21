@@ -6,6 +6,10 @@ from sqlalchemy import schema, types
 from database import Base, db_session
 import json
 
+WAITING="waiting"
+RUNNING="running"
+DONE="done"
+
 class Task(Base):
     __tablename__ = 'tasks'
 
@@ -15,9 +19,6 @@ class Task(Base):
     params = Column(String)
     runner = Column(String)
 
-    WAITING="waiting"
-    RUNNING="running"
-    DONE="done"
 
     def __init__(self, status, tasktype, params=None, runner=None):
       self.status = status
@@ -44,7 +45,7 @@ class Task(Base):
                      "Description":
                      "Attempt to start processing, but no process runner specified" }
 
-        error_desc = self.state_transition(self.WAITING, self.RUNNING)
+        error_desc = self.state_transition(WAITING, RUNNING)
         if (error_desc):
             print "State transition failed %r" % (error_desc)
             return error_desc
@@ -66,10 +67,10 @@ class Task(Base):
             return {}
 
     def done(self):
-        return self.state_transition(self.RUNNING, self.DONE)
+        return self.state_transition(RUNNING, DONE)
 
     def run(self, runner):
-        result = self.state_transition(self.WAITING, self.RUNNING)
+        result = self.state_transition(WAITING, RUNNING)
         if not result:
             self.runner = runner
 
@@ -81,13 +82,13 @@ class Task(Base):
         return self.status == status
 
     def is_waiting(self):
-        return self.has_status(self.WAITING)
+        return self.has_status(WAITING)
 
     def is_running(self):
-        return self.has_status(self.RUNNING)
+        return self.has_status(RUNNING)
 
     def is_done(self):
-        return self.has_status(self.DONE)
+        return self.has_status(DONE)
 
     def has_task_type(self, tasktype):
         return self.tasktype == tasktype
@@ -101,18 +102,18 @@ class RDBQueueStorage():
         return mapped_result
 
     def list_all_waiting_tasks(self):
-        return self.list_all_tasks_of_status("waiting")
+        return self.list_all_tasks_of_status(WAITING)
 
     def list_all_running_tasks(self):
-        return self.list_all_tasks_of_status("running")
+        return self.list_all_tasks_of_status(RUNNING)
 
 
     def list_all_done_tasks(self):
-        return self.list_all_tasks_of_status("done")
+        return self.list_all_tasks_of_status(DONE)
 
     def list_all_waiting_tasks_of_type(self, tasktype):
         result = db_session.query(Task).filter(
-            Task.status == "waiting",
+            Task.status == WAITING,
             Task.tasktype == tasktype).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result        
@@ -124,7 +125,7 @@ class RDBQueueStorage():
         # XXX2 Repeated code.
 
         result = db_session.query(Task)\
-                .filter(Task.status == "waiting",
+                .filter(Task.status == WAITING,
                         Task.tasktype == tasktype)\
                 .first()
 
@@ -171,7 +172,7 @@ class RDBQueueStorage():
 
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)
-        task = Task("waiting", tasktype, json_params)
+        task = Task(WAITING, tasktype, json_params)
         db_session.add(task)
         db_session.commit()
         mtask =task.as_map()
