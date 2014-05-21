@@ -1,4 +1,4 @@
-# Too aggressive import list
+# XXX Too aggressive import list
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -14,7 +14,6 @@ class Task(Base):
     tasktype = Column(String)
     params = Column(String)
     runner = Column(String)
-
 
     WAITING="waiting"
     RUNNING="running"
@@ -96,7 +95,6 @@ class Task(Base):
 
 class RDBQueueStorage():
 
-
     def list_all_tasks_of_status(self, status):
         # XXX  Bogus static string.  Use better encapsulation
         result = db_session.query(Task).filter(Task.status == status).all()
@@ -105,7 +103,6 @@ class RDBQueueStorage():
 
     def list_all_waiting_tasks(self):
         return self.list_all_tasks_of_status("waiting")
-
 
     def list_all_running_tasks(self):
         return self.list_all_tasks_of_status("running")
@@ -216,6 +213,7 @@ class RDBQueueStorage():
             return {}
         else:
             print "Could not find task to delete, taskidd=", taskid
+            # XXX Repeated code
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
