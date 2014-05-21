@@ -119,16 +119,6 @@ class RDBQueueStorage():
         return mapped_result        
 
 
-    def check_if_task_exists(self, taskid):
-        task_id=str(taskid)
-        result = db_session.query(Task).get(task_id)
-
-        if not result :
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%taskid)}
-        else:
-            return {}
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
         # XXX  Bogus static string.  Use better encapsulation
@@ -155,13 +145,18 @@ class RDBQueueStorage():
         else:
             return {}
 
-    # Used for testing
-    def declare_as_running(self, taskid, runner):
-        # XXX  Bogus static string.  Use better encapsulation
-        # XXX2 Repeated code.
-        result = db_session.query(Task).get(taskid)
+    def check_if_task_exists(self, taskid):
+        task_id=str(taskid)
+        result = db_session.query(Task).get(task_id)
+        if not result :
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     ("No such task taskid='%s'"%taskid)}
+        else:
+            return {}
 
-        # Handle missing object
+    def declare_as_running(self, taskid, runner):
+        result = db_session.query(Task).get(taskid)
         if not result:
             return { "HTTP_error_code": 404,
                      "Description":
@@ -169,18 +164,14 @@ class RDBQueueStorage():
 
         result.run(runner)
         return {}
-        
 
     def declare_as_done(self, taskid):
         result = db_session.query(Task).get(taskid)
-
         if not result :
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
 
-        # Update
-        # XXX this should be delegated to the "Task" class.
         result.done()
         return {}
 
