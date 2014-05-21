@@ -157,25 +157,18 @@ class RDBQueueStorage():
             return {}
 
 
-    def check_if_task_exists(self, taskid):
-        return self.do_if_task_exists_error_if_not(taskid,
+    def check_if_task_exists(self, task_id):
+        return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task)
 
-    def declare_as_running(self, taskid, runner):
-        return self.do_if_task_exists_error_if_not(taskid,
+    def declare_as_running(self, task_id, runner):
+        return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task.run(runner))
 
 
     def declare_as_done(self, task_id):
-        #   self.do_if_task_exists_error_if_not(taskid, lambda task:task.done())
-        result = db_session.query(Task).get(task_id)
-        if not result :
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%task_id)}
+        return self.do_if_task_exists_error_if_not(task_id, lambda task:task.done())
 
-        result.done()
-        return {}
 
 
 
