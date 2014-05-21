@@ -170,8 +170,6 @@ class RDBQueueStorage():
         return self.do_if_task_exists_error_if_not(task_id, lambda task:task.done())
 
 
-
-
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)
         task = Task("waiting", tasktype, json_params)
@@ -180,17 +178,10 @@ class RDBQueueStorage():
         mtask =task.as_map()
         return mtask
 
+    def nuke(self, task):
+        task_id = task.id
+        db_session.delete(task)
+        db_session.commit()
 
-    def delete_task(self, taskid):
-        (result, found_it) = db_session.query(Task, Task.id == taskid).first()
-
-        if found_it:
-            db_session.delete(result)
-            # XXX Check deletion result
-            return {}
-        else:
-            # XXX Repeated code
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%taskid)}
-
+    def delete_task(self, task_id):
+        return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))

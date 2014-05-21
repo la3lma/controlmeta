@@ -81,9 +81,10 @@ class MkeepTestCase(unittest.TestCase):
 
         # Then nuke it
         errorDescription = self.tqs.delete_task(task_id)
+        self.assertFalse(errorDescription)
 
-        # And check that it's no longer there
-        self.assertTrue(errorDescription)
+        # And check that it's no longer ther
+        self.assertTrue(self.tqs.check_if_task_exists(task_id))
 
         
     def test_pick_nonexisting_task(self):
