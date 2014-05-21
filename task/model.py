@@ -161,7 +161,6 @@ class RDBQueueStorage():
         # XXX2 Repeated code.
         result = db_session.query(Task).get(taskid)
 
-        print "result from query ", result
         # Handle missing object
         if not result:
             return { "HTTP_error_code": 404,
@@ -175,7 +174,6 @@ class RDBQueueStorage():
     def declare_as_done(self, taskid):
         result = db_session.query(Task).get(taskid)
 
-        print "result from query ", result
         if not result :
             return { "HTTP_error_code": 404,
                      "Description":
@@ -184,19 +182,15 @@ class RDBQueueStorage():
         # Update
         # XXX this should be delegated to the "Task" class.
         result.done()
-        print "returning pick"
         return {}
 
 
     def create_task(self, tasktype, params):
-        print "tasktype = ",tasktype
-        print "params =", params
         json_params = json.dumps(params)
         task = Task("waiting", tasktype, json_params)
         db_session.add(task)
         db_session.commit()
         mtask =task.as_map()
-        print "mtask = ", mtask
         return mtask
 
 
