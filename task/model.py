@@ -204,15 +204,10 @@ class RDBQueueStorage():
         (result, found_it) = db_session.query(Task, Task.id == taskid).first()
 
         if found_it:
-            print "Deleting task with taskid", taskid
-            print "THe result is =", result
-            print "result asmap =", result.as_map()
             db_session.delete(result)
             # XXX Check deletion result
-            print "delete succeeded for taskid=", taskid
             return {}
         else:
-            print "Could not find task to delete, taskidd=", taskid
             # XXX Repeated code
             return { "HTTP_error_code": 404,
                      "Description":
