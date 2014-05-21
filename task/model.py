@@ -90,8 +90,6 @@ class Task(Base):
 
 
 class RDBQueueStorage():
-    def clear(self):
-        pass
 
 
     def list_all_tasks_of_status(self, status):

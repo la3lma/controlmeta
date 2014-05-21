@@ -16,7 +16,6 @@ from database import init_db
 from task.model import RDBQueueStorage
 from sqlalchemy import Table, Column, Integer, String, MetaData
 
-
 class MkeepTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -116,7 +115,6 @@ class MkeepTestCase(unittest.TestCase):
 
         task = self.tqs.get_task(task_id)
         self.assertEqual("done", task['status'])
-
 
 if __name__ == '__main__':
     unittest.main()

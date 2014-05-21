@@ -22,7 +22,6 @@ class State:
 
     def clear(self):
         self.mms.clear();
-        self.tqs.clear();
 
 state = State()
 state.clear()
