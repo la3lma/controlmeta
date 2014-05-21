@@ -146,7 +146,9 @@ class RDBQueueStorage():
         if not result:
             return None
 
-        result.run(runner)
+        update_result = result.run(runner)
+        # XXX Should throw an exception if the
+        #     update_result isn't empty.
         return result.as_map()
 
     def get_task(self, taskid):
@@ -184,7 +186,7 @@ class RDBQueueStorage():
 
         # Update
         # XXX this should be delegated to the "Task" class.
-        result.status = "done"
+        result.done()
         print "returning pick"
         return {}
 
