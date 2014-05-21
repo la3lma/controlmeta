@@ -130,8 +130,6 @@ class RDBQueueStorage():
         else:
             return {}
 
-            
-
     def pick_next_waiting_task_of_type(self, tasktype, runner):
         # XXX  Bogus static string.  Use better encapsulation
         # XXX2 Repeated code.
@@ -153,15 +151,19 @@ class RDBQueueStorage():
         print "returning pick"
         return result.as_map()
 
+    def get_task(self, taskid):
+        result = db_session.query(Task).get(taskid)
+        if result:
+            return result.as_map()
+        else:
+            return {}
 
-    def declare_as_done(self, taskid):
+    # Used for testing
+    def declare_as_running(self, taskid, runner):
         # XXX  Bogus static string.  Use better encapsulation
         # XXX2 Repeated code.
-        print "Finding waiting tasks of type ", tasktype
-        result = db_session.query(Task)\
-                .filter(Task.status == "running",
-                        Task.tasktype == tasktype)\
-                .first()
+        result = db_session.query(Task).get(taskid)
+
 
         print "result from query ", result
         # Handle missing object
@@ -169,11 +171,28 @@ class RDBQueueStorage():
             return None
 
         # Update
-        result.status = "done"
+        result.status = "running"
         result.runner = runner
 
         print "returning pick"
         return result.as_map()
+        
+
+    def declare_as_done(self, taskid):
+        result = db_session.query(Task).get(taskid)
+
+        print "result from query ", result
+        if not result :
+            return { "HTTP_error_code": 404,
+                     "Description":
+                     ("No such task taskid='%s'"%taskid)}
+
+        # Update
+        # XXX this should be delegated to the "Task" class.
+        result.status = "done"
+        print "returning pick"
+        return {}
+
 
     def create_task(self, tasktype, params):
         print "tasktype = ",tasktype

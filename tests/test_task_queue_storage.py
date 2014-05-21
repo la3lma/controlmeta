@@ -89,7 +89,6 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(errorDescription)
 
         
-
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
         self.assertFalse(errorDescription)
@@ -97,6 +96,27 @@ class MkeepTestCase(unittest.TestCase):
     def test_list_all_nonexisting_done_tasks(self):        
         errorDescription = self.tqs.list_all_done_tasks()
         self.assertFalse(errorDescription)
+
+    def test_transition_through_lifecycle(self):
+        # First create a new task
+        params={"apple":"fruitflie"}
+        task = self.tqs.create_task("rubberduckie9", params)
+
+        self.assertEqual("waiting", task['status'])
+        task_id = task['taskId']
+
+        result  = self.tqs.declare_as_running(task_id, "gazonk runner")
+        assertFalse(result)
+
+        task = self.tqs.get_task(taskid)
+        self.assertEqual("running", task['status'])
+
+        result  = self.tqs.declare_as_done(task_id)
+        assertFalse(result)
+
+        task = self.tqs.get_task(taskid)
+        self.assertEqual("done", task['status'])
+
 
 if __name__ == '__main__':
     unittest.main()

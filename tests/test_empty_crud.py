@@ -118,7 +118,7 @@ class SimpleCrudCases(Control_meta_test_case):
 
     def test_declare_task_done(self):
         rv = self.app.post(
-                '/task/id/999/done',
+                '/task/id/9991234/done',
                 headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
