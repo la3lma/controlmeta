@@ -56,7 +56,7 @@ class Task(Base):
     ##
     def state_transition(self, source, destination):
         if (self.status != source):
-            return { "HTTP_error_code": 404,
+            return { "HTTP_error_code": 403,
                      "Description":
                      (("Attempt to change status to state '%s' " +
                        "of a task that wasn't in state " +
@@ -145,35 +145,38 @@ class RDBQueueStorage():
         else:
             return {}
 
-    def check_if_task_exists(self, taskid):
+    def do_if_task_exists_error_if_not(self, taskid, function):
         task_id=str(taskid)
-        result = db_session.query(Task).get(task_id)
-        if not result :
+        task = db_session.query(Task).get(task_id)
+        if not task:
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
         else:
+            function(task)
             return {}
 
+
+    def check_if_task_exists(self, taskid):
+        return self.do_if_task_exists_error_if_not(taskid,
+                                            lambda task: task)
+
     def declare_as_running(self, taskid, runner):
-        result = db_session.query(Task).get(taskid)
-        if not result:
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%taskid)}
+        return self.do_if_task_exists_error_if_not(taskid,
+                                            lambda task: task.run(runner))
 
-        result.run(runner)
-        return {}
 
-    def declare_as_done(self, taskid):
-        result = db_session.query(Task).get(taskid)
+    def declare_as_done(self, task_id):
+        #   self.do_if_task_exists_error_if_not(taskid, lambda task:task.done())
+        result = db_session.query(Task).get(task_id)
         if not result :
             return { "HTTP_error_code": 404,
                      "Description":
-                     ("No such task taskid='%s'"%taskid)}
+                     ("No such task taskid='%s'"%task_id)}
 
         result.done()
         return {}
+
 
 
     def create_task(self, tasktype, params):
