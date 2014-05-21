@@ -1,3 +1,8 @@
+o Refactor for fun & profit.
+  o Nuke obsolete code
+  o Enforce layer separation/separation of concerns.
+  o Move state transitions into Task objects.
+
 
 o Make it work, goddamit!
   o Nuke content of database between tests.
@@ -8,9 +13,9 @@ o Make it work, goddamit!
        to do sqlalchemy-persistence in order to make that happen.	
   o Should "app" be called "app", and what's wrong with 
     the "application.py" thing. Why isn't that replicated anywhere?
-  o Unit tests
-  o Running application
-  o Make it nice.
+  o Fix tests for running application, use proper configuration
+    that can be moved into production when done in the testing phase.
+
 
 o Rewrite the task storage to use the sql-based persistence.
   o Make the the unit tests for the whole thing use the simple memory based sql thing.
