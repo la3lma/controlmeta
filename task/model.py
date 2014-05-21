@@ -69,6 +69,12 @@ class Task(Base):
     def done(self):
         return self.state_transition(self.RUNNING, self.DONE)
 
+    def run(self, runner):
+        result = self.state_transition(self.WAITING, self.RUNNING)
+        if not result:
+            self.runner = runner
+
+
     def has_status(self, taskType):
         return self.taskType == taskType
 
@@ -86,7 +92,6 @@ class Task(Base):
 
     def has_task_type(self, tasktype):
         return self.tasktype == tasktype
-
 
 
 class RDBQueueStorage():
@@ -131,22 +136,17 @@ class RDBQueueStorage():
     def pick_next_waiting_task_of_type(self, tasktype, runner):
         # XXX  Bogus static string.  Use better encapsulation
         # XXX2 Repeated code.
-        print "Finding waiting tasks of type ", tasktype
+
         result = db_session.query(Task)\
                 .filter(Task.status == "waiting",
                         Task.tasktype == tasktype)\
                 .first()
 
-        print "result from query ", result
         # Handle missing object
         if not result:
             return None
 
-
-        result.status = "running"
-        result.runner = runner
-
-        print "returning pick"
+        result.run(runner)
         return result.as_map()
 
     def get_task(self, taskid):
@@ -162,7 +162,6 @@ class RDBQueueStorage():
         # XXX2 Repeated code.
         result = db_session.query(Task).get(taskid)
 
-
         print "result from query ", result
         # Handle missing object
         if not result:
@@ -170,12 +169,7 @@ class RDBQueueStorage():
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
 
-
-
-        # Update
-        result.status = "running"
-        result.runner = runner
-
+        result.run(runner)
         return {}
         
 
