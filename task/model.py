@@ -73,8 +73,10 @@ class Task(Base):
 
     def run(self, runner):
         result = self.state_transition(WAITING, RUNNING)
-        if not result:
-            self.runner = runner
+        if result:
+            return result
+        self.runner = runner
+        db_session.commit()
 
 
     def has_status(self, taskType):
