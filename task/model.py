@@ -50,6 +50,7 @@ class Task(Base):
             print "State transition failed %r" % (error_desc)
             return error_desc
         self.runner = runner
+        db_session.commit()
         return {}
 
     ##
@@ -118,11 +119,7 @@ class RDBQueueStorage():
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result        
 
-
-
     def pick_next_waiting_task_of_type(self, tasktype, runner):
-        # XXX  Bogus static string.  Use better encapsulation
-        # XXX2 Repeated code.
 
         result = db_session.query(Task)\
                 .filter(Task.status == WAITING,
@@ -156,19 +153,16 @@ class RDBQueueStorage():
             function(task)
             return {}
 
-
     def check_if_task_exists(self, task_id):
         return self.do_if_task_exists_error_if_not(task_id,
-                                            lambda task: task)
+                                            lambda task: task )
 
     def declare_as_running(self, task_id, runner):
         return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task.run(runner))
 
-
     def declare_as_done(self, task_id):
         return self.do_if_task_exists_error_if_not(task_id, lambda task:task.done())
-
 
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)
