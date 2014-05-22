@@ -1,6 +1,6 @@
 from flask import  jsonify, Response, request, abort
 import json
-from mediameta.model import MediaAndMetaStorage
+from mediameta.model import RDBMSMediaAndMetaStorage
 import sys
 from  database import Base, db_session, init_db
 from ctlm import app
@@ -16,7 +16,7 @@ class State:
         base_url="http://ctrl-meta.loltel.co"
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
-        self.mms = MediaAndMetaStorage(base_url)
+        self.mms = RDBMSMediaAndMetaStorage(base_url)
         # self.tqs = InMemoryTaskQueueStorage()
         self.tqs = RDBQueueStorage()
 
