@@ -65,6 +65,7 @@ class Task(Base):
                        "'%s' but in state %s") % (destination, source, self.status)) }
         else:
             self.status = destination
+            db_session.commit()
             return {}
 
     def done(self):
