@@ -1,6 +1,6 @@
 from flask import  jsonify, Response, request, abort
 import json
-from mediameta.mediametastorage import MediaAndMetaStorage
+from mediameta.model import MediaAndMetaStorage
 import sys
 from  database import Base, db_session, init_db
 from ctlm import app
