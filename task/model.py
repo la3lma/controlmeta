@@ -50,6 +50,8 @@ class Task(Base):
             print "State transition failed %r" % (error_desc)
             return error_desc
         self.runner = runner
+        # XXX This is a design flaw.  The db_commit, should not 
+        #     happen at this level, I think.
         db_session.commit()
         return {}
 
