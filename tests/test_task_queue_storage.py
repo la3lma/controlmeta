@@ -85,7 +85,6 @@ class MkeepTestCase(unittest.TestCase):
 
         # And check that it's no longer ther
         self.assertTrue(self.tqs.check_if_task_exists(task_id))
-
         
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
