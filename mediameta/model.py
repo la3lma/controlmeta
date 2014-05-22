@@ -1,6 +1,17 @@
+from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import schema, types
+from database import Base, db_session
+import json
 
 class MediaMetaEntry:
-    
+    __tablename__ = 'mediametaentry'
+
+    id = schema.Column(Integer, primary_key=True)
+    content_type = Column(String)
+    content = Column(String)
+    metadata = Column(String)
 
     def __init__(self, id, content_type, content, metadata):
       self.id = id
