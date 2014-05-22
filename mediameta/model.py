@@ -21,13 +21,8 @@ class MediaMetaEntry:
 
 class RDBMSMediaAndMetaStorage:
 
-    def clear(self):
-        self.objects = {}
-        self.next_index = 1
-
     def __init__(self, base_url):
         self.base_url = base_url
-        self.clear()
 
     def create_new_media_entry(self, mimetype, data):
         contentId = str(self.next_index)
@@ -38,23 +33,31 @@ class RDBMSMediaAndMetaStorage:
         # XXX The base URI is completely bogus
         metadata = {}
         url = ("%smedia/id/%s"%(self.base_url, contentId))
+
+        # XXX Stuff things into the metadata map
+        #     Needs to be serialized to json before stuffing into
+        #     database
         metadata['ContentURL']  = url
         metadata['ContentId']  = contentId
+
         object = MediaMetaEntry(
             contentId,
             mimetype,
             data,
             metadata)
-        self.objects[contentId] = object
+        db_session.add(object)
+        db_session.commit()
         return metadata
 
-    
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
-        if id in self.objects:
-            object = self.objects[id]
+
+        entry = db_session.query(MediaMetaEntry).get(id)
+        if entry:
             object.content_type=mimetype
             object.content=data
+            # XXX Necessary or not?
+            db_session.save(entry)
         else:
             contentId = str(self.next_index)
             self.next_index = self.next_index + 1
@@ -64,28 +67,33 @@ class RDBMSMediaAndMetaStorage:
                 mimetype,
                 data,
                 metadata)
-            self.objects[contentId] = object            
+            db_session.add(object)
+        db_session.commit()
         return {}
 
     def get_all_meta(self):
-        keys = self.objects.keys()
+        keys = []
+        for key in db_session.query(MediaMetaEntry.id):
+            keys.append(id)
         return keys
 
     def get_media(self, id):
         id=str(id)
-        if  id in self.objects:
-            ob = self.objects.get(id)
-            return ob.content_type, ob.content
+        result = db_session.query(MediaMetaEntry).get(id)
+        if  result:
+            return result.content_type, result.content
         else:
             return None, None
 
     def delete_media(self, id):
         id=str(id)
-
-        if (id in self.objects):
-            del self.objects[id]
-            ## Empty map means no errors
-            
+        ## XXX This is wasteful. We sholdn't have
+        ##     to get the full object, we shuld just
+        ##     nuke it from orbit.
+        result = db_session.query(MediaMetaEntry).get(id)
+        if result:
+            db_session.delete(result)
+            db_session.commit()
             return {}
         else:
             retval = {"Unknown_media_id": id}

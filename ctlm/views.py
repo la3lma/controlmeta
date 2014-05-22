@@ -20,11 +20,8 @@ class State:
         # self.tqs = InMemoryTaskQueueStorage()
         self.tqs = RDBQueueStorage()
 
-    def clear(self):
-        self.mms.clear();
-
 state = State()
-state.clear()
+
 
 
 ##
