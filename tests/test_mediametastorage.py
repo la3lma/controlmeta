@@ -12,24 +12,26 @@ import os
 import ctlm
 import unittest
 import json
+from database import init_db
 
-from mediameta.model import MediaAndMetaStorage
+from mediameta.model import RDBMSMediaAndMetaStorage
 
 class control_meta_test_case(unittest.TestCase):
 
     def setUp(self):
+        init_db()
         pass
     
     def tearDown(self):
         pass
 
     def test_create_new_media_entry_from_upload(self):
-        mms=MediaAndMetaStorage("http://namuu/")
+        mms=RDBMSMediaAndMetaStorage("http://namuu/")
         retval = mms.create_new_media_entry("text/plain", "jiha")
         self.assertTrue(retval)
 
     def test_create_delete_roundtrip(self):
-        mms=MediaAndMetaStorage("http://namuu/")
+        mms=RDBMSMediaAndMetaStorage("http://namuu/")
 
         keys = mms.get_all_meta()
         self.assertTrue(not keys)        
