@@ -22,8 +22,6 @@ class State:
 
 state = State()
 
-
-
 ##
 ## Helper functions to make it simpler to translate return values
 ## into response objects.
@@ -108,8 +106,12 @@ def hello_world():
 @requires_auth
 def get_all_meta():
      "Get a list of all the available media's metadata."
+     print "foo"
      retval=state.mms.get_all_meta()
-     return expect_non_empty_map_return_as_json(retval)
+     print "bar retval=", retval
+     rv =  expect_non_empty_map_return_as_json(retval)
+     print "rv=", rv
+     return rv
 
 @app.route('/media/id/<id>', methods = ['GET'])
 @requires_auth
@@ -143,6 +145,7 @@ def create_new_media_entry_from_upload():
 def post_media_to_id(id):
     "Write the media representation an identified asset"
     errors = state.mms.post_media_to_id(id, request.mimetype, request.data)
+    print "fluff"
     return expect_empty_map_return_error_as_json(errors, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])

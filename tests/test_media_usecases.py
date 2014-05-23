@@ -9,7 +9,7 @@
   :license: All rights reserved (at least for now)
 """
 import os
-import app
+import ctlm
 import unittest
 import json
 
@@ -60,6 +60,8 @@ class MediaUsecases(Control_meta_test_case):
             '/media/id/1',
             headers=self.plain_headers,
             data='this is amazing')
+
+
         self.assertEqual(rv.status_code, 201)
 
         # XXX Here we should look up a lot more stuff just to

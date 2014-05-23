@@ -69,7 +69,9 @@ class RDBMSMediaAndMetaStorage:
     def get_all_meta(self):
         keys = []
         for key in db_session.query(MediaMetaEntry.id):
-            keys.append(id)
+            k = key[0]
+            print "Found key = ", k
+            keys.append(k)
         return keys
 
     def get_media(self, id):
