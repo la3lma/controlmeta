@@ -19,15 +19,15 @@ from control_meta_test_case import Control_meta_test_case
 
 class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
-    
+
     def tearDown(self):
         "Nothing to tear down yet"
         pass
 
     def test_create_media_only_delete_roundtrip(self):
-        mms = RDBMSMediaAndMetaStorage("")                
+        mms = RDBMSMediaAndMetaStorage("")
         keys = mms.get_all_meta()
-        self.assertTrue(not keys)        
+        self.assertTrue(not keys)
         mms.post_media_to_id("1", "text/plain", "foo")
 
         keys = mms.get_all_meta()
@@ -46,8 +46,15 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
         # XXX VERY BOGUS!
         keys = mms.get_all_meta()
-        self.assertTrue(keys)        
+        self.assertTrue(keys)
         mms.post_media_to_id(contentid, "text/plain", "zor")
+
+
+    def test_push_meta_for_specific_id(self):
+        mms = RDBMSMediaAndMetaStorage("")
+        errors = mms.post_media_to_id("1", "text/plain", "this is plain text")
+        ## XXX Check the return value
+        print "errors = ", errors
 
 if __name__ == '__main__':
     unittest.main()

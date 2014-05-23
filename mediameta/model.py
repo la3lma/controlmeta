@@ -54,15 +54,15 @@ class RDBMSMediaAndMetaStorage:
 
         entry = db_session.query(MediaMetaEntry).get(id)
         if entry:
-            object.content_type=mimetype
-            object.content=data
+            entry.content_type=mimetype
+            entry.content=data
         else:
             meta_data = {}
-            object = MediaMetaEntry(
+            entry = MediaMetaEntry(
                 mimetype,
                 data,
                 json.dumps(meta_data))
-            db_session.add(object)
+            db_session.add(entry)
         db_session.commit()
         return {}
 
@@ -70,7 +70,6 @@ class RDBMSMediaAndMetaStorage:
         keys = []
         for key in db_session.query(MediaMetaEntry.id):
             k = key[0]
-            print "Found key = ", k
             keys.append(k)
         return keys
 
