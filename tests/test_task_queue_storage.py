@@ -94,6 +94,7 @@ class MkeepTestCase(unittest.TestCase):
         errorDescription = self.tqs.list_all_done_tasks()
         self.assertFalse(errorDescription)
 
+
     def test_transition_through_lifecycle(self):
         # First create a new task
         params={"apple":"fruitflie"}
@@ -101,6 +102,9 @@ class MkeepTestCase(unittest.TestCase):
 
         self.assertEqual("waiting", task['status'])
         task_id = task['taskId']
+
+        waiting = self.tqs.list_all_waiting_tasks()
+        self.assertTrue(waiting)
 
         result  = self.tqs.declare_as_running(task_id, "gazonk runner")
         self.assertFalse(result)
