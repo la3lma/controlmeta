@@ -3,7 +3,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base, db_session, commit_db
+from database import Base, db_session
 import json
 
 WAITING="waiting"
@@ -50,9 +50,6 @@ class Task(Base):
             print "State transition failed %r" % (error_desc)
             return error_desc
         self.runner = runner
-        # XXX This is a design flaw.  The db_commit, should not 
-        #     happen at this level, I think.
-        commit_db()
         return {}
 
     ##
@@ -67,7 +64,6 @@ class Task(Base):
                        "'%s' but in state %s") % (destination, source, self.status)) }
         else:
             self.status = destination
-            commit_db()
             return {}
 
     def done(self):
@@ -79,7 +75,6 @@ class Task(Base):
         if result:
             return result
         self.runner = runner
-        commit_db()
 
     def has_status(self, taskType):
         return self.taskType == taskType
@@ -178,14 +173,12 @@ class RDBQueueStorage():
         json_params = json.dumps(params)
         task = Task(WAITING, tasktype, json_params)
         db_session.add(task)
-        commit_db()
         mtask =task.as_map()
         return mtask
 
     def nuke(self, task):
         task_id = task.id
         db_session.delete(task)
-        commit_db()
 
     def delete_task(self, task_id):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))

@@ -12,6 +12,7 @@ import os
 import ctlm
 import unittest
 import json
+from database import commit_db
 
 from mediameta.model import RDBMSMediaAndMetaStorage
 
@@ -29,12 +30,14 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         keys = mms.get_all_meta()
         self.assertTrue(not keys)
         mms.post_media_to_id("1", "text/plain", "foo")
+        commit_db()
 
         keys = mms.get_all_meta()
         self.assertFalse(not keys)
 
-        mms.delete_media(1)
         rv = mms.delete_media('1')
+        commit_db()
+
         keys = mms.get_all_meta()
         self.assertTrue(not keys)
 
@@ -43,7 +46,8 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         mms = RDBMSMediaAndMetaStorage("")
         return_metadata=mms.create_new_media_entry('text/plain', 'foo')
         contentid = return_metadata['ContentId']
-
+        commit_db()
+        
         # XXX VERY BOGUS!
         keys = mms.get_all_meta()
         self.assertTrue(keys)

@@ -11,7 +11,7 @@
 import os
 import unittest
 import json
-from database import init_db
+from database import init_db, commit_db
 
 from task.model import RDBQueueStorage
 from sqlalchemy import Table, Column, Integer, String, MetaData
@@ -55,6 +55,7 @@ class MkeepTestCase(unittest.TestCase):
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertFalse(tasklist)
         task = self.tqs.create_task(tasktype, {})
+        commit_db()
         tasklist=self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertTrue(tasklist)
         task = self.tqs.pick_next_waiting_task_of_type(tasktype, runner)
@@ -66,24 +67,35 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(errorDescription)
 
     def test_delete_existing_task(self):
+        tasktype="rubberduckie99"
+
+        # First check that there is no task there
+        tasks = self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertFalse(tasks)
 
         # First create a new task
         params={"apple":"fruitflie"}
-        task = self.tqs.create_task("rubberduckie", params)
+
+        task = self.tqs.create_task(tasktype, params)
+        commit_db()
+        
+        tasks = self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertTrue(tasks)
+
+        task = tasks[0]
+        self.assertTrue(task)
 
         task_id = task['taskId']
-
-        # Then check that it's there
-        # (the check is for falsehood since check_if_task_exists
-        # XXX perversely returns empty (interpreted as "no error" 
-        # if it's there)
-        self.assertFalse(self.tqs.check_if_task_exists(task_id))
 
         # Then nuke it
         errorDescription = self.tqs.delete_task(task_id)
         self.assertFalse(errorDescription)
+        commit_db()
 
-        # And check that it's no longer ther
+        # And check that it's no longer there in a couple of ways
+        tasks = self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertFalse(tasks)
+
         self.assertTrue(self.tqs.check_if_task_exists(task_id))
         
     def test_pick_nonexisting_task(self):
@@ -98,9 +110,19 @@ class MkeepTestCase(unittest.TestCase):
     def test_transition_through_lifecycle(self):
         # First create a new task
         params={"apple":"fruitflie"}
-        task = self.tqs.create_task("rubberduckie9", params)
+        tasktype = "rubberduckie9"
+        task = self.tqs.create_task(tasktype, params)
+        commit_db()
 
         self.assertEqual("waiting", task['status'])
+
+        tasks = self.tqs.list_all_waiting_tasks_of_type(tasktype)
+        self.assertTrue(tasks)
+
+        task = tasks[0]
+        self.assertTrue(task)
+
+
         task_id = task['taskId']
 
         waiting = self.tqs.list_all_waiting_tasks()

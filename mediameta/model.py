@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base, db_session, commit_db
+from database import Base, db_session
 import json
 
 class MediaMetaEntry(Base):
@@ -46,7 +46,6 @@ class RDBMSMediaAndMetaStorage:
 
         object.meta_data = json.dumps(meta_data)
 
-        commit_db()
         return meta_data
 
     def post_media_to_id(self, id, mimetype, data):
@@ -63,7 +62,6 @@ class RDBMSMediaAndMetaStorage:
                 data,
                 json.dumps(meta_data))
             db_session.add(entry)
-        commit_db()
         return {}
 
     def get_all_meta(self):
@@ -89,7 +87,6 @@ class RDBMSMediaAndMetaStorage:
         result = db_session.query(MediaMetaEntry).get(id)
         if result:
             db_session.delete(result)
-            commit_db()
             return {}
         else:
             retval = {"Unknown_media_id": id}
@@ -107,11 +104,9 @@ class RDBMSMediaAndMetaStorage:
         # Empty map means that no data was stored
         return {}
 
-
     def store_new_meta(self, id, metaid):
         # Empty map means that no data was stored
         return {}
-
 
     def delete_metaid(self, id, metaid):
         # Empty map means that no data was deleted

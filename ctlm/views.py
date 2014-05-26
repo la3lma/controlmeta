@@ -2,13 +2,13 @@ from flask import  jsonify, Response, request, abort
 import json
 from mediameta.model import RDBMSMediaAndMetaStorage
 import sys
-from  database import Base, db_session, init_db
+from  database import Base, db_session, init_db, commit_db
 from ctlm import app
 from task.model import RDBQueueStorage
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
-# This is a kludge, for sure.
+# XXX This is a kludge, for sure.
 
 class State:
 
@@ -17,7 +17,6 @@ class State:
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
-        # self.tqs = InMemoryTaskQueueStorage()
         self.tqs = RDBQueueStorage()
 
 state = State()
@@ -31,9 +30,11 @@ def expect_non_empty_map_return_as_json(retval, errorcode=404, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
+        commit_db()
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
 def allow_empty_map_return_as_json(retval, status=200):
+    commit_db()
     if (not retval):
         return Response(status=status)
     else:
@@ -41,6 +42,7 @@ def allow_empty_map_return_as_json(retval, status=200):
 
 def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
     if (not bool(retval)):
+        commit_db()
         return Response(status=status)
     else:
         # XXX The "use a map as a datastructure" antipattern, evaluate and refactor.
@@ -118,17 +120,8 @@ def get_media(id):
      if (not mimetype):
          return Response(status=404)
      else:
+         commit_db()
          return Response(data, mimetype=mimetype, status=200)
-
-def get_requests_json(request):
-    """Will return a pair of values (error, pval), where
-     pval is the request parsed as python, and error is
-     a Response object containing a parse error message
-     that can be returned to the calling method. If no error
-     is detected, the error value is None"""
-    json_value  = request.json
-    return None, json_value
-
 
 @app.route('/media/', methods = ['POST'])
 @requires_auth
@@ -207,13 +200,16 @@ def list_all_waiting_tasks():
 @requires_auth
 def get_in_progress_task_list():
     running_tasks = state.tqs.list_all_running_tasks()
-    return expect_non_empty_map_return_as_json(running_tasks)
+    returnvalue = expect_non_empty_map_return_as_json(running_tasks)
+    return returnvalue
 
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 @requires_auth
 def get_done_task_list(type):
-    return task_list_as_return_value(state.tqs.list_all_done_tasks())
+    return_value = state.tqs.list_all_done_tasks()
+    commit_db()
+    return return_value
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 @requires_auth
