@@ -53,8 +53,8 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
     def test_push_meta_for_specific_id(self):
         mms = RDBMSMediaAndMetaStorage("")
         errors = mms.post_media_to_id("1", "text/plain", "this is plain text")
-        ## XXX Check the return value
-        print "errors = ", errors
+        self.assertFalse(errors)
+
 
 if __name__ == '__main__':
     unittest.main()
