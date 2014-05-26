@@ -1,5 +1,6 @@
 
 o Rewrite the task storage to use the sql-based persistence.
+  o Run a few simple curl/shell scripts to test workitude.
   o Make the acceptance tests work.
 
 o Make config file that lets us run sqllite in tests on workstation
