@@ -22,13 +22,11 @@ def init_db():
 
 
 def commit_db():
-    print "database.py::commit:pre"
     try:
       db_session.commit()
     except Exception as e:
         print "database.py::commit:exception ", e
         raise
-    print "database.py::commit:post"
 
 
 

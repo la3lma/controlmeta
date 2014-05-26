@@ -197,32 +197,18 @@ def delete_meta(id, metaid):
 ###  Accessing the task queue
 ###
 
-# def tasklist_as_return_value(tasklist):
-#     print "tasklist_as_return_value"
-#     print "tasklist =", tasklist
-#     retval = map(lambda x: x.as_map(), tasklist)
-#     print "retval = " , retval
-#     return expect_non_empty_map_return_as_json(retval)
-
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
 def list_all_waiting_tasks():
-    print "foo"
     waiting_tasks = state.tqs.list_all_waiting_tasks()
     return expect_non_empty_map_return_as_json(waiting_tasks)
 
 @app.route('/task/running', methods = ['GET'])
 @requires_auth
 def get_in_progress_task_list():
-    print "banana"
     running_tasks = state.tqs.list_all_running_tasks()
-    print "applepie, tasks=", running_tasks
     return expect_non_empty_map_return_as_json(running_tasks)
 
-
-#     returnvalue = tasklist_as_return_value(tasks)
-#     print "zebrafish ", returnvalue
-#     return returnvalue
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 @requires_auth
@@ -247,18 +233,14 @@ def pick_next_waiting_task(type):
     #         errorcode=400)
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
-    print "pick_next_waiting_task:begin"
     agent_description=request.json
     if not agent_description:
         data = request.stream.read()
         return expect_non_empty_map_return_as_json(
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
-    print "pick_next_waiting_task: got agent_description = ", agent_description
-    print "pick_next_waiting_task: got type = ", type
     task = state.tqs.pick_next_waiting_task_of_type(type, agent_description)
 
-    print "pick_next_waiting_task: task =", task
     return expect_non_empty_map_return_as_json(task)
 
 

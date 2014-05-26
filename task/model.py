@@ -74,17 +74,12 @@ class Task(Base):
         return self.state_transition(RUNNING, DONE)
 
     def run(self, runner):
-        print "Task::run: runner  = ", runner
-
         result = self.state_transition(WAITING, RUNNING)
-        print "Task::run: state transitioned runner  = ", runner
+
         if result:
             return result
         self.runner = runner
-        print "Task::run: pre-commit"
         commit_db()
-        print "Task::run: committed"
-
 
     def has_status(self, taskType):
         return self.taskType == taskType
@@ -108,11 +103,8 @@ class Task(Base):
 class RDBQueueStorage():
 
     def list_all_tasks_of_status(self, status):
-        print "tasks/model.py:list_all_tasks_of_status tstatus=", status
         result = db_session.query(Task).filter(Task.status == status).all()
-        print "tasks/model.py:list_all_tasks_of_status results=", result
         mapped_result = map(lambda x: x.as_map(), result)
-        print "tasks/model.py:list_all_tasks_of_status mapped_result=", mapped_result
         return mapped_result
 
     def list_all_waiting_tasks(self):
@@ -137,14 +129,10 @@ class RDBQueueStorage():
     
     def pick_next_waiting_task_of_type(self, tasktype, runner):
 
-        print "pick_next_waiting_task_of_type: begin"
-
         result = db_session.query(Task)\
                 .filter(Task.status == WAITING,
                         Task.tasktype == tasktype)\
                 .first()
-
-        print "pick_next_waiting_task_of_type: result = ", result
 
         # Handle missing object
         if not result:
@@ -152,7 +140,7 @@ class RDBQueueStorage():
 
         serialized_runner = json.dumps(runner)
         update_result = result.run(serialized_runner)
-        print "pick_next_waiting_task_of_type: result = ", update_result
+
         # XXX Should throw an exception if the
         #     update_result isn't empty.
         return result.as_map()
