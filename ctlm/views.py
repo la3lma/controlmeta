@@ -218,9 +218,8 @@ def get_done_task_list(type):
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 @requires_auth
 def list_waiting_task_of_type(type):
-    returnvalue = state.tqs.list_all_waiting_tasks_of_type(type)
-    return returnvalue
-#    return tasklist_as_return_value(returnvalue)
+    waiting_tasks = state.tqs.list_all_waiting_tasks_of_type(type)
+    return expect_non_empty_map_return_as_json(waiting_tasks)
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 @requires_auth
