@@ -239,13 +239,18 @@ def pick_next_waiting_task(type):
     #         errorcode=400)
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
+    print "pick_next_waiting_task:begin"
     agent_description=request.json
     if not agent_description:
         data = request.stream.read()
         return expect_non_empty_map_return_as_json(
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
+    print "pick_next_waiting_task: got agent_description = ", agent_description
+    print "pick_next_waiting_task: got type = ", type
     task = state.tqs.pick_next_waiting_task_of_type(type, agent_description)
+
+    print "pick_next_waiting_task: task =", task
     return expect_non_empty_map_return_as_json(task)
 
 

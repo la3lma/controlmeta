@@ -74,11 +74,16 @@ class Task(Base):
         return self.state_transition(RUNNING, DONE)
 
     def run(self, runner):
+        print "Task::run: runner  = ", runner
+
         result = self.state_transition(WAITING, RUNNING)
+        print "Task::run: state transitioned runner  = ", runner
         if result:
             return result
         self.runner = runner
+        print "Task::run: pre-commit"
         db_session.commit()
+        print "Task::run: committed"
 
 
     def has_status(self, taskType):
@@ -126,16 +131,21 @@ class RDBQueueStorage():
 
     def pick_next_waiting_task_of_type(self, tasktype, runner):
 
+        print "pick_next_waiting_task_of_type: begin"
+
         result = db_session.query(Task)\
                 .filter(Task.status == WAITING,
                         Task.tasktype == tasktype)\
                 .first()
+
+        print "pick_next_waiting_task_of_type: result = ", result
 
         # Handle missing object
         if not result:
             return None
 
         update_result = result.run(runner)
+        print "pick_next_waiting_task_of_type: result = ", update_result
         # XXX Should throw an exception if the
         #     update_result isn't empty.
         return result.as_map()
