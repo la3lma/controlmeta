@@ -198,13 +198,18 @@ def delete_meta(id, metaid):
 ###
 
 def tasklist_as_return_value(tasklist):
+    print "tasklist_as_return_value"
+    print "tasklist =", tasklist
     retval = map(lambda x: x.as_map(), tasklist)
+    print "retval = " , retval
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
 def list_all_waiting_tasks():
-    return tasklist_as_return_value(state.tqs.list_all_waiting_tasks())
+    print "foo"
+    waiting_tasks = state.tqs.list_all_waiting_tasks()
+    return expect_non_empty_map_return_as_json(waiting_tasks)
 
 @app.route('/task/running', methods = ['GET'])
 @requires_auth
