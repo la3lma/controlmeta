@@ -1,36 +1,16 @@
-o Refactor for fun & profit.
-  o Do session management in a sane manner.
-  o Enforce layer separation/separation of concerns.
-
-
-o Move the media/meta storage into sqlalchemy
-  o Tests and all.
 
 o Make it work, goddamit!
-  o Nuke content of database between tests.
   o implement pattern from http://flask.readthedocs.org/en/0.1/patterns/
-  o make tests/test_task_queue_storage.py  work.
-     - Figure out how to avoid circular dependencies so that the
-       test can actually be run.   Need to read some docs on how
-       to do sqlalchemy-persistence in order to make that happen.	
-  o Should "app" be called "app", and what's wrong with 
-    the "application.py" thing. Why isn't that replicated anywhere?
-  o Fix tests for running application, use proper configuration
-    that can be moved into production when done in the testing phase.
-
 
 o Rewrite the task storage to use the sql-based persistence.
-  o Make the the unit tests for the whole thing use the simple memory based sql thing.
-     o  Follow through on unit tests
-  o First do the task storage, then do the media storage.
-  o Then deploy to the service@amazon.
-  o Then create a mysql db and start using that instead of the in-memory thing.
-    - Think hard about how to test that.  
-    - This should be something that is tested/changed only very rarely
+  o Make the acceptance tests work.
 
-o Write backends for postgresql and the serverless SQLite database
-  - Run regression tests against the SQLite database on the
-    developer workstation, perhaps also the unit tests?
+o Make config file that lets us run sqllite in tests on workstation
+  and postgresql in production.  We should also be able to run
+  postgresql tests on the workstation.
+
+o Write management scripts for elastic beanstalk that will let us
+  create a new database instance when required.
 
 o Necessary refactoring:
   o Esthetics
@@ -49,20 +29,12 @@ o Necessary refactoring:
    o Then the whole test infrastructure needs to be brought
       in line with this refactoring, then we can proceed.
 
-o Oauth?
-o Make a small worker that does something to an image.
-o Send/receive task parameters
-o Start making a proper library for submitting/picking up tasks.
+o Possibly useful features
+  o Oauth? Using Google IDs or perhaps Yahoo IDs.
+  o Ensure that we can upload big data objects (images, movies)
 
-o Refactor to make things nice.
-  - Introduce some directory structure doc/src
-  - Separate test code into separate directory
-o Make some tests that work against the EC2 installed 
-  instance, to check that it actually does something useful.
-o Ensure that we an add some proper parameters to the task descriptions
-o Ensure that we can upload big data objects
-o Add some kind of security (preferably oauth) that can use
-  e.g. google IDs.
-o Write some code that actually uses the ting to do something useful,
-   such as identifying images with faces.
+o Actually doing something useful
+  o Make a small worker that does something to an image.
+  o Write some code that actually uses the ting to do something useful,
+    such as identifying images with faces.
 
