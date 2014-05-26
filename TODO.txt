@@ -1,7 +1,4 @@
 
-o Make it work, goddamit!
-  o implement pattern from http://flask.readthedocs.org/en/0.1/patterns/
-
 o Rewrite the task storage to use the sql-based persistence.
   o Make the acceptance tests work.
 
