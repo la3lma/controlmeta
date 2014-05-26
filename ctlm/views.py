@@ -197,12 +197,12 @@ def delete_meta(id, metaid):
 ###  Accessing the task queue
 ###
 
-def tasklist_as_return_value(tasklist):
-    print "tasklist_as_return_value"
-    print "tasklist =", tasklist
-    retval = map(lambda x: x.as_map(), tasklist)
-    print "retval = " , retval
-    return expect_non_empty_map_return_as_json(retval)
+# def tasklist_as_return_value(tasklist):
+#     print "tasklist_as_return_value"
+#     print "tasklist =", tasklist
+#     retval = map(lambda x: x.as_map(), tasklist)
+#     print "retval = " , retval
+#     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
@@ -214,8 +214,15 @@ def list_all_waiting_tasks():
 @app.route('/task/running', methods = ['GET'])
 @requires_auth
 def get_in_progress_task_list():
-    tasks = state.tqs.list_all_running_tasks()
-    return tasklist_as_return_value(tasks)
+    print "banana"
+    running_tasks = state.tqs.list_all_running_tasks()
+    print "applepie, tasks=", running_tasks
+    return expect_non_empty_map_return_as_json(running_tasks)
+
+
+#     returnvalue = tasklist_as_return_value(tasks)
+#     print "zebrafish ", returnvalue
+#     return returnvalue
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 @requires_auth
@@ -226,7 +233,8 @@ def get_done_task_list(type):
 @requires_auth
 def list_waiting_task_of_type(type):
     returnvalue = state.tqs.list_all_waiting_tasks_of_type(type)
-    return tasklist_as_return_value(returnvalue)
+    return returnvalue
+#    return tasklist_as_return_value(returnvalue)
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 @requires_auth

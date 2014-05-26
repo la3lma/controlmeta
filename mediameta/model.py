@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base, db_session
+from database import Base, db_session, commit_db
 import json
 
 class MediaMetaEntry(Base):
@@ -46,7 +46,7 @@ class RDBMSMediaAndMetaStorage:
 
         object.meta_data = json.dumps(meta_data)
 
-        db_session.commit()
+        commit_db()
         return meta_data
 
     def post_media_to_id(self, id, mimetype, data):
@@ -63,7 +63,7 @@ class RDBMSMediaAndMetaStorage:
                 data,
                 json.dumps(meta_data))
             db_session.add(entry)
-        db_session.commit()
+        commit_db()
         return {}
 
     def get_all_meta(self):
@@ -89,7 +89,7 @@ class RDBMSMediaAndMetaStorage:
         result = db_session.query(MediaMetaEntry).get(id)
         if result:
             db_session.delete(result)
-            db_session.commit()
+            commit_db()
             return {}
         else:
             retval = {"Unknown_media_id": id}

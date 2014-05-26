@@ -19,3 +19,16 @@ def init_db():
 #                           Column('params', String),
 #                           Column('runner', String))
     Base.metadata.create_all(bind=engine)
+
+
+def commit_db():
+    print "database.py::commit:pre"
+    try:
+      db_session.commit()
+    except Exception as e:
+        print "database.py::commit:exception ", e
+        raise
+    print "database.py::commit:post"
+
+
+

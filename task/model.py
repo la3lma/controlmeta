@@ -3,7 +3,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base, db_session
+from database import Base, db_session, commit_db
 import json
 
 WAITING="waiting"
@@ -52,7 +52,7 @@ class Task(Base):
         self.runner = runner
         # XXX This is a design flaw.  The db_commit, should not 
         #     happen at this level, I think.
-        db_session.commit()
+        commit_db()
         return {}
 
     ##
@@ -67,7 +67,7 @@ class Task(Base):
                        "'%s' but in state %s") % (destination, source, self.status)) }
         else:
             self.status = destination
-            db_session.commit()
+            commit_db()
             return {}
 
     def done(self):
@@ -82,7 +82,7 @@ class Task(Base):
             return result
         self.runner = runner
         print "Task::run: pre-commit"
-        db_session.commit()
+        commit_db()
         print "Task::run: committed"
 
 
@@ -108,8 +108,11 @@ class Task(Base):
 class RDBQueueStorage():
 
     def list_all_tasks_of_status(self, status):
+        print "tasks/model.py:list_all_tasks_of_status tstatus=", status
         result = db_session.query(Task).filter(Task.status == status).all()
+        print "tasks/model.py:list_all_tasks_of_status results=", result
         mapped_result = map(lambda x: x.as_map(), result)
+        print "tasks/model.py:list_all_tasks_of_status mapped_result=", mapped_result
         return mapped_result
 
     def list_all_waiting_tasks(self):
@@ -129,6 +132,9 @@ class RDBQueueStorage():
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result        
 
+    # The "runner" is the agent description, and it's a map
+    # that needs to be serialized before being stored
+    
     def pick_next_waiting_task_of_type(self, tasktype, runner):
 
         print "pick_next_waiting_task_of_type: begin"
@@ -144,7 +150,8 @@ class RDBQueueStorage():
         if not result:
             return None
 
-        update_result = result.run(runner)
+        serialized_runner = json.dumps(runner)
+        update_result = result.run(serialized_runner)
         print "pick_next_waiting_task_of_type: result = ", update_result
         # XXX Should throw an exception if the
         #     update_result isn't empty.
@@ -183,14 +190,14 @@ class RDBQueueStorage():
         json_params = json.dumps(params)
         task = Task(WAITING, tasktype, json_params)
         db_session.add(task)
-        db_session.commit()
+        commit_db()
         mtask =task.as_map()
         return mtask
 
     def nuke(self, task):
         task_id = task.id
         db_session.delete(task)
-        db_session.commit()
+        commit_db()
 
     def delete_task(self, task_id):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))
