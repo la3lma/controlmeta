@@ -108,7 +108,6 @@ class RDBQueueStorage():
     def list_all_running_tasks(self):
         return self.list_all_tasks_of_status(RUNNING)
 
-
     def list_all_done_tasks(self):
         return self.list_all_tasks_of_status(DONE)
 

@@ -122,7 +122,6 @@ class MkeepTestCase(unittest.TestCase):
         task = tasks[0]
         self.assertTrue(task)
 
-
         task_id = task['taskId']
 
         waiting = self.tqs.list_all_waiting_tasks()

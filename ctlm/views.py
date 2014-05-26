@@ -220,12 +220,6 @@ def list_waiting_task_of_type(type):
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 @requires_auth
 def pick_next_waiting_task(type):
-    # XXX This code crashes, why?  
-    # if not request.is_json():
-    #     print "This isn't json"
-    #     return expect_non_empty_map_return_as_json(
-    #         {"Error description:" : "No agent description given when picking task" },
-    #         errorcode=400)
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
     agent_description=request.json
@@ -235,7 +229,6 @@ def pick_next_waiting_task(type):
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
     task = state.tqs.pick_next_waiting_task_of_type(type, agent_description)
-
     return expect_non_empty_map_return_as_json(task)
 
 
