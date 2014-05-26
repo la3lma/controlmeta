@@ -55,15 +55,18 @@ for test in $TESTS ; do
        break
    fi
 
-   echo "Running test $test, stdout/err to files in $TMPDIR"
+   echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"
    EXIT_CODE=$?
    if  [ "$EXIT_CODE" != "0" ] ; then
+       echo ""
        echo "ERROR: The test $test failed.  Aborting acceptance testing."
        echo "  See stderr from the test in $STDERR"
        echo "  See stdout from the test in $STDOUT"
        SUCCESS_OR_FAILURE="failed"
        break
+   else
+       echo "  Success."
    fi
 done
 
