@@ -1,7 +1,7 @@
 o Refactor for fun & profit.
-  o Nuke obsolete code
+  o Do session management in a sane manner.
   o Enforce layer separation/separation of concerns.
-  o Move state transitions into Task objects.
+
 
 o Move the media/meta storage into sqlalchemy
   o Tests and all.
