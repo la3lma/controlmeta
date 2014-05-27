@@ -2,7 +2,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 ## XXX Where will I get the config from?
-# app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
+
 # XXX Don't delete. Start using instead!!
 # def create_app(self):
 #    app.config.from_object('config.TestConfiguration')
@@ -11,6 +11,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 application = Flask(__name__)
 app=application
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
 
 import ctlm.views 
 

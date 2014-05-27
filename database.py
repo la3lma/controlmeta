@@ -15,19 +15,12 @@ def init_db():
     Base.metadata.create_all(bind=engine)
 
 
-def rollback_db():
-    try:
-        db_session.rollback()
-    except Exception as e:
-        print "database.py::rollback_db():exception ", e
-        raise
-
 
 def commit_db():
     try:
         db_session.commit()
     except Exception as e:
-        print "database.py::rollback_db():exception ", e
+        print "database.py::commit_db():exception ", e
         raise
 
 
