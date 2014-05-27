@@ -19,6 +19,3 @@ def commit_db():
     except Exception as e:
         print "database.py::commit_db():exception ", e
         raise
-
-
-
