@@ -8,8 +8,12 @@ application = Flask(__name__)
 app=application
 
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
-# db  = SQLAlchemy(app)
+
 import ctlm.views 
 
-# db.init_app(app)
-#  init_db()
+
+# XXX Don't delete. Start using instead!!
+# def create_app(self):
+#    app.config.from_object('config.TestConfiguration')
+#    return app
+

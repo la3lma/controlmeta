@@ -9,11 +9,6 @@ from database import init_db
 
 class Control_meta_test_case(unittest.TestCase):
 
-    # XXX Don't delete. Start using instead!!
-    # def create_app(self):
-    #    app.config.from_object('config.TestConfiguration')
-    #    return app
-
 
     def setUp(self):
         "Talking to a temporary file database"
