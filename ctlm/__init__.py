@@ -1,19 +1,17 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-# from database import  init_db
-# This weirdness seems to be necessary for elastic beanstalk to 
-# be able to recognize the application.
 
-application = Flask(__name__)
-app=application
-
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
-
-import ctlm.views 
-
-
+## XXX Where will I get the config from?
+# app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///:memory:'
 # XXX Don't delete. Start using instead!!
 # def create_app(self):
 #    app.config.from_object('config.TestConfiguration')
 #    return app
+
+
+application = Flask(__name__)
+app=application
+
+import ctlm.views 
+
 
