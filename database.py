@@ -10,14 +10,8 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+
 def init_db():
-#     metadata = MetaData()
-#     players_table = Table('tasks', metadata,
-#                           Column('id', Integer, primary_key=True),
-#                           Column('status', String),
-#                           Column('tasktype', String),
-#                           Column('params', String),
-#                           Column('runner', String))
     Base.metadata.create_all(bind=engine)
 
 

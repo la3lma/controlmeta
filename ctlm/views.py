@@ -20,6 +20,7 @@ class State:
         self.tqs = RDBQueueStorage()
 
 state = State()
+init_db()
 
 ##
 ## Helper functions to make it simpler to translate return values
