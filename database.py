@@ -3,12 +3,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, MetaData
 import config
-import traceback
-import sys
 
-
-print "Loading database.py, callstack = "
-traceback.print_stack(file=sys.stdout)
 
 
 engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=True)
