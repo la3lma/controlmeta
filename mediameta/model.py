@@ -10,7 +10,7 @@ class MediaMetaEntry(Base):
 
     id = schema.Column(Integer, primary_key=True)
     content_type = Column(String)
-    content = Column(String)
+    content = LargeBinary(String)
     meta_data = Column(String)
 
     def __init__(self,content_type, content, meta_data):
