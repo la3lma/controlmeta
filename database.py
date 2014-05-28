@@ -3,10 +3,15 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, MetaData
 import config
-import os
+import traceback
+import sys
 
 
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
+print "Loading database.py, callstack = "
+traceback.print_stack(file=sys.stdout)
+
+
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
