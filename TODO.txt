@@ -1,3 +1,7 @@
+o Investigate if the persistence f-up I'm observing now is
+  due to loading the databaese.py module multiple times.
+  It seems to be loading multiple times but it should
+  only be loaded once.
 
 o Rewrite the task storage to use the sql-based persistence.
   o Run a few simple curl/shell scripts to test workitude.
