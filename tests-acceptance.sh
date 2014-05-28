@@ -56,7 +56,7 @@ for test in $TESTS ; do
    fi
 
    # Nuke old testdb if present.
-   rm -f testdb.db
+   (cd "$BASEDIR" && $PYTHON create_database.py)
 
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"
