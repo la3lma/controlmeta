@@ -1,10 +1,14 @@
 from flask import  jsonify, Response, request, abort
 import json
-from mediameta.model import RDBMSMediaAndMetaStorage
 import sys
-from  database import Base, db_session, init_db, commit_db
+
 from ctlm import app
+from database import Base, db_session, init_db, commit_db
+from mediameta.model import RDBMSMediaAndMetaStorage
 from task.model import RDBQueueStorage
+
+
+
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
@@ -22,7 +26,9 @@ class State:
         # This _should_ declare the database tables
         # XXX This only makes sense during test, it would
         #     completely mess things up in prod.
-        init_db()
+        #   Actually, it only makes sense during unit tests, and perhaps
+        #   not even then.
+        #   init_db()
 
 state = State()
 
