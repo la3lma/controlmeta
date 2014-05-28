@@ -17,7 +17,9 @@ except KeyError:
     print "Did not find environment variable"
     db_uri = config.SQLALCHEMY_DATABASE_URI
 
-engine = create_engine(db_uri, echo=True)
+# Change to true to print all SQL statements going into and coming out of the database.
+echo=False
+engine = create_engine(db_uri, echo=echo)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
