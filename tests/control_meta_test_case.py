@@ -13,6 +13,8 @@ class Control_meta_test_case(unittest.TestCase):
     def setUp(self):
         "Talking to a temporary file database"
 
+        init_db()
+
         # Get the test client
         self.app = ctlm.app.test_client()
 
