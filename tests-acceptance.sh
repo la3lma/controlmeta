@@ -44,6 +44,11 @@ TESTS="test-upload-media.py test-upload-task.py"
 
 SUCCESS_OR_FAILURE="succeeded"
 
+# Instruct the application where to find its datase instance.
+# We'll use an sqlite instance based on a local file.
+
+export SQLALCHEMY_DATABASE_URI="sqlite:///testdb.db"
+
 for test in $TESTS ; do 
    TESTFILE="tests/$test"
    STDOUT="${TMPDIR}/${test}.out"
