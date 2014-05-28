@@ -55,6 +55,9 @@ for test in $TESTS ; do
        break
    fi
 
+   # Nuke old testdb if present.
+   rm -f testdb.db
+
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"
    EXIT_CODE=$?

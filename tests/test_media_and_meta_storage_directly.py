@@ -20,7 +20,6 @@ from control_meta_test_case import Control_meta_test_case
 
 class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
-
     def tearDown(self):
         "Nothing to tear down yet"
         pass

@@ -18,9 +18,10 @@ class State:
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
         self.tqs = RDBQueueStorage()
+        init_db()
 
 state = State()
-init_db()
+
 
 ##
 ## Helper functions to make it simpler to translate return values
