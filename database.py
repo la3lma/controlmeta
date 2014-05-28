@@ -3,10 +3,21 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, MetaData
 import config
+import os
 
 
+# A kludgy way of gettingi config either from
+# an environment variable (as typically done during testing)
+# or from a config file (typically done during operation)
 
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=True)
+try:
+    db_uri = os.environ["SQLALCHEMY_DATABASE_URI"]
+    print "Found environment variable"
+except KeyError:
+    print "Did not find environment variable"
+    db_uri = config.SQLALCHEMY_DATABASE_URI
+
+engine = create_engine(db_uri, echo=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
