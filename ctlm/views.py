@@ -18,6 +18,10 @@ class State:
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
         self.tqs = RDBQueueStorage()
+
+        # This _should_ declare the database tables
+        # XXX This only makes sense during test, it would
+        #     completely mess things up in prod.
         init_db()
 
 state = State()
