@@ -1,15 +1,10 @@
-o Investigate if the persistence f-up I'm observing now is
-  due to loading the databaese.py module multiple times.
-  It seems to be loading multiple times but it should
-  only be loaded once.
 
-o Rewrite the task storage to use the sql-based persistence.
-  o Run a few simple curl/shell scripts to test workitude.
-  o Make the acceptance tests work.
+o Extend functionality to a level where it's actually useful to 
+  the task at hand.
 
-o Make config file that lets us run sqllite in tests on workstation
-  and postgresql in production.  We should also be able to run
-  postgresql tests on the workstation.
+o Run some tests using postgresql both on workstation and in beanstalk
+
+o Create a postgresql instance to be used in production.
 
 o Write management scripts for elastic beanstalk that will let us
   create a new database instance when required.
