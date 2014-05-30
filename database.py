@@ -13,9 +13,9 @@ import os
 
 def rds_connect_string(dbcfg):
     db_uri  = dbcfg['ENGINE'] + "://"
-    db_uri += dbcfg['RDS_USERNAME'] + ":" +  dbcfg['RDS_PASSWORD']
-    db_uri += '@' + dbcfg['RDS_HOSTNAME'] + ':' + dbcfg['RDS_PORT']
-    db_uri += '/' + dbcfg['RDS_DB_NAME']
+    db_uri += dbcfg['USER'] + ":" +  dbcfg['PASSWORD']
+    db_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
+    db_uri += '/' + dbcfg['NAME']
     return db_uri
 
 if 'RDS_HOSTNAME' in os.environ:
