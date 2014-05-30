@@ -5,9 +5,10 @@ from sqlalchemy import Table, Column, Integer, String, MetaData
 import config
 import os
 
-# A very kludgy way of getting access to a database.
-# (refactor when shown to actually work)
-# First se see if there is an Amazon RDS instance available.
+# XXX A very kludgy way of getting access to a database.
+# This file should refactored for readability and maintainability when
+# it has actually been proven to work.
+
 # We're using the receipe suggested in 
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Python.rds.html
 
