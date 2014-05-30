@@ -35,8 +35,13 @@ def get_database_params_from_EBS_envir_params(environ):
     else:
         return {}
 
+
+
+# Then we do our thing to pick up connect params from 
+# various places
 DATABASES=get_database_params_from_EBS_envir_params(os.environ)
 
+db_uri=""
 if DATABASES:
     selected_db='default'
     dbcfg=DATABASES[selected_db]
@@ -48,6 +53,10 @@ else:
     except KeyError:
         print "Did not find environment variable"
         db_uri = config.SQLALCHEMY_DATABASE_URI
+
+# At this point we should have a non-empty db_uri, or else we're screwed.
+if (db_uri == ""):
+    raise RuntimeError("Could not determine database connect string.")
 
 # Change to true to print all SQL statements going into and coming out of the database.
 echo=False
