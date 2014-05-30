@@ -18,21 +18,29 @@ def rds_connect_string(dbcfg):
     db_uri += '/' + dbcfg['NAME']
     return db_uri
 
-if 'RDS_HOSTNAME' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'postgresql',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
-        }
-    }
+
+def get_database_params_from_EBS_envir_params(environ):
+    if 'RDS_HOSTNAME' in environ:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'postgresql',
+                'NAME': environ['RDS_DB_NAME'],
+                'USER': environ['RDS_USERNAME'],
+                'PASSWORD': environ['RDS_PASSWORD'],
+                'HOST': environ['RDS_HOSTNAME'],
+                'PORT': environ['RDS_PORT'],
+                }
+            }
+        return DATABASES
+    else:
+        return {}
+
+DATABASES=get_database_params_from_EBS_envir_params(os.environ)
+
+if DATABASES:
     selected_db='default'
     dbcfg=DATABASES[selected_db]
     db_uri = rds_connect_string(dbcfg)
-
 else:
     try:
         db_uri = os.environ["SQLALCHEMY_DATABASE_URI"]
