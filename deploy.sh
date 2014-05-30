@@ -16,19 +16,26 @@ if [ !  -d "$DEPLOYDIR" ] ; then
   exit 1
 fi
 
+
+
+
 # Nuke cruft
 "${HOMEDIR}/clean.sh"
 
-SUBDIRS="mediameta tasks"
+SUBDIRS="mediameta tasks ctlm"
 # First clean up the deploydir
 (cd $DEPLOYDIR && rm -f *.py $SUBDIRS)
 
-# Then copy all python scripts that are not for testing to the deploydir
-cp $(ls $HOMEDIR/*.py | grep -v test) "$DEPLOYDIR"
+TOPLEVEL_PYTHONFILES_TO_DEPLOY="application.py config.py database.py create_database.py"
+
+# Then copy relevant python scripts to the deploydir
+cp $TOPLEVEL_PYTHONFILES_TO_DEPLOY "$DEPLOYDIR"
 cp -r $SUBDIRS "$DEPLOYDIR"
 
-(cd $DEPLOYDIR && git add $SUBDIRS)
-(cd $DEPLOYDIR && git commit -a -m "New version")
+LAST_GIT_COMMIT=$(cd "$HOMEDIR" && git log | head -n 1 | awk '/commit/ {print $2}')
+
+(cd $DEPLOYDIR && git add $TOPLEVEL_FILES_TO_DEPLOY $SUBDIRS)
+(cd $DEPLOYDIR && git commit -a -m "New version, based in git commit $LAST_GIT_COMMIT")
 
 # Finally push the new files to the application server
 (cd $DEPLOYDIR && git aws.push && eb status)
