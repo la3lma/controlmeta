@@ -19,7 +19,16 @@ fi
 # Nuke cruft
 "${HOMEDIR}/clean.sh"
 
-SUBDIRS="mediameta tasks ctlm .ebextensions"
+SUBDIRS="mediameta task ctlm .ebextensions"
+
+# First sanity check. Bail out if some of the subdirs don't exist
+for dir in $SUBDIRS ; do
+    if [ ! -d "$dir" ] ; then
+	echo "Could not find deployment subdir $dir, bailing out"
+	exit 1
+    fi
+done
+
 # First clean up the deploydir
 (cd $DEPLOYDIR && rm -f *.py $SUBDIRS)
 
