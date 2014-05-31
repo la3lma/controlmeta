@@ -16,13 +16,10 @@ if [ !  -d "$DEPLOYDIR" ] ; then
   exit 1
 fi
 
-
-
-
 # Nuke cruft
 "${HOMEDIR}/clean.sh"
 
-SUBDIRS="mediameta tasks ctlm"
+SUBDIRS="mediameta tasks ctlm .ebextensions"
 # First clean up the deploydir
 (cd $DEPLOYDIR && rm -f *.py $SUBDIRS)
 
