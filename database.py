@@ -55,6 +55,8 @@ else:
         print "Did not find environment variable"
         db_uri = config.SQLALCHEMY_DATABASE_URI
 
+print "db_uri = ", db_uri
+
 # At this point we should have a non-empty db_uri, or else we're screwed.
 if (db_uri == ""):
     raise RuntimeError("Could not determine database connect string.")
