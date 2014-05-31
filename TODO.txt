@@ -1,3 +1,7 @@
+o Make the prod. stuff work a bit better.
+    o Fix things so that authentication works on loltel
+    o Fix thing so that the urls that are delivered makes sense in prod.
+    o Run acceptance tests automatically against prod.
 
 o Extend functionality to a level where it's actually useful to 
   the task at hand.
