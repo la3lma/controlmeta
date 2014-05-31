@@ -26,10 +26,10 @@ SUBDIRS="mediameta tasks ctlm"
 # First clean up the deploydir
 (cd $DEPLOYDIR && rm -f *.py $SUBDIRS)
 
-TOPLEVEL_PYTHONFILES_TO_DEPLOY="application.py config.py database.py create_database.py"
+TOPLEVEL_FILES_TO_DEPLOY="application.py config.py database.py create_database.py requirements.txt"
 
 # Then copy relevant python scripts to the deploydir
-cp $TOPLEVEL_PYTHONFILES_TO_DEPLOY "$DEPLOYDIR"
+cp $TOPLEVEL_FILES_TO_DEPLOY "$DEPLOYDIR"
 cp -r $SUBDIRS "$DEPLOYDIR"
 
 LAST_GIT_COMMIT=$(cd "$HOMEDIR" && git log | head -n 1 | awk '/commit/ {print $2}')
