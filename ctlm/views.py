@@ -95,10 +95,18 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
+
+        if not auth:
+            logging.debug("No auth seen.")
+            return authenticate()
+
+        elif  not check_auth(auth.username, auth.password):
+            # XXX This is a very dangerous thing to print.
             logging.debug("auth error un='%s', pw='%s'"%(auth.username, auth.password))
             return authenticate()
-        return f(*args, **kwargs)
+
+        else:
+            return f(*args, **kwargs)
     return decorated
 
 
