@@ -7,8 +7,8 @@ from database import Base, db_session, init_db, commit_db
 from mediameta.model import RDBMSMediaAndMetaStorage
 from task.model import RDBQueueStorage
 
-
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
@@ -17,7 +17,7 @@ from task.model import RDBQueueStorage
 class State:
 
     def __init__(self):
-        base_url="http://ctrl-meta.loltel.co"
+        base_url="http://ctrlmeta.loltel.co"
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
@@ -96,6 +96,7 @@ def requires_auth(f):
     def decorated(*args, **kwargs):
         auth = request.authorization
         if not auth or not check_auth(auth.username, auth.password):
+            logging.debug("auth error un='%s', pw='%s'"%(auth.username, auth.password))
             return authenticate()
         return f(*args, **kwargs)
     return decorated
