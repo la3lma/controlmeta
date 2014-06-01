@@ -46,6 +46,8 @@ db_uri=""
 if DATABASES:
     selected_db='default'
     dbcfg=DATABASES[selected_db]
+    # XXX Monkeypatch due to brain damage in EBS config.
+    dbcfg['PASSWORD'] = 'foobarzz'
     db_uri = rds_connect_string(dbcfg)
 else:
     try:
