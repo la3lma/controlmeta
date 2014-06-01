@@ -48,6 +48,8 @@ if DATABASES:
     dbcfg=DATABASES[selected_db]
     # XXX Monkeypatch due to brain damage in EBS config.
     dbcfg['PASSWORD'] = 'foobarzz'
+    dbcfg['NAME'] = 'ctlmeta'
+
     db_uri = rds_connect_string(dbcfg)
 else:
     try:
