@@ -106,6 +106,7 @@ def requires_auth(f):
             return authenticate()
 
         else:
+            logging.debug("auth success  un='%s', pw='%s'"%(auth.username, auth.password))
             return f(*args, **kwargs)
     return decorated
 
