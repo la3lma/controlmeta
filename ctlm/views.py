@@ -27,7 +27,7 @@ class State:
         # XXX This only makes sense during test, it would
         #     completely mess things up in prod.
         #   Actually, it only makes sense during unit tests, and perhaps
-        #   not even then.
+        #   not even  then.
         #   init_db()
 
 state = State()
