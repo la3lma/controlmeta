@@ -96,6 +96,8 @@ def requires_auth(f):
     def decorated(*args, **kwargs):
         auth = request.authorization
         if not auth or not check_auth(auth.username, auth.password):
+            # XXX Be noisy & dangerous to debug in aws
+            print "Failure: un=%s, pw=%s"%(auth.username, auth.password)
             return authenticate()
         return f(*args, **kwargs)
     return decorated
