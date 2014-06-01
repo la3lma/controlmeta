@@ -97,16 +97,12 @@ def requires_auth(f):
         auth = request.authorization
 
         if not auth:
-            logging.debug("No auth seen.")
             return authenticate()
 
         elif  not check_auth(auth.username, auth.password):
-            # XXX This is a very dangerous thing to print.
-            logging.debug("auth error un='%s', pw='%s'"%(auth.username, auth.password))
             return authenticate()
 
         else:
-            logging.debug("auth success  un='%s', pw='%s'"%(auth.username, auth.password))
             return f(*args, **kwargs)
     return decorated
 
