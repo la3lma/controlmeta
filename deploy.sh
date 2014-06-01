@@ -41,7 +41,7 @@ cp -r $SUBDIRS "$DEPLOYDIR"
 LAST_GIT_COMMIT=$(cd "$HOMEDIR" && git log | head -n 1 | awk '/commit/ {print $2}')
 
 (cd $DEPLOYDIR && git add $TOPLEVEL_FILES_TO_DEPLOY $SUBDIRS)
-(cd $DEPLOYDIR && git commit -a -m "New version, based in git commit $LAST_GIT_COMMIT")
+(cd $DEPLOYDIR && git commit -a -m "New version, based on git commit $LAST_GIT_COMMIT")
 
 # Finally push the new files to the application server
 (cd $DEPLOYDIR && git aws.push && eb status)
