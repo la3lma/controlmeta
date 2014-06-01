@@ -30,7 +30,7 @@ for dir in $SUBDIRS ; do
 done
 
 # First clean up the deploydir
-(cd $DEPLOYDIR && rm -f *.py $SUBDIRS)
+(cd $DEPLOYDIR && rm -rf *.py $SUBDIRS)
 
 TOPLEVEL_FILES_TO_DEPLOY="application.py config.py database.py create_database.py requirements.txt"
 
