@@ -160,7 +160,6 @@ def delete_media_and_meta(id):
     errors = state.mms.delete_media(id)
     return expect_empty_map_return_error_as_json(errors)
 
-
 ###
 ###  Meta CRUD
 ###
