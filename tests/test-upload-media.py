@@ -61,5 +61,15 @@ if not image_id :
 #     TODO:   Modify this thing into a failing unit test.
 image_result=requests.get(image_url, auth=auth)
 
-print "image result = ", image_result
+
+print "image result.headers = ", image_result.headers
+print "image result.content = ", image_result.content
+
+with open(filepath, 'r') as content_file:
+    content = content_file.read()
+
+if content != image_result.content :
+    logging.debug("content != image_result.content, so we fail")
+    sys.exit(errno.ENOENT)
+
 
