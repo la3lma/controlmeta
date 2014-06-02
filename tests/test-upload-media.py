@@ -45,8 +45,8 @@ print "document url = ", doc_url
 # and use that to fetch the content
 
 # Then upload an image from a file
-filename='tests/images/lena1.jpeg'
-file_upload_result = cmc.upload_media_from_file('image/jpeg', filename)
+filepath='tests/images/lena1.jpeg'
+file_upload_result = cmc.upload_media_from_file('image/jpeg', filepath)
 image_id = file_upload_result.document_id
 image_url = file_upload_result.document_url
 

@@ -10,7 +10,7 @@ class MediaMetaEntry(Base):
 
     id = schema.Column(Integer, primary_key=True)
     content_type = Column(String)
-    content = LargeBinary(String)
+    content = Column(LargeBinary)
     meta_data = Column(String)
 
     def __init__(self,content_type, content, meta_data):
@@ -77,13 +77,7 @@ class RDBMSMediaAndMetaStorage:
         id=str(id)
         result = db_session.query(MediaMetaEntry).get(id)
         if  result:
-            #  XXX What should be returned here isn't a BLOB
-            #      (which is what we get from sqlalchemy)
-            #      but a proper byte array that we can send out via
-            #      http.  Is this the right way of getting the bytes
-            #      out of the blob?
-            buf=bytes(result.content)
-            return (result.content_type, buf)
+            return (result.content_type, result.content)
         else:
             return (None, None)
 

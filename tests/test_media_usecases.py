@@ -27,42 +27,56 @@ class MediaUsecases(Control_meta_test_case):
         rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 404)
 
+        payload="""{
+             "Name": "Test",
+             "Latitude": 12.59817,
+             "Longitude": 52.12873
+             }"""
+
         # Then we upload some mediadata
         rv = self.app.post(
             '/media/',
             headers=self.json_headers,
-            data="""{
-             "Name": "Test",
-             "Latitude": 12.59817,
-             "Longitude": 52.12873
-             }""")
+            data=payload)
         self.assertEqual(rv.status_code, 201)
-        rvj=json.loads(rv.data)
+        rvj = json.loads(rv.data)
 
         # Pick up the content ID and the content URL
-        contentid=rvj.get('ContentId')
+        contentid = rvj.get('ContentId')
 
         # Had we been really concerned with being
         # conformant we would have used this url instead
         # of the paths we use below.
-        contenturl=rvj.get('ContentURL')
+        contenturl = rvj.get('ContentURL')
 
         # Now there should be something here
         rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
 
-        # XXX Here we should look at the json and add some more
-        #     tests
+        # Since there is something there, we can get it and 
+        # compare it to what we sent in the first place.
+        mediaurl = '/media/id/' + str(contentid)
+        rv2 = self.app.get(mediaurl, headers=self.auth_headers)
+        self.assertEqual(rv2.status_code, 200)
+        self.assertEqual(rv2.data, payload)
 
+        
+        
         # Then upload some real content to go with that
         # content
-        rv = self.app.post(
+        payload2 = 'this is amazing'
+        rv3 = self.app.post(
             '/media/id/1',
             headers=self.plain_headers,
-            data='this is amazing')
+            data=payload2)
 
+        self.assertEqual(rv3.status_code, 201)
 
-        self.assertEqual(rv.status_code, 201)
+        rv4 = self.app.get(mediaurl, headers=self.auth_headers)
+        self.assertEqual(rv4.status_code, 200)
+        self.assertEqual(rv4.data, payload2)
+
+        
 
         # XXX Here we should look up a lot more stuff just to
         # see what we can do roundtripping for.
