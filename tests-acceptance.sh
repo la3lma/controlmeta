@@ -85,19 +85,21 @@ for test in $TESTS ; do
        SUCCESS_OR_FAILURE="failed"
    fi
 
-   SERVER_ERROR_MESSAGES=$(egrep -v 'DEBUG|INFO' "$SERVER_STDERR")
-   if [ -n "$SERVER_ERROR_MESSAGES"  ] ; then 
-       echo ""
-       echo "ERROR: The test $test failed.  Aborting acceptance testing."
-       echo "  See stderr from the test in $STDERR"
-       echo "  See stdout from the test in $STDOUT"
-       echo "  Server output contains error, see $SERVER_STDERR"
-       echo "  Summary of errors found in server log:"
-       echo
-       echo "  ======================================"
-       echo "$SERVER_ERROR_MESSAGES" | sed 's/^/   /g'
-       echo "  ======================================"
-       SUCCESS_OR_FAILURE="failed"
+   if [ -f "$SERVER_STDERR" ] ;  then 
+       SERVER_ERROR_MESSAGES=$(egrep -v 'DEBUG|INFO' "$SERVER_STDERR")
+       if [ -n "$SERVER_ERROR_MESSAGES"  ] ; then 
+	   echo ""
+	   echo "ERROR: The test $test failed.  Aborting acceptance testing."
+	   echo "  See stderr from the test in $STDERR"
+	   echo "  See stdout from the test in $STDOUT"
+	   echo "  Server output contains error, see $SERVER_STDERR"
+	   echo "  Summary of errors found in server log:"
+	   echo
+	   echo "  ======================================"
+	   echo "$SERVER_ERROR_MESSAGES" | sed 's/^/   /g'
+	   echo "  ======================================"
+	   SUCCESS_OR_FAILURE="failed"
+       fi
    fi
 
    if [ "$SUCCESS_OR_FAILURE" = "failed" ] ; then
