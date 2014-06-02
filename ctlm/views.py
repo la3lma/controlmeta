@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 class State:
 
     def __init__(self):
-        base_url="http://ctrlmeta.loltel.co"
+        base_url="http://ctlmeta.loltel.co"
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
