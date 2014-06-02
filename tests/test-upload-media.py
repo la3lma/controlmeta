@@ -44,18 +44,18 @@ print "document url = ", doc_url
 # Construct an URL based on the base URL (config problems)
 # and use that to fetch the content
 
-# Then upload an image from a file XXX Does not work!
+# Then upload an image from a file
 filename='tests/images/lena1.jpeg'
 file_upload_result = cmc.upload_media_from_file('image/jpeg', filename)
 image_id = file_upload_result.document_id
 image_url = file_upload_result.document_url
+
 print "image ID = ", image_id
 print "image document url = ", image_url
 
 if not image_id :
     logging.debug("Could not get image ID")
     sys.exit(errno.ENOENT)
-
 
 # XXX This fails !!
 #     TODO:   Modify this thing into a failing unit test.
