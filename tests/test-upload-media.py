@@ -6,6 +6,9 @@ import logging
 import requests
 from requests.auth import HTTPDigestAuth
 from requests.auth import HTTPBasicAuth
+import logging
+logging.basicConfig(level=logging.DEBUG)
+import errno, sys
 
 
 # Pick a base url from the command line
@@ -48,6 +51,11 @@ image_id = file_upload_result.document_id
 image_url = file_upload_result.document_url
 print "image ID = ", image_id
 print "image document url = ", image_url
+
+if not image_id :
+    logging.debug("Could not get image ID")
+    sys.exit(errno.ENOENT)
+
 
 image_result=requests.get(image_url, auth=auth)
 
