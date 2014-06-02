@@ -80,10 +80,10 @@ class RDBMSMediaAndMetaStorage:
             #  XXX What should be returned here isn't a BLOB
             #      (which is what we get from sqlalchemy)
             #      but a proper byte array that we can send out via
-            #      http.
-            print "ersult.content_type = ", result.content_type
-            print "ersult.content = ", result.content
-            return (result.content_type, result.content)
+            #      http.  Is this the right way of getting the bytes
+            #      out of the blob?
+            buf=bytes(result.content)
+            return (result.content_type, buf)
         else:
             return (None, None)
 
