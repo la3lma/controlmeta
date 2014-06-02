@@ -21,7 +21,11 @@ class MediaMetaEntry(Base):
 class RDBMSMediaAndMetaStorage:
 
     def __init__(self, base_url):
-        self.base_url = base_url
+
+        if  base_url.endswith("/"):
+            self.base_url = base_url
+        else:
+            self.base_url = base_url + "/"
 
     def create_new_media_entry(self, mimetype, data):
 
