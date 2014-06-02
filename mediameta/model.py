@@ -77,9 +77,15 @@ class RDBMSMediaAndMetaStorage:
         id=str(id)
         result = db_session.query(MediaMetaEntry).get(id)
         if  result:
-            return result.content_type, result.content
+            #  XXX What should be returned here isn't a BLOB
+            #      (which is what we get from sqlalchemy)
+            #      but a proper byte array that we can send out via
+            #      http.
+            print "ersult.content_type = ", result.content_type
+            print "ersult.content = ", result.content
+            return (result.content_type, result.content)
         else:
-            return None, None
+            return (None, None)
 
     def delete_media(self, id):
         id=str(id)
