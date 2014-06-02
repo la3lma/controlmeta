@@ -137,7 +137,6 @@ def get_media(id):
      if (not mimetype):
          return Response(status=404)
      else:
-         commit_db()
          return Response(data, mimetype=mimetype, status=200)
 
 @app.route('/media/', methods = ['POST'])
