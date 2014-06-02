@@ -34,17 +34,17 @@ if [ ! -z "$START_SERVER" ] ; then
 
     export SQLALCHEMY_DATABASE_URI="sqlite:///testdb.db"
 
-    STDOUT="${TMPDIR}/server.out"
-    STDERR="${TMPDIR}/server.err"
+    SERVER_STDOUT="${TMPDIR}/server.out"
+    SERVER_STDERR="${TMPDIR}/server.err"
     
-    $PYTHON application.py  "$BASE_URL" > "$STDOUT" 2> "$STDERR" &
+    $PYTHON application.py  "$BASE_URL" > "$SERVER_STDOUT" 2> "$SERVER_STDERR" &
     SERVER_PID=$!
     
     # Busy wait until server is up
     PHRASE_TO_WAIT_FOR="Restarting with reloader"
     
     echo -n "Waiting for server .."
-    while  grep -s "PHRASE_TO_WAIT_FOR" "$STDERR" ; do
+    while  grep -s "PHRASE_TO_WAIT_FOR" "$SERVER_STDERR" ; do
 	echo -n "."
 	sleep 0.5
     done
@@ -75,6 +75,7 @@ for test in $TESTS ; do
 
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"
+
    EXIT_CODE=$?
    if  [ "$EXIT_CODE" != "0" ] ; then
        echo ""
@@ -82,21 +83,37 @@ for test in $TESTS ; do
        echo "  See stderr from the test in $STDERR"
        echo "  See stdout from the test in $STDOUT"
        SUCCESS_OR_FAILURE="failed"
+   fi
+
+   SERVER_ERROR_MESSAGES=$(egrep -v 'DEBUG|INFO' "$SERVER_STDERR")
+   if [ -n "$SERVER_ERROR_MESSAGES"  ] ; then 
+       echo ""
+       echo "ERROR: The test $test failed.  Aborting acceptance testing."
+       echo "  See stderr from the test in $STDERR"
+       echo "  See stdout from the test in $STDOUT"
+       echo "  Server output contains error, see $SERVER_STDERR"
+       echo "  Summary of errors found in server log:"
+       echo
+       echo "  ======================================"
+       echo "$SERVER_ERROR_MESSAGES" | sed 's/^/   /g'
+       echo "  ======================================"
+       SUCCESS_OR_FAILURE="failed"
+   fi
+
+   if [ "$SUCCESS_OR_FAILURE" = "failed" ] ; then
        break
    else
        echo "  Success."
    fi
+   
 done
 
 
 echo "Acceptance tests run against the server at $BASE_URL ${SUCCESS_OR_FAILURE}."
 
 if [ ! -z "$START_SERVER" ] ; then 
-   ## XXX
-   ## This should be optional, if we're running against a server running somewhere
-   ## else, but for now it's ok.
 
-   # Finally shut down the server
+   # Finally shut down the server (if one is running)
     sleep 2
     kill  $SERVER_PID
     for  pid in $(pgrep -P "$SERVER_PID" ) ; do 
