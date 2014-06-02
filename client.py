@@ -24,8 +24,11 @@ class  ControlMetaClient:
     def __init__(self,
                  base_url=None,
                  auth=None):
-      self.base_url = base_url
-      self.auth = auth
+        if base_url and not base_url.endswith("/"):
+            base_url = base_url + "/"
+
+        self.base_url = base_url
+        self.auth = auth
 
     def post_dictionary_as_json(self, url, dictionary):
         raw_response = requests.post(
@@ -68,6 +71,7 @@ class  ControlMetaClient:
     # Upload unidentified metadata, get a metadata ID back
     def upload_metadata(self, type, data):
         ## This is fXed up
+        print "Uploading metadata from url = " , url
         raw_response = requests.post(
             url,
             auth=self.auth,
