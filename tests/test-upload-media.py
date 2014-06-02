@@ -57,6 +57,8 @@ if not image_id :
     sys.exit(errno.ENOENT)
 
 
+# XXX This fails !!
+#     TODO:   Modify this thing into a failing unit test.
 image_result=requests.get(image_url, auth=auth)
 
 print "image result = ", image_result
