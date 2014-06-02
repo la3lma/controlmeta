@@ -51,7 +51,10 @@ class SimpleCrudCases(Control_meta_test_case):
             '/media/',
             headers=self.plain_headers,
             data='this is amazing')
+        # Check that the return value was OK, created.
         self.assertEqual(rv.status_code, 201)
+        # XXX Should  check that there is also an object ID returned.
+        #     Can't really find that in the output, and that is a bug.
 
     def test_delete_item(self):
         rv = self.app.delete('/media/id/1',  headers=self.headers)

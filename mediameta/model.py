@@ -33,6 +33,8 @@ class RDBMSMediaAndMetaStorage:
 
         db_session.add(object)
 
+        # XXX IF the commit fails, then we shouldn't return
+        commit_db()
 
         # Set a couple of pieces of metadata that can't be
         # set by the setter
