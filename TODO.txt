@@ -1,10 +1,12 @@
-o Make the acceptance tests conservative.
-  o At present they mutate the database.
-
 o Extend functionality to a level where it's actually useful to 
   the task at hand.
 
-o Run some tests using postgresql both on workstation and in beanstalk
+o Make the metadata management sane.
+  o Redesign API.
+  o Write tests to ensure workitude.
+
+o Make the acceptance tests conservative.
+  o At present they mutate the database.
 
 o Create a postgresql instance to be used in production.
 
