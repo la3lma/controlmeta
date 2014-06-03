@@ -99,11 +99,21 @@ class RDBMSMediaAndMetaStorage:
             retval = {"Unknown_media_id": id}
             return retval
 
-    def get_meta_list(self, id, metatype):
-        # Empty map means no meta_data found
-        return {}
+    def get_metadata_from_id(self, id):
+        "Get the entire meta datastructure, as a map, for a particular ID"
+        # XXX How to handle nulls?
+        result = db_session.query(MediaMetaEntry, MediaMetaEntry.meta_data)\
+            .filter(MediaMetaEntry.id == id).first()
+        if not result:
+            return {}
+        else:
+            metadata = result.meta_data
+            print "get_meta.result = ", result
+            metadata_json = json.loads(metadata)
+            return metadata_json
 
-    def get_metadata_from_id(self, id, metaid):
+
+    def get_metadata_from_id_and_metaid(self, id, metaid):
         # Empty map means no metadata found
         return {}
 

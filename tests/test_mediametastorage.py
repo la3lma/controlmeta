@@ -37,12 +37,12 @@ class control_meta_test_case(unittest.TestCase):
         self.assertTrue(not keys)        
         mms.post_media_to_id(1, "text/plain", "foo")
 
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertFalse(not keys)
 
         mms.delete_media(1)
         rv = mms.delete_media('/media/id/1')
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertTrue(not keys)
 
 if __name__ == '__main__':

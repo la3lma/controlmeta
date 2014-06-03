@@ -167,15 +167,24 @@ def delete_media_and_meta(id):
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 @requires_auth
-def get_meta_list(id, metatype):
+def get_meta_list_from_id_and_metaid(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    retval = state.mms.get_meta_list(id, metatype)
+    retval = state.mms.get_metadata_from_id_and_metaid(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 @requires_auth
-def get_meta(id, metaid):
-    retval = state.mms.get_metadata_from_id(id, metaid)
+def get_metadata_from_id_and_metaid(id, metaid):
+    retval = state.mms.get_metadata_from_id_and_metaid(id, metaid)
+    return expect_non_empty_map_return_as_json(retval)
+
+
+@app.route('/media/id/<id>', methods = ['GET'])
+@requires_auth
+def get_metadata_from_id(id):
+    "Get all the metadata for a particular media id."
+
+    retval = state.mms.get_metadata_from_id(id)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
