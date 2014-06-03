@@ -1,7 +1,5 @@
-o Make the prod. stuff work a bit better.
-    o Fix things so that authentication works on loltel
-    o Fix thing so that the urls that are delivered makes sense in prod.
-    o Run acceptance tests automatically against prod.
+o Make the acceptance tests conservative.
+  o At present they mutate the database.
 
 o Extend functionality to a level where it's actually useful to 
   the task at hand.
@@ -31,8 +29,11 @@ o Necessary refactoring:
       in line with this refactoring, then we can proceed.
 
 o Possibly useful features
+  o Identity
+  o Ownership
+  o Access control lists
   o Oauth? Using Google IDs or perhaps Yahoo IDs.
-  o Ensure that we can upload big data objects (images, movies)
+  o Ensure that we can upload really big data objects (images, movies)
 
 o Actually doing something useful
   o Make a small worker that does something to an image.
