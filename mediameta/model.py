@@ -70,7 +70,8 @@ class RDBMSMediaAndMetaStorage:
             db_session.add(entry)
         return {}
 
-    def get_all_meta(self):
+    # XXX This is absolutely not scalable!!
+    def get_all_media(self):
         keys = []
         for key in db_session.query(MediaMetaEntry.id):
             k = key[0]

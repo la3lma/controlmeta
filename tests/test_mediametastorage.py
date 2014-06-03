@@ -33,7 +33,7 @@ class control_meta_test_case(unittest.TestCase):
     def test_create_delete_roundtrip(self):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
 
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertTrue(not keys)        
         mms.post_media_to_id(1, "text/plain", "foo")
 

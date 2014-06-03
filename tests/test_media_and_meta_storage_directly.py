@@ -26,18 +26,18 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
 
     def test_create_media_only_delete_roundtrip(self):
         mms = RDBMSMediaAndMetaStorage("")
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertTrue(not keys)
         mms.post_media_to_id("1", "text/plain", "foo")
         commit_db()
 
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertFalse(not keys)
 
         rv = mms.delete_media('1')
         commit_db()
 
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertTrue(not keys)
 
 
@@ -48,7 +48,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         commit_db()
         
         # XXX VERY BOGUS!
-        keys = mms.get_all_meta()
+        keys = mms.get_all_media()
         self.assertTrue(keys)
         mms.post_media_to_id(contentid, "text/plain", "zor")
 

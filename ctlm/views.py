@@ -123,9 +123,9 @@ def hello_world():
 
 @app.route('/media', methods = ['GET'])
 @requires_auth
-def get_all_meta():
+def get_all_media():
      "Get a list of all the available media's metadata."
-     retval=state.mms.get_all_meta()
+     retval=state.mms.get_all_media()
      rv =  expect_non_empty_map_return_as_json(retval)
      return rv
 
