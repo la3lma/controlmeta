@@ -128,11 +128,10 @@ class RDBMSMediaAndMetaStorage:
         # XXX This thing does not work. db_session does not
         #     have an "update" method, so we'll have to 
         #     try something else.
-        db_session.update(MediaMetaEntry).\
-            where(MediaMetaEntry.id==id).\
-            values(metadata = json.dump(meta))
-
-        # Return id of this meta entry
+        meta_as_json =  json.dumps(meta)
+        db_session.query(MediaMetaEntry).\
+                   filter(id==id).\
+                   update({'meta_data': meta_as_json})
         return meta_id
 
 
