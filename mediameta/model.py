@@ -54,6 +54,9 @@ class RDBMSMediaAndMetaStorage:
 
         return meta_data
 
+    def get_initial_meta_data(self):
+        return {"nextId": 1, "content":{}, "types":{}}
+
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
 
@@ -62,7 +65,7 @@ class RDBMSMediaAndMetaStorage:
             entry.content_type=mimetype
             entry.content=data
         else:
-            meta_data = {}
+            meta_data = self.get_initial_meta_data()
             entry = MediaMetaEntry(
                 mimetype,
                 data,
@@ -99,6 +102,37 @@ class RDBMSMediaAndMetaStorage:
             retval = {"Unknown_media_id": id}
             return retval
 
+
+    def store_new_meta_from_type(self, id, metatype, payload):
+        "Store new meta from a type for an existing media entry."
+        id=str(id)
+
+        meta = self.get_meta_from_id(id)
+
+        # Update next_id
+        next_id = meta['nextId']
+        meta_id = next_id
+        next_id += 1
+        meta['nextId'] = next_id
+
+        # Remember the metatype this particular payload
+        if not metatype in meta['types']:
+            meta['types'][metatype] = [meta_id]
+        else:
+            meta['types'][metatype].append(meta_id) 
+
+        # Remember the actual payload
+        meta['content'][meta_id] = payload
+
+        # Persist the payload
+        db_session.update(MediaMetaEntry)
+            where(MediaMetaEntry.id==id).\
+            values(metadata = json.dump(meta))
+
+        # Return id of this meta entry
+        return meta_id
+
+
     def get_metadata_from_id(self, id):
         "Get the entire meta datastructure, as a map, for a particular ID"
         # XXX How to handle nulls?
@@ -117,13 +151,6 @@ class RDBMSMediaAndMetaStorage:
         # Empty map means no metadata found
         return {}
 
-    def store_new_meta(self, id, metatype):
-        # Empty map means that no data was stored
-        return {}
-
-    def store_new_meta(self, id, metaid):
-        # Empty map means that no data was stored
-        return {}
 
     def delete_metaid(self, id, metaid):
         # Empty map means that no data was deleted

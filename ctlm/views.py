@@ -191,7 +191,7 @@ def get_metadata_from_id(id):
 @requires_auth
 def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
-    retval = state.mms.store_new_meta(id, metatype)
+    retval = state.mms.store_new_meta_from_type(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
