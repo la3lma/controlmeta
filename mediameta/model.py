@@ -107,7 +107,7 @@ class RDBMSMediaAndMetaStorage:
         "Store new meta from a type for an existing media entry."
         id=str(id)
 
-        meta = self.get_meta_from_id(id)
+        meta = self.get_metadata_from_id(id)
 
         # Update next_id
         next_id = meta['nextId']
@@ -125,7 +125,10 @@ class RDBMSMediaAndMetaStorage:
         meta['content'][meta_id] = payload
 
         # Persist the payload
-        db_session.update(MediaMetaEntry)
+        # XXX This thing does not work. db_session does not
+        #     have an "update" method, so we'll have to 
+        #     try something else.
+        db_session.update(MediaMetaEntry).\
             where(MediaMetaEntry.id==id).\
             values(metadata = json.dump(meta))
 
