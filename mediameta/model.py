@@ -61,6 +61,7 @@ class RDBMSMediaAndMetaStorage:
 
         meta_data = self.get_initial_meta_data(object.id)
         object.meta_data = json.dumps(meta_data)
+        commit_db()
 
         return meta_data
 
@@ -146,7 +147,7 @@ class RDBMSMediaAndMetaStorage:
 
         self.store_meta_data(id, metadata)
 
-        return {"meta_id" : meta_id}
+        return {"meta_id" : meta_id, "ContentId": id}
 
     def store_meta_data(self, id, metadata):
         meta_as_json =  json.dumps(metadata)

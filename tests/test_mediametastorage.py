@@ -36,7 +36,11 @@ class control_meta_test_case(unittest.TestCase):
         keys = mms.get_all_media()
         print "keys = ", keys
         self.assertTrue(not keys)        
-        mms.post_media_to_id(1, "text/plain", "foo")
+        
+        foo = store_new_meta_from_type("foo", {})
+        id = foo['ContentId']
+
+        mms.post_media_to_id(id, "text/plain", "foo")
 
         keys = mms.get_all_media()
         self.assertFalse(not keys)
@@ -49,12 +53,12 @@ class control_meta_test_case(unittest.TestCase):
 
     def test_metadata_roundtrip(self):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
-        mms.post_media_to_id(1, "text/plain", "foo")
-        doc_id = 1
+        retval = mms.create_new_media_entry("text/plain", "jiha")
+        doc_id = retval['ContentId']
         
         meta_type = 'bananas'
         payload   = {"amount": "a big bunch"}
-        meta_id = mms.store_new_meta_from_type(doc_id, meta_type, payload)
+        meta_id = mms.store_new_meta_from_id_and_type(doc_id, meta_type, payload)
 
         returned_payload = mms.get_metadata_from_id_and_metaid(doc_id, meta_id)
         self.assertEquals(payload, returned_payload)

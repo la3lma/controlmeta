@@ -37,7 +37,6 @@ def get_database_params_from_EBS_envir_params(environ):
         return {}
 
 
-
 # Then we do our thing to pick up connect params from 
 # various places
 DATABASES=get_database_params_from_EBS_envir_params(os.environ)
