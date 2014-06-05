@@ -5,6 +5,16 @@ from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
 import json
 
+class ModelException(Exception):
+
+    def __init__(self,  message, http_returnvalue = None):
+        self.http_returnvalue = http_returnvalue
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message + " -> http code " + str(self.http_returnvalue))
+
+
 class MediaMetaEntry(Base):
     __tablename__ = 'mediametaentry'
 
@@ -27,6 +37,15 @@ class RDBMSMediaAndMetaStorage:
         else:
             self.base_url = base_url + "/"
 
+    def get_initial_meta_data(self, id):
+        url = ("%smedia/id/%s"%(self.base_url, id))
+
+        return {"ContentURL": url,
+                "ContentId": id,
+                "nextId": 1,
+                "content":{},
+                "types":{}}
+
     def create_new_media_entry(self, mimetype, data):
 
         object = MediaMetaEntry(
@@ -37,41 +56,27 @@ class RDBMSMediaAndMetaStorage:
 
         db_session.add(object)
 
-        # XXX IF the commit fails, then we shouldn't return
+        # XXX If the commit fails, then we shouldn't return
         commit_db()
 
-        # Set a couple of pieces of metadata that can't be
-        # set by the setter
-        # XXX The base URI is completely bogus
-        meta_data = {}
-
-        id = object.id
-        url = ("%smedia/id/%s"%(self.base_url, id))
-        meta_data['ContentURL']  = url
-        meta_data['ContentId']  = id
-
+        meta_data = self.get_initial_meta_data(object.id)
         object.meta_data = json.dumps(meta_data)
 
         return meta_data
 
-    def get_initial_meta_data(self):
-        return {"nextId": 1, "content":{}, "types":{}}
 
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
 
         entry = db_session.query(MediaMetaEntry).get(id)
         if entry:
-            entry.content_type=mimetype
-            entry.content=data
+            entry.content_type = mimetype
+            entry.content = data
         else:
-            meta_data = self.get_initial_meta_data()
-            entry = MediaMetaEntry(
-                mimetype,
-                data,
-                json.dumps(meta_data))
-            db_session.add(entry)
+            error_msg ="Attempt to post media to nonexistant id " + id
+            raise ModelException(error_msg, http_returnvalue = 404)
         return {}
+
 
     # XXX This is absolutely not scalable!!
     def get_all_media(self):
@@ -81,6 +86,7 @@ class RDBMSMediaAndMetaStorage:
             keys.append(k)
         return keys
 
+
     def get_media(self, id):
         id=str(id)
         result = db_session.query(MediaMetaEntry).get(id)
@@ -88,6 +94,7 @@ class RDBMSMediaAndMetaStorage:
             return (result.content_type, result.content)
         else:
             return (None, None)
+
 
     def delete_media(self, id):
         id=str(id)
@@ -102,49 +109,68 @@ class RDBMSMediaAndMetaStorage:
             retval = {"Unknown_media_id": id}
             return retval
 
+        
+    def store_new_meta_from_type(self, metatype, payload):
+        meta_data = self.create_new_media_entry(None, None)
+        id = meta_data['ContentId']
+        print "newly created id is = ", id
+        return self.store_new_meta(id, meta_data, metatype, payload)
 
-    def store_new_meta_from_type(self, id, metatype, payload):
+
+    def store_new_meta_from_id_and_type(self, id, metatype, payload):
         "Store new meta from a type for an existing media entry."
         id=str(id)
 
-        meta = self.get_metadata_from_id(id)
+        metadata = self.get_metadata_from_id(id)
+        if not metadata:
+            raise ModelException("Unknown media ID " + id, 404)
+
+        return self.store_new_meta(id, metadata, metatype, payload)
+
+    def store_new_meta(self, id, metadata, metatype, payload):
 
         # Update next_id
-        next_id = meta['nextId']
+        next_id = metadata['nextId']
         meta_id = next_id
         next_id += 1
-        meta['nextId'] = next_id
+        metadata['nextId'] = next_id
 
         # Remember the metatype this particular payload
-        if not metatype in meta['types']:
-            meta['types'][metatype] = [meta_id]
+        if not metatype in metadata['types']:
+            metadata['types'][metatype] = [meta_id]
         else:
-            meta['types'][metatype].append(meta_id) 
+            metadata['types'][metatype].append(meta_id) 
 
         # Remember the actual payload
-        meta['content'][meta_id] = payload
+        metadata['content'][meta_id] = payload
 
-        # Persist the payload
-        # XXX This thing does not work. db_session does not
-        #     have an "update" method, so we'll have to 
-        #     try something else.
-        meta_as_json =  json.dumps(meta)
+        self.store_meta_data(id, metadata)
+
+        return {"meta_id" : meta_id}
+
+    def store_meta_data(self, id, metadata):
+        meta_as_json =  json.dumps(metadata)
+
         db_session.query(MediaMetaEntry).\
                    filter(id==id).\
                    update({'meta_data': meta_as_json})
-        return meta_id
 
 
     def get_metadata_from_id(self, id):
-        "Get the entire meta datastructure, as a map, for a particular ID"
-        # XXX How to handle nulls?
+        """Get the entire meta datastructure, as a map, for a particular ID. An empty
+        map means that the datum does not exist and hence has no associated metadata 
+        structure."""
+        print "Finding metadata for id = ", id
         result = db_session.query(MediaMetaEntry, MediaMetaEntry.meta_data)\
             .filter(MediaMetaEntry.id == id).first()
+        print "result -->", result
         if not result:
             return {}
         else:
             metadata = result.meta_data
-            print "get_meta.result = ", result
+            if not metadata:
+                raise ModelException("No metadata found for id " + id,  404)
+            
             metadata_json = json.loads(metadata)
             return metadata_json
 

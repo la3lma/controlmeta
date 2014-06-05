@@ -28,13 +28,16 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         mms = RDBMSMediaAndMetaStorage("")
         keys = mms.get_all_media()
         self.assertTrue(not keys)
-        mms.post_media_to_id("1", "text/plain", "foo")
+        
+        metadata = mms.create_new_media_entry("text/plain", "foo")
+        id = metadata['ContentId']
+
         commit_db()
 
         keys = mms.get_all_media()
         self.assertFalse(not keys)
 
-        rv = mms.delete_media('1')
+        rv = mms.delete_media(id)
         commit_db()
 
         keys = mms.get_all_media()

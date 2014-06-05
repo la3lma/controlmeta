@@ -34,6 +34,7 @@ class control_meta_test_case(unittest.TestCase):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
 
         keys = mms.get_all_media()
+        print "keys = ", keys
         self.assertTrue(not keys)        
         mms.post_media_to_id(1, "text/plain", "foo")
 
@@ -50,7 +51,7 @@ class control_meta_test_case(unittest.TestCase):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
         mms.post_media_to_id(1, "text/plain", "foo")
         doc_id = 1
-
+        
         meta_type = 'bananas'
         payload   = {"amount": "a big bunch"}
         meta_id = mms.store_new_meta_from_type(doc_id, meta_type, payload)

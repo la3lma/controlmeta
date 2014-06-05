@@ -4,7 +4,7 @@ import sys
 
 from ctlm import app
 from database import Base, db_session, init_db, commit_db
-from mediameta.model import RDBMSMediaAndMetaStorage
+from mediameta.model import RDBMSMediaAndMetaStorage, ModelException
 from task.model import RDBQueueStorage
 
 import logging
@@ -187,12 +187,46 @@ def get_metadata_from_id(id):
     retval = state.mms.get_metadata_from_id(id)
     return expect_non_empty_map_return_as_json(retval)
 
+## XXX This should only be allowed on existing media instances.
+##     If the media instance does not already exist, then 
+##     /media/metatype/<metatype>  [POST] is what should be used
+##     instead.  The way this is designed is just a receipe for disaster.
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 @requires_auth
 def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
-    retval = state.mms.store_new_meta_from_type(id, metatype)
-    return expect_non_empty_map_return_as_json(retval)
+    payload = request.json
+    try:
+        retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload)
+        return expect_non_empty_map_return_as_json(retval)
+    except ModelException as e:
+        # XXX When this has been proven to work, create a wrapper and put all
+        #     functions inside that wrapper.
+        print "Caught Model Exception: " , e
+        return Response(
+            json.dumps(e.message),
+            status=e.http_returnvalue,
+            mimetype="application/json")    
+
+
+@app.route('/media/metatype/<metatype>', methods = ['POST'])
+@requires_auth
+def post_new_meta_with_metatype_only(metatype):
+    "Post a new bit of metadata for a media item"
+    payload = request.json
+    try:
+        retval = state.mms.store_new_meta_from_type(metatype, payload)
+        return expect_non_empty_map_return_as_json(retval,status=201)
+    except ModelException as e:
+        # XXX When this has been proven to work, create a wrapper and put all
+        #     functions inside that wrapper.
+        print "Caught Model Exception: " , e
+        return Response(
+            json.dumps(e.message),
+            status=e.http_returnvalue,
+            mimetype="application/json")    
+
+
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 @requires_auth
@@ -200,6 +234,7 @@ def post_meta(id, metaid):
     "Post a particular metadata instance"
     retval = state.mms.store_meta(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
+
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 @requires_auth

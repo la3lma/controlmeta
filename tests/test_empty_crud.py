@@ -71,18 +71,39 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.get('/media/id/1/metaid/1', headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
-    def test_post_new_meta(self):
-        rv = self.app.post(
-            '/media/id/1/metatype/faces',
+
+    def test_post_new_meta_to_exististing_document(self):
+        # First we create a media entry
+        me = self.app.post(
+            '/media/',
             headers=self.plain_headers,
             data='this is amazing')
-        self.assertEqual(rv.status_code, 404) 
+        self.assertEqual(me.status_code, 201)
+
+        returnvalue = json.loads(me.data)
+        index = returnvalue['ContentId']
+        url = '/media/id/'+str(index) + '/metatype/faces'
+
+        rv = self.app.post(
+            url,
+            headers=self.plain_headers,
+            data={"we love": "poker"})
+        self.assertEqual(rv.status_code, 200)
+
+
+    def test_post_new_meta(self):
+        rv = self.app.post(
+            '/media/metatype/faces',
+            headers=self.plain_headers,
+            data={"we love": "poker"})
+        self.assertEqual(rv.status_code, 201)
+
 
     def test_post_new_meta_update(self):
         rv = self.app.post(
             '/media/id/1/meta/metaid/1',
             headers=self.json_headers,
-            data='this is amazing')
+            data={"who would guessed": "this?"})
         self.assertEqual(rv.status_code, 404)
 
     def test_delete_meta(self):
