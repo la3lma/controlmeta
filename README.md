@@ -60,16 +60,16 @@ IT IS CRUCIAL THAT THIS MODEL IS IN PLACE FROM DAY ONE!
 This is the one thing that we can't compromise on when it comes
 to scaling.
 
-It _must_ be possible to write small scripts in whatever to do 
-things.  These scripts should be first class citizens in the 
-ingestion facility.
+It _must_ be possible to write small scripts in whatever to do things.
+These scripts should be first class citizens in the ingestion
+facility.
 
 Distribution of tasks should use some queueing mechanism.  Either one
 from amazon or perhaps 0MQ.
 
 The tasks are then picked up, processed and the results stored back to
-the metadata storage.  It can then be used for search & collation by known
-features ("tags").
+the metadata storage.  It can then be used for search & collation by
+known features ("tags").
 
 
 REST interface
@@ -85,37 +85,60 @@ to S3, or a filesystem or whatever).
 Accessing media and metadata
 ----------------------------
 
-GET /media/id/{id}/media
+GET /media
+ -> Gets all the media stored.  This could be a very long list
+    indeed
+ => XXX Return value is missing from the documentation.
+
+POST /media
+  -> Store a media item, assign a document ID, and return the
+     ID
+  => XXX Return value is missing from the documentation.
+
+
+GET /media/id/{id}
  -> Gets the content stored in the blob
+ Success => The document, as a document with a MIME type
+ Nonexistant document => HTTP 404
 
-PUT /media/id/{id}/media
+POST /media/id/{id}
  -> Upload new media, get an ID back in the reply.
+ Success => XXX MISSING
+ Nonexistant document => HTTP 404
 
-GET /media/id/{id}/meta/{metatype}
+DELETE /media/id/{id}
+  -> Delete a particular entry
+  Success => XXX Missing
+  Nonexistant document => HTTP 404
+
+GET /media/id/{id}/metatype/{metatype}
  -> The JSON describing the metadata
 
-PUT /media/id/{id}/meta/{metatype}
+POST /media/id/{id}/metatype/{metatype}
  -> The JSON describing the metadata
+
+DELETE /media/id/{id}
+ Success => XXX
+ Nonexistant ID => 404
+
 
 
 Accessing the task queue
 ------------------------
 
 Some ideas:
-------
+----------
 
 Creating and updating individual tasks
 .....
 
 GET /task/id/{id}
 PUT /task/id/{id}
-
 GET /task/{type/{type}}/waiting/next
 GET /task/{type/{type}}/waiting/pick
 GET /task/{type/{type}}/in-progress/list
 GET /task/{type/{type}}/done/list
 GET /task/{type/{type}}/list
-
 
 
 
