@@ -3,6 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
+from sqlalchemy.orm import backref, relationship
+
 import json
 
 class ModelException(Exception):
@@ -15,18 +17,42 @@ class ModelException(Exception):
         return repr(self.message + " -> http code " + str(self.http_returnvalue))
 
 
-class MediaMetaEntry(Base):
-    __tablename__ = 'mediametaentry'
+class MediaEntry(Base):
+    __tablename__ = 'media'
 
     id = schema.Column(Integer, primary_key=True)
     content_type = Column(String)
     content = Column(LargeBinary)
-    meta_data = Column(String)
+    meta_data  = relationship(
+        "meta_data", 
+        backref='media',
+        cascade="all, delete, delete-orphan")
 
-    def __init__(self,content_type, content, meta_data):
+    def __init__(self,content_type, content):
       self.content_type = content_type
       self.content = content
-      self.meta_data = meta_data
+
+
+class MetaEntry(Base):
+    __tablename__ = 'meta'
+    id = schema.Column(Integer, primary_key=True)
+    meta_type = Column(String)
+    content = Column(LargeBinary)
+    media  = Column(Integer, ForeignKey('media.id'))
+
+    def __init(self, media, meta_type, content):
+        self.meta_type = meta_type
+        self.content = content
+        self.media = media
+
+    def as_map():
+        return {
+            'meta_id': id, 
+            'media_id': media, 
+            'meta_type': meta_type, 
+            'content': json.dumps(content)
+         }
+
 
 class RDBMSMediaAndMetaStorage:
 
@@ -37,39 +63,20 @@ class RDBMSMediaAndMetaStorage:
         else:
             self.base_url = base_url + "/"
 
-    def get_initial_meta_data(self, id):
-        url = ("%smedia/id/%s"%(self.base_url, id))
-
-        return {"ContentURL": url,
-                "ContentId": id,
-                "nextId": 1,
-                "content":{},
-                "types":{}}
-
     def create_new_media_entry(self, mimetype, data):
 
-        object = MediaMetaEntry(
+        object = MediaEntry(
             mimetype,
-            data,
-            None
-            )
+            data)
 
         db_session.add(object)
-
-        # XXX If the commit fails, then we shouldn't return
-        commit_db()
-
-        meta_data = self.get_initial_meta_data(object.id)
-        object.meta_data = json.dumps(meta_data)
-        commit_db()
-
         return meta_data
-
 
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
 
-        entry = db_session.query(MediaMetaEntry).get(id)
+        entry = db_session.query(MediaEntry).get(id)
+
         if entry:
             entry.content_type = mimetype
             entry.content = data
@@ -78,43 +85,37 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException(error_msg, http_returnvalue = 404)
         return {}
 
-
-    # XXX This is absolutely not scalable!!
     def get_all_media(self):
         keys = []
-        for key in db_session.query(MediaMetaEntry.id):
+        for key in db_session.query(MediaEntry.id):
             k = key[0]
             keys.append(k)
         return keys
 
-
     def get_media(self, id):
         id=str(id)
-        result = db_session.query(MediaMetaEntry).get(id)
+        result = db_session.query(MediaEntry).get(id)
         if  result:
             return (result.content_type, result.content)
         else:
             return (None, None)
-
 
     def delete_media(self, id):
         id=str(id)
         ## XXX This is wasteful. We sholdn't have
         ##     to get the full object, we shuld just
         ##     nuke it from orbit.
-        result = db_session.query(MediaMetaEntry).get(id)
+        result = db_session.query(MediaEntry).get(id)
         if result:
             db_session.delete(result)
             return {}
         else:
             retval = {"Unknown_media_id": id}
             return retval
-
         
     def store_new_meta_from_type(self, metatype, payload):
         meta_data = self.create_new_media_entry(None, None)
         id = meta_data['ContentId']
-        print "newly created id is = ", id
         return self.store_new_meta(id, meta_data, metatype, payload)
 
 
@@ -128,61 +129,44 @@ class RDBMSMediaAndMetaStorage:
 
         return self.store_new_meta(id, metadata, metatype, payload)
 
+
     def store_new_meta(self, id, metadata, metatype, payload):
 
-        # Update next_id
-        next_id = metadata['nextId']
-        meta_id = next_id
-        next_id += 1
-        metadata['nextId'] = next_id
+        entry = MetaEntry(id, metatype, payload)
+        db_session.add(entry)
+        db_session.commit()
+        return {"meta_id" : entry.id, "ContentId": id}
 
-        # Remember the metatype this particular payload
-        if not metatype in metadata['types']:
-            metadata['types'][metatype] = [meta_id]
-        else:
-            metadata['types'][metatype].append(meta_id) 
+    def get_metadata_from_metaid(self,  metaid):
+        meta_data = self.get_metadata_from_id(str(id))
+        if not meta_data:
+                raise ModelException(
+                    "No metadata instance for object "
+                    + id 
+                    + ", with metaid  " 
+                    + metaid, 
+                    404)
+        
+        return_value = meta_data.as_map()
+        return return_value
 
-        # Remember the actual payload
-        metadata['content'][meta_id] = payload
+    
+    def get_metadata_from_id_and_metatype(self, media_id, metatype):
+        entries = db_session.query(MetaEntry).filter_by(
+            media = media_id, 
+            meta_type = meta_type).all()
+        # XXX Get all of them
+        return []
 
-        self.store_meta_data(id, metadata)
-
-        return {"meta_id" : meta_id, "ContentId": id}
-
-    def store_meta_data(self, id, metadata):
-        meta_as_json =  json.dumps(metadata)
-
-        db_session.query(MediaMetaEntry).\
-                   filter(id==id).\
-                   update({'meta_data': meta_as_json})
-
-
-    def get_metadata_from_id(self, id):
-        """Get the entire meta datastructure, as a map, for a particular ID. An empty
-        map means that the datum does not exist and hence has no associated metadata 
-        structure."""
-        print "Finding metadata for id = ", id
-        result = db_session.query(MediaMetaEntry, MediaMetaEntry.meta_data)\
-            .filter(MediaMetaEntry.id == id).first()
-        print "result -->", result
-        if not result:
+    # XXX Placeholder
+    def delete_metaid(self, meta_id):
+        # Empty map means that no data was deleted
+        result = db_session.query(MetaEntry).get(meta_id)
+        if result:
+            db_session.delete(result)
             return {}
         else:
-            metadata = result.meta_data
-            if not metadata:
-                raise ModelException("No metadata found for id " + id,  404)
-            
-            metadata_json = json.loads(metadata)
-            return metadata_json
-
-
-    def get_metadata_from_id_and_metaid(self, id, metaid):
-        # Empty map means no metadata found
-        return {}
-
-
-    def delete_metaid(self, id, metaid):
-        # Empty map means that no data was deleted
-        return {}
+            retval = {"Unknown_meta_id": meta_id}
+            return retval
 
 
