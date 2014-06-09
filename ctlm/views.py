@@ -106,6 +106,22 @@ def requires_auth(f):
             return f(*args, **kwargs)
     return decorated
 
+def catches_model_exception(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except ModelException as e:
+            # XXX When this has been proven to work, create a wrapper and put all
+            #     functions inside that wrapper.
+            print "Caught Model Exception: " , e
+            return Response(
+                json.dumps(e.message),
+                status=e.http_returnvalue,
+                mimetype="application/json")
+    return decorated
+
+
     
 ###
 ###  Static pages
@@ -167,13 +183,15 @@ def delete_media_and_meta(id):
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_meta_list_from_id_and_metaid(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    retval = state.mms.get_metadata_from_id_and_metaid(id, metatype)
+    retval = state.mms.get_metadata_from_id_and_metatype(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_metadata_from_id_and_metaid(id, metaid):
     retval = state.mms.get_metadata_from_id_and_metaid(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
@@ -181,6 +199,7 @@ def get_metadata_from_id_and_metaid(id, metaid):
 
 @app.route('/media/id/<id>', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_metadata_from_id(id):
     "Get all the metadata for a particular media id."
 
@@ -193,43 +212,28 @@ def get_metadata_from_id(id):
 ##     instead.  The way this is designed is just a receipe for disaster.
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
-    try:
-        retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload)
-        return expect_non_empty_map_return_as_json(retval)
-    except ModelException as e:
-        # XXX When this has been proven to work, create a wrapper and put all
-        #     functions inside that wrapper.
-        print "Caught Model Exception: " , e
-        return Response(
-            json.dumps(e.message),
-            status=e.http_returnvalue,
-            mimetype="application/json")    
+    retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload)
+    return expect_non_empty_map_return_as_json(retval)
 
 
 @app.route('/media/metatype/<metatype>', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def post_new_meta_with_metatype_only(metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
-    try:
-        retval = state.mms.store_new_meta_from_type(metatype, payload)
-        return expect_non_empty_map_return_as_json(retval,status=201)
-    except ModelException as e:
-        # XXX When this has been proven to work, create a wrapper and put all
-        #     functions inside that wrapper.
-        print "Caught Model Exception: " , e
-        return Response(
-            json.dumps(e.message),
-            status=e.http_returnvalue,
-            mimetype="application/json")    
+    retval = state.mms.store_new_meta_from_type(metatype, payload)
+    return expect_non_empty_map_return_as_json(retval,status=201)
 
 
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def post_meta(id, metaid):
     "Post a particular metadata instance"
     retval = state.mms.store_meta(id, metaid)
@@ -238,6 +242,7 @@ def post_meta(id, metaid):
 
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 @requires_auth
+@catches_model_exception
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
     retval = state.mms.delete_metaid(id, metaid)
@@ -251,12 +256,14 @@ def delete_meta(id, metaid):
 
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def list_all_waiting_tasks():
     waiting_tasks = state.tqs.list_all_waiting_tasks()
     return expect_non_empty_map_return_as_json(waiting_tasks)
 
 @app.route('/task/running', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_in_progress_task_list():
     running_tasks = state.tqs.list_all_running_tasks()
     returnvalue = expect_non_empty_map_return_as_json(running_tasks)
@@ -265,6 +272,7 @@ def get_in_progress_task_list():
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_done_task_list(type):
     return_value = state.tqs.list_all_done_tasks()
     commit_db()
@@ -272,12 +280,14 @@ def get_done_task_list(type):
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def list_waiting_task_of_type(type):
     waiting_tasks = state.tqs.list_all_waiting_tasks_of_type(type)
     return expect_non_empty_map_return_as_json(waiting_tasks)
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def pick_next_waiting_task(type):
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
@@ -293,6 +303,7 @@ def pick_next_waiting_task(type):
 
 @app.route('/task/id/<id>/done', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def declare_task_as_done(id):
     tqs=state.tqs
     retval = tqs.declare_as_done(id)
@@ -300,6 +311,7 @@ def declare_task_as_done(id):
     
 @app.route('/task/type/<type>', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def create_task(type):
     # Not sure about the semantics of this one.
     params=request.json
@@ -313,6 +325,7 @@ def create_task(type):
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 @requires_auth
+@catches_model_exception
 def delete_task(taskid):
     retval = state.tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)
