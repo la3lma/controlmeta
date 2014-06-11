@@ -47,19 +47,14 @@ class MetaEntry(Base):
         self.metatype = metatype
         self.content = content
 
-    def get_url(self, id):
-        return self.base_url + "media/metaid/" + str(id)
 
-
-    def as_map(self):
+    def as_map(self, rdbms):
         return {
             'meta_id': self.id, 
             'media_id': self.mediaid, 
             'meta_type': self.metatype, 
             'content': json.loads(self.content),
-# XXX This should ge here, but the get_url screws up 
-#     due to the base_url problem.
-#            'URL': self.get_url(self.id)
+            'URL': rdbms.get_meta_url(self.id)
          }
 
 
@@ -72,8 +67,12 @@ class RDBMSMediaAndMetaStorage:
         else:
             self.base_url = base_url + "/"
 
-    def get_url(self, id):
+    def get_media_url(self, id):
         return self.base_url + "media/id/" + str(id)
+
+    def get_meta_url(self, id):
+        return self.base_url + "media/metaid/" + str(id)
+
 
     def create_new_media_entry(self, mimetype, data):
 
@@ -90,7 +89,7 @@ class RDBMSMediaAndMetaStorage:
 
         # XXX Get the representation from the object itself, not from
         #     this ad-hoc thing.
-        return {"ContentId": object.id, "ContentURL": self.get_url(object.id)}
+        return {"ContentId": object.id, "ContentURL": self.get_media_url(object.id)}
 
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
@@ -174,7 +173,7 @@ class RDBMSMediaAndMetaStorage:
                     + metaid, 
                     404)
         
-        return_value = meta_entry.as_map()
+        return_value = meta_entry.as_map(self)
         return return_value
 
     
