@@ -6,6 +6,15 @@ o Refactor
   - Write at least one test that checks cascading deletes of
     media with associated meta-items.
 
+o Add users
+  o Initially, add API users.  They should have an userid and an
+    associated "API key" that are used through http simple 
+    authentication to get access.
+  o Then we should have OAUth users, that log in using
+    google/yahoo/facebook/whatever authentication
+    to access "their" data, and trigger agents
+    to work on their behalf.
+
 o Extend functionality to a level where it's actually useful to 
   the task at hand.
 
