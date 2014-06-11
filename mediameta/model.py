@@ -26,7 +26,7 @@ class MediaEntry(Base):
     metadatax  = relationship(
         "MetaEntry", 
         order_by="MetaEntry.id",
-#       backref='media_id',
+        backref='media_id',
         cascade="all, delete, delete-orphan")
 
     def __init__(self, content_type, content):
