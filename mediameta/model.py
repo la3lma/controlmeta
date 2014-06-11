@@ -146,6 +146,7 @@ class RDBMSMediaAndMetaStorage:
 
         json_payload = json.dumps(payload)
 
+
         entry = MetaEntry(media_id, metatype, json_payload)
         db_session.add(entry)
         db_session.commit()
@@ -164,7 +165,7 @@ class RDBMSMediaAndMetaStorage:
         return return_value
 
     
-    def get_metadata_from_id_and_metatype(self, media_id, metatype):
+    def get_metadata_from_id_and_metatype(self, media_id, meta_type):
         entries = db_session.query(MetaEntry).filter_by(
             mediaid = media_id, 
             metatype = meta_type).all()
@@ -179,7 +180,8 @@ class RDBMSMediaAndMetaStorage:
             db_session.delete(result)
             return {}
         else:
-            retval = {"Unknown_meta_id": meta_id}
-            return retval
+            raise ModelException("Unknown meta_id" +  meta_id, 404)
+
+
 
 

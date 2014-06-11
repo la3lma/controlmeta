@@ -193,7 +193,7 @@ def get_meta_list_from_id_and_metaid(id, metatype):
 @requires_auth
 @catches_model_exception
 def get_metadata_from_id_and_metaid(id, metaid):
-    retval = state.mms.get_metadata_from_id_and_metaid(id, metaid)
+    retval = state.mms.get_metadata_from_metaid(metaid)
     return expect_non_empty_map_return_as_json(retval)
 
 
@@ -240,12 +240,14 @@ def post_meta(id, metaid):
     return expect_non_empty_map_return_as_json(retval)
 
 
+# XXX The id is in fact not necessary, and should be
+#     removed.
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
 @requires_auth
 @catches_model_exception
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
-    retval = state.mms.delete_metaid(id, metaid)
+    retval = state.mms.delete_metaid(metaid)
     return expect_non_empty_map_return_as_json(retval)
 
 
