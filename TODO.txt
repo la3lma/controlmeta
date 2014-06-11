@@ -1,5 +1,5 @@
 o Refactor
-  - Fix XXXes
+  - Fix XXXes all over the place.  There are way too many bloopers now.
   - Avoid internal camelcases
   - Consider extendig test coverage to some more 
     things that looks brittle.
@@ -12,11 +12,6 @@ o Extend functionality to a level where it's actually useful to
 o Make the metadata management sane.
   o Redesign API.
   o Write tests to ensure workitude.
-
-o Make the acceptance tests conservative.
-  o At present they mutate the database.
-
-o Create a postgresql instance to be used in production.
 
 o Write management scripts for elastic beanstalk that will let us
   create a new database instance when required.
