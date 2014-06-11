@@ -34,10 +34,10 @@ class control_meta_test_case(unittest.TestCase):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
 
         keys = mms.get_all_media()
-        print "keys = ", keys
         self.assertTrue(not keys)        
         
         foo = mms.store_new_meta_from_type("foo", {})
+        
         id = foo['ContentId']
 
         mms.post_media_to_id(id, "text/plain", "foo")
@@ -62,7 +62,9 @@ class control_meta_test_case(unittest.TestCase):
         payload   = {"amount": "a big bunch"}
         r = mms.store_new_meta_from_id_and_type(doc_id, meta_type, payload)
         meta_id = r['meta_id']
-        returned_payload = mms.get_metadata_from_id_and_metaid(doc_id, meta_id)
+        returned_meta = mms.get_metadata_from_metaid(meta_id)
+        self.assertTrue(returned_meta)
+        returned_payload = returned_meta['content']
         self.assertEquals(payload, returned_payload)
 
 if __name__ == '__main__':

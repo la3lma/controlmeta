@@ -64,7 +64,7 @@ print "db_uri = ", db_uri
 if (db_uri == ""):
     raise RuntimeError("Could not determine database connect string.")
 
-# Change to true to print all SQL statements going into and coming out of the database.
+# Change to True to print all SQL statements going into and coming out of the database.
 echo=False
 engine = create_engine(db_uri, echo=echo)
 db_session = scoped_session(sessionmaker(autocommit=False,
