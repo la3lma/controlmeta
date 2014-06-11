@@ -240,9 +240,7 @@ def post_meta(id, metaid):
     return expect_non_empty_map_return_as_json(retval)
 
 
-# XXX The id is in fact not necessary, and should be
-#     removed.
-@app.route('/media/id/<id>/metaid/<metaid>', methods = ['DELETE'])
+@app.route('/media/metaid/<metaid>', methods = ['DELETE'])
 @requires_auth
 @catches_model_exception
 def delete_meta(id, metaid):

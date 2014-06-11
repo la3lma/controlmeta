@@ -107,7 +107,7 @@ class SimpleCrudCases(Control_meta_test_case):
         self.assertEqual(rv.status_code, 404)
 
     def test_delete_meta(self):
-        rv = self.app.delete('/media/id/1/metaid/1', headers=self.headers)
+        rv = self.app.delete('/media/id/1', headers=self.headers)
         self.assertEqual(rv.status_code, 404)
         
     def test_delete_all_meta_of_type(self):
