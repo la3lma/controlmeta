@@ -112,9 +112,6 @@ def catches_model_exception(f):
         try:
             return f(*args, **kwargs)
         except ModelException as e:
-            # XXX When this has been proven to work, create a wrapper and put all
-            #     functions inside that wrapper.
-            print "Caught Model Exception: " , e
             return Response(
                 json.dumps(e.message),
                 status=e.http_returnvalue,
