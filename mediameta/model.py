@@ -36,7 +36,6 @@ class MediaEntry(Base):
     def location_as_map(self, storage):
        return {
            "ContentId": self.id, 
-           # XXX This should just be URL
            "ContentURL": storage.get_media_url(self.id)
            }
 
