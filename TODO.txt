@@ -1,3 +1,11 @@
+o Refactor
+  - Fix XXXes
+  - Avoid internal camelcases
+  - Consider extendig test coverage to some more 
+    things that looks brittle.
+  - Write at least one test that checks cascading deletes of
+    media with associated meta-items.
+
 o Extend functionality to a level where it's actually useful to 
   the task at hand.
 
