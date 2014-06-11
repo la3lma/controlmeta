@@ -33,6 +33,12 @@ class MediaEntry(Base):
       self.content_type = content_type
       self.content = content
 
+    def location_as_map(self, storage):
+       return {
+           "ContentId": self.id, 
+           "ContentURL": storage.get_media_url(self.id)
+           }
+
 
 class MetaEntry(Base):
     __tablename__ = 'meta'
@@ -48,13 +54,13 @@ class MetaEntry(Base):
         self.content = content
 
 
-    def as_map(self, rdbms):
+    def as_map(self, storage):
         return {
             'meta_id': self.id, 
             'media_id': self.mediaid, 
             'meta_type': self.metatype, 
             'content': json.loads(self.content),
-            'URL': rdbms.get_meta_url(self.id)
+            'URL': storage.get_meta_url(self.id)
          }
 
 
@@ -85,11 +91,9 @@ class RDBMSMediaAndMetaStorage:
 
         if not object.id:
             raise ModelException("Null object.id  detected for MediaEntry", 500)
-        
 
-        # XXX Get the representation from the object itself, not from
-        #     this ad-hoc thing.
-        return {"ContentId": object.id, "ContentURL": self.get_media_url(object.id)}
+        return object.location_as_map(self)
+
 
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)
