@@ -189,10 +189,10 @@ def get_meta_list_from_id_and_metaid(id, metatype):
     retval = state.mms.get_metadata_from_id_and_metatype(id, metatype)
     return expect_non_empty_map_return_as_json(retval)
 
-@app.route('/media/id/<id>/metaid/<metaid>', methods = ['GET'])
+@app.route('/media/metaid/<metaid>', methods = ['GET'])
 @requires_auth
 @catches_model_exception
-def get_metadata_from_id_and_metaid(id, metaid):
+def get_metadata_from_metaid(metaid):
     retval = state.mms.get_metadata_from_metaid(metaid)
     return expect_non_empty_map_return_as_json(retval)
 
@@ -206,10 +206,7 @@ def get_metadata_from_id(id):
     retval = state.mms.get_metadata_from_id(id)
     return expect_non_empty_map_return_as_json(retval)
 
-## XXX This should only be allowed on existing media instances.
-##     If the media instance does not already exist, then 
-##     /media/metatype/<metatype>  [POST] is what should be used
-##     instead.  The way this is designed is just a receipe for disaster.
+
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
 @requires_auth
 @catches_model_exception
@@ -230,8 +227,6 @@ def post_new_meta_with_metatype_only(metatype):
     return expect_non_empty_map_return_as_json(retval,status=201)
 
 
-
-## XXX Lose the id. Metaid is sufficient
 @app.route('/media/metaid/<metaid>', methods = ['POST'])
 @requires_auth
 @catches_model_exception
