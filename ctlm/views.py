@@ -231,6 +231,7 @@ def post_new_meta_with_metatype_only(metatype):
 
 
 
+## XXX Lose the id. Metaid is sufficient
 @app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
 @requires_auth
 @catches_model_exception

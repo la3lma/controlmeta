@@ -47,12 +47,19 @@ class MetaEntry(Base):
         self.metatype = metatype
         self.content = content
 
+    def get_url(self, id):
+        return self.base_url + "media/metaid/" + str(id)
+
+
     def as_map(self):
         return {
             'meta_id': self.id, 
             'media_id': self.mediaid, 
             'meta_type': self.metatype, 
-            'content': json.loads(self.content)
+            'content': json.loads(self.content),
+# XXX This should ge here, but the get_url screws up 
+#     due to the base_url problem.
+#            'URL': self.get_url(self.id)
          }
 
 
@@ -80,6 +87,9 @@ class RDBMSMediaAndMetaStorage:
         if not object.id:
             raise ModelException("Null object.id  detected for MediaEntry", 500)
         
+
+        # XXX Get the representation from the object itself, not from
+        #     this ad-hoc thing.
         return {"ContentId": object.id, "ContentURL": self.get_url(object.id)}
 
     def post_media_to_id(self, id, mimetype, data):
