@@ -232,12 +232,13 @@ def post_new_meta_with_metatype_only(metatype):
 
 
 ## XXX Lose the id. Metaid is sufficient
-@app.route('/media/id/<id>/metaid/<metaid>', methods = ['POST'])
+@app.route('/media/metaid/<metaid>', methods = ['POST'])
 @requires_auth
 @catches_model_exception
-def post_meta(id, metaid):
-    "Post a particular metadata instance"
-    retval = state.mms.store_meta(id, metaid)
+def post_meta(metaid):
+    "Post to a particular metadata instance"
+    payload = request.json
+    retval = state.mms.update_meta(metaid, request.json)
     return expect_non_empty_map_return_as_json(retval)
 
 

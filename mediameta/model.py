@@ -168,8 +168,8 @@ class RDBMSMediaAndMetaStorage:
         db_session.commit()
         return entry.as_map(self)
 
-
-    def get_metadata_from_metaid(self,  metaid):
+                
+    def basic_get_metadata_from_metaid(self, metaid):
         meta_entry = db_session.query(MetaEntry).get(metaid)
         if not meta_entry:
                 raise ModelException(
@@ -177,7 +177,15 @@ class RDBMSMediaAndMetaStorage:
                     + ", with metaid = " 
                     + metaid, 
                     404)
-        
+        return meta_entry
+
+    def update_meta_meta(self, metaid, payload):
+        meta_entry = self.basic_get_metadata_from_metaid(metaid)
+        meta_entry.content = payload
+
+
+    def get_metadata_from_metaid(self,  metaid):
+        meta_entry = self.basic_get_metadata_from_metaid(metaid)
         return_value = meta_entry.as_map(self)
         return return_value
 
