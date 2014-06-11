@@ -65,6 +65,9 @@ class RDBMSMediaAndMetaStorage:
         else:
             self.base_url = base_url + "/"
 
+    def get_url(self, id):
+        return self.base_url + "media/id/" + str(id)
+
     def create_new_media_entry(self, mimetype, data):
 
         object = MediaEntry(
@@ -77,7 +80,7 @@ class RDBMSMediaAndMetaStorage:
         if not object.id:
             raise ModelException("Null object.id  detected for MediaEntry", 500)
         
-        return {"ContentId": object.id}
+        return {"ContentId": object.id, "ContentURL": self.get_url(object.id)}
 
     def post_media_to_id(self, id, mimetype, data):
         id=str(id)

@@ -95,4 +95,5 @@ class  ControlMetaClient:
             data=data,
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
+        print "jrv = ", jrv
         return UploadResult(jrv['ContentId'], jrv['ContentURL'])
