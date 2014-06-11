@@ -38,7 +38,7 @@ class control_meta_test_case(unittest.TestCase):
         
         foo = mms.store_new_meta_from_type("foo", {})
         
-        id = foo['ContentId']
+        id = foo['media_id']
 
         mms.post_media_to_id(id, "text/plain", "foo")
 
@@ -66,6 +66,22 @@ class control_meta_test_case(unittest.TestCase):
         self.assertTrue(returned_meta)
         returned_payload = returned_meta['content']
         self.assertEquals(payload, returned_payload)
+
+
+    def test_getting_metadata_from_metatype(self):
+        mms=RDBMSMediaAndMetaStorage("http://namuu/")
+        meta_content = {"banana" : "apples" }
+        meta_type = "eplegreie"
+        retval = mms.store_new_meta_from_type(meta_type, meta_content)
+        media_id = retval['media_id']
+        meta_id = retval['meta_id']
+        
+        r = mms.get_metadata_from_id_and_metatype(media_id, meta_type)
+        self.assertTrue(r)
+
+        r_content = r[0]['content']
+
+        self.assertEquals(r_content,  meta_content)
 
 if __name__ == '__main__':
     unittest.main()

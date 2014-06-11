@@ -36,6 +36,7 @@ class MediaEntry(Base):
     def location_as_map(self, storage):
        return {
            "ContentId": self.id, 
+           # XXX This should just be URL
            "ContentURL": storage.get_media_url(self.id)
            }
 
@@ -166,7 +167,8 @@ class RDBMSMediaAndMetaStorage:
         entry = MetaEntry(media_id, metatype, json_payload)
         db_session.add(entry)
         db_session.commit()
-        return {"meta_id" : entry.id, "ContentId": media_id}
+        return entry.as_map(self)
+
 
     def get_metadata_from_metaid(self,  metaid):
         meta_entry = db_session.query(MetaEntry).get(metaid)
@@ -182,13 +184,16 @@ class RDBMSMediaAndMetaStorage:
 
     
     def get_metadata_from_id_and_metatype(self, media_id, meta_type):
+
         entries = db_session.query(MetaEntry).filter_by(
             mediaid = media_id, 
             metatype = meta_type).all()
-        # XXX Get all of them
-        return []
+        result = []
+        for item in entries:
+            result.append(item.as_map(self))
+        return result
 
-    # XXX Placeholder
+
     def delete_metaid(self, meta_id):
         # Empty map means that no data was deleted
         result = db_session.query(MetaEntry).get(meta_id)
