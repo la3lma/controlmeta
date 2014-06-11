@@ -23,13 +23,6 @@ class State:
         self.mms = RDBMSMediaAndMetaStorage(base_url)
         self.tqs = RDBQueueStorage()
 
-        # This _should_ declare the database tables
-        # XXX This only makes sense during test, it would
-        #     completely mess things up in prod.
-        #   Actually, it only makes sense during unit tests, and perhaps
-        #   not even  then.
-        #   init_db()
-
 state = State()
 
 
