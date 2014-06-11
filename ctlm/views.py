@@ -25,7 +25,6 @@ class State:
 
 state = State()
 
-
 ##
 ## Helper functions to make it simpler to translate return values
 ## into response objects.
