@@ -162,7 +162,6 @@ class RDBMSMediaAndMetaStorage:
 
         json_payload = json.dumps(payload)
 
-
         entry = MetaEntry(media_id, metatype, json_payload)
         db_session.add(entry)
         db_session.commit()
@@ -202,7 +201,7 @@ class RDBMSMediaAndMetaStorage:
 
 
     def delete_metaid(self, meta_id):
-        # Empty map means that no data was deleted
+        "Empty map means that no data was deleted"
         result = db_session.query(MetaEntry).get(meta_id)
         if result:
             db_session.delete(result)
