@@ -6,6 +6,7 @@ from ctlm import app
 from database import Base, db_session, init_db, commit_db
 from mediameta.model import RDBMSMediaAndMetaStorage, ModelException
 from task.model import RDBQueueStorage
+import config
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +20,8 @@ class State:
     def __init__(self):
         # XXX This URL should not even be in this file, it should come from
         #     config, somewhere, somehow.
-        base_url="http://ctlmeta.loltel.co"
+
+        base_url=config.DEFAULT_HOME_URL
         if (len(sys.argv) > 1):
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
