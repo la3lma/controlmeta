@@ -34,8 +34,5 @@ print "picked task id", picked_task_id
 ## And declare it as done
 doneresponse=cmc.declare_task_done(picked_task_id, '007')
 
-print "doneresponse = ", doneresponse
-print "doneresponse.text = ", doneresponse.text
-
 
 

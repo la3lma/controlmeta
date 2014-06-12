@@ -5,6 +5,7 @@ class  UploadResult:
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
+        
 
     
 class ClientException(Exception):
@@ -30,6 +31,20 @@ class  ControlMetaClient:
         self.base_url = base_url
         self.auth = auth
 
+    def post(self, url, payload, expected_status, error_message):
+        raw_response  = requests.delete(
+                url,
+                auth=self.auth,
+                data=json.dumps(payload),
+                headers=self.JSON_HEADERS)
+        status_code = raw_response.status_code
+        if status_code != expected_status:
+            raise ClientException(
+                    status_code, 
+                    error_message)
+        return raw_response
+
+
     def post_dictionary_as_json(self, url, dictionary):
         raw_response = requests.post(
             url,
@@ -46,39 +61,29 @@ class  ControlMetaClient:
     def upload_task(self, type, parameters):
         tasktypepath = "task/type/%s" % type
         url = "%s%s" %(self.base_url, tasktypepath)
-        return self.post_dictionary_as_json(
-            url,
-            parameters)
+        self.post(url, parameters, 204, "Unable to upload task")
+
 
     def pick_task(self, type, agent_id):
-        parameters={'agentId':agent_id}
-        url="%stask/waiting/type/%s/pick" %(self.base_url, type)
-        return self.post_dictionary_as_json(
-            url,
-            parameters)
+        parameters = {'agentId':agent_id}
+        url = "%stask/waiting/type/%s/pick" %(self.base_url, type)
+        error_message = "Unable to pick task of type %s for agent %s"%(type, agentid)
+        post(url, parameters, 200, error_message)
 
+        
     def declare_task_done(self, task_id, agent_id):
-        pickurl="%s%s%s" %(self.base_url, 'task/id/', task_id)
-        parameters={'agentId': agent_id}
-        raw_response = requests.delete(
-                pickurl,
-                auth=self.auth,
-                data=json.dumps(parameters),
-                headers=self.JSON_HEADERS)
-        # XXX Return value
-        return raw_response
+        url="%s%s%s" %(self.base_url, 'task/id/', task_id)
+        payload={'agentId': agent_id}
+        error_message="Unable to declare task " + str(task_id) + " as done."
+        self.post(url, payload,  204, error_message)
 
-    # Upload unidentified metadata, get a metadata ID back
+
     def upload_metadata(self, type, data):
-        ## This is fXed up
-        print "Uploading metadata from url = " , url
-        raw_response = requests.post(
-            url,
-            auth=self.auth,
-            headers=self.JSON_HEADERS,
-            data=json.dumps(data))
-        # XXX return value not correctly parsed
-        return raw_response
+        url="%s,media/metadata/%s" %(self.base_url, type)
+        error_message="Unable to create naked  metadata instance."
+        raw_response = self.post(url, data, 204, error_message)
+        return json.loads(raw_response.text)
+
 
     def  upload_media_from_file(self, type, filepath):
         url="%smedia/" %(self.base_url)
@@ -95,5 +100,4 @@ class  ControlMetaClient:
             data=data,
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
-        print "jrv = ", jrv
         return UploadResult(jrv['ContentId'], jrv['ContentURL'])
