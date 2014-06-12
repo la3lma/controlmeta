@@ -84,7 +84,6 @@ class  ControlMetaClient:
         raw_response = self.post(url, data, 204, error_message)
         return json.loads(raw_response.text)
 
-
     def  upload_media_from_file(self, type, filepath):
         url="%smedia/" %(self.base_url)
         with open(filepath, 'r') as content_file:
@@ -92,6 +91,7 @@ class  ControlMetaClient:
             return self.upload_media(type, content)
     
     # Upload unidentified metadata, get a data ID back
+    # XXX Rewrite using the post method.
     def  upload_media(self, type, data):
         url="%smedia/" %(self.base_url)
         raw_response = requests.post(
