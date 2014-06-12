@@ -1,4 +1,6 @@
 o Refactor
+  - The deletion of tasks is broken in two ways.  It's mixed up with
+    deletions, and it's broken as deletion.
   - Separate out model exception into separate package.
   - Add comments to methods, use best practices
   - Fix XXXes all over the place.  There are way too many bloopers now.
