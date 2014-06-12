@@ -133,6 +133,7 @@ class RDBMSMediaAndMetaStorage:
             db_session.delete(result)
             return {}
         else:
+            # XXX This isn't right.  Throw a model exception instead!
             retval = {"Unknown_media_id": id}
             return retval
         
