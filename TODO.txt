@@ -1,4 +1,5 @@
 o Refactor
+  - Add comments to methods, use best practices
   - Fix XXXes all over the place.  There are way too many bloopers now.
   - Avoid internal camelcases
   - Consider extendig test coverage to some more 
