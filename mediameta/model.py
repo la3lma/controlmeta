@@ -4,17 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
 from sqlalchemy.orm import backref, relationship
+from model_exception import ModelException
 
 import json
-
-class ModelException(Exception):
-
-    def __init__(self,  message, http_returnvalue = None):
-        self.http_returnvalue = http_returnvalue
-        self.message = message
-
-    def __str__(self):
-        return repr(self.message + " -> http code " + str(self.http_returnvalue))
 
 
 class MediaEntry(Base):
