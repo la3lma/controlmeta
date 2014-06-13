@@ -116,7 +116,6 @@ class RDBQueueStorage():
         return self.list_all_tasks_of_status(RUNNING)
 
     def list_all_done_tasks(self):
-        print "Done tasks invoked"
         return self.list_all_tasks_of_status(DONE)
 
     def list_all_tasks_of_type_with_status(self, tasktype, status):
