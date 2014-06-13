@@ -31,9 +31,6 @@ class  ControlMetaClient:
 
     def process(self, function,  url, payload, expected_status, error_message):
 
-        print "process function ", function
-        print "process url  ", url
-
         if payload:
             raw_response  = function(
                 url,
@@ -45,10 +42,6 @@ class  ControlMetaClient:
                 url,
                 auth=self.auth,
                 headers=self.JSON_HEADERS)
-
-
-        print "process got raw_response = ", raw_response
-        print "Expecting status = ", expected_status
 
         status_code = raw_response.status_code
         if status_code != expected_status:
@@ -94,7 +87,6 @@ class  ControlMetaClient:
         return self.post(url, parameters, 200, error_message)
         
     def declare_task_done(self, task_id, agent_id):
-        print "Client: declaring task done ", task_id
         url="%stask/id/%s/done" %(self.base_url, task_id)
         payload={'agentId': agent_id}
         error_message="Unable to declare task " + str(task_id) + " as done."
