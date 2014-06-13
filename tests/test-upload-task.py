@@ -18,8 +18,13 @@ print "Testing against base-url = ", base_url
 parameters={'parameter1':'Value 1'}
 data = cmc.upload_task("face", parameters)
 
+print "Pre getting tasks"
+t1=cmc.all_tasks()
+print "Tasks 1 = ", t1
+
+print " data -> ", data
 # pick up the task ID from the response
-task_id=data['taskId']
+task_id = data['taskId']
 print "taskId=",task_id
 
 ## Then pick a task
@@ -30,9 +35,13 @@ print "pickresponse = ", pickresponse
 picked_task_id=pickresponse['taskId']
 print "picked task id", picked_task_id
 
+foo=cmc.all_tasks()
+print "Tasks 2 -> = ", foo
 
 ## And declare it as done
-doneresponse=cmc.declare_task_done(picked_task_id, '007')
+doneresponse = cmc.declare_task_done(picked_task_id, '007')
 
+t3=cmc.all_tasks()
+print "Tasks 3 = ", t3
 
 

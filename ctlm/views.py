@@ -241,6 +241,16 @@ def delete_meta(id, metaid):
 ###  Accessing the task queue
 ###
 
+# Get all tasks (for debugging)
+@app.route('/task', methods = ['GET'])
+@requires_auth
+@catches_model_exception
+def list_all_tasks():
+    tasks = state.tqs.list_all_tasks()
+    return expect_non_empty_map_return_as_json(tasks)
+
+
+
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
 @catches_model_exception
@@ -262,7 +272,6 @@ def get_in_progress_task_list():
 @catches_model_exception
 def get_done_task_list(type):
     return_value = state.tqs.list_all_done_tasks()
-    commit_db()
     return return_value
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
@@ -292,27 +301,34 @@ def pick_next_waiting_task(type):
 @requires_auth
 @catches_model_exception
 def declare_task_as_done(id):
-    tqs=state.tqs
+    tqs = state.tqs
+    # Will throw client exception on failure
     retval = tqs.declare_as_done(id)
-    return expect_empty_map_return_error_as_json(retval)
+    return allow_empty_map_return_as_json({"this":"is", "bullshit":" yeah"}, status=204)
+
     
 @app.route('/task/type/<type>', methods = ['POST'])
 @requires_auth
 @catches_model_exception
 def create_task(type):
-    # Not sure about the semantics of this one.
+    #XXX  Not sure about the semantics of this one.
+    print "Creating task: ", request
     params=request.json
+    print "Creating task:(params ", params
     if not params:
         params = request.stream.read()
         return expect_non_empty_map_return_as_json(
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
+    print "Before creating task"
     retval = state.tqs.create_task(type, params)
+    print "create task retval = ", retval
     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 @requires_auth
 @catches_model_exception
 def delete_task(taskid):
+    print "Deleting task ", taskid
     retval = state.tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)

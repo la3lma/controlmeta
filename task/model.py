@@ -3,7 +3,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
-from database import Base, db_session
+from database import Base, db_session, commit_db
 import json
 
 WAITING="waiting"
@@ -18,7 +18,6 @@ class Task(Base):
     tasktype = Column(String)
     params = Column(String)
     runner = Column(String)
-
 
     def __init__(self, status, tasktype, params=None, runner=None):
       self.status = status
@@ -41,12 +40,14 @@ class Task(Base):
     ##
     def start(self, runner):
         if (not runner):
+            # Use model exception instead.
             return { "HTTP_error_code": 400,
                      "Description":
                      "Attempt to start processing, but no process runner specified" }
 
         error_desc = self.state_transition(WAITING, RUNNING)
         if (error_desc):
+            #  XXXX Raise model exception
             print "State transition failed %r" % (error_desc)
             return error_desc
         self.runner = runner
@@ -57,6 +58,7 @@ class Task(Base):
     ##
     def state_transition(self, source, destination):
         if (self.status != source):
+            # XXX Raise model exception
             return { "HTTP_error_code": 403,
                      "Description":
                      (("Attempt to change status to state '%s' " +
@@ -99,6 +101,11 @@ class RDBQueueStorage():
 
     def list_all_tasks_of_status(self, status):
         result = db_session.query(Task).filter(Task.status == status).all()
+        mapped_result = map(lambda x: x.as_map(), result)
+        return mapped_result
+
+    def list_all_tasks(self):
+        result = db_session.query(Task).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result
 
@@ -150,34 +157,56 @@ class RDBQueueStorage():
         task_id=str(taskid)
         task = db_session.query(Task).get(task_id)
         if not task:
+            # XXXX Use model exception instead
             return { "HTTP_error_code": 404,
                      "Description":
                      ("No such task taskid='%s'"%taskid)}
         else:
             function(task)
-            return {}
+            return {} # XXX No need to return anything
 
+    # XXX This design is a bit bogus. It's a bit too astonishing
+    #     for its own good.
     def check_if_task_exists(self, task_id):
-        return self.do_if_task_exists_error_if_not(task_id,
+        self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task )
+        
 
     def declare_as_running(self, task_id, runner):
         return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task.run(runner))
 
+    # Hack to ensure that task.done is invoked exactly once
+    def do_done(self, task):
+        print "Do-done invoked"
+        task.done()
+
     def declare_as_done(self, task_id):
-        return self.do_if_task_exists_error_if_not(task_id, lambda task:task.done())
+        print "Declaring task as done ", task_id
+#       self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
+        retval = self.do_if_task_exists_error_if_not(task_id, self.do_done)
+        print "declare_as_done retval = ", retval
+        return retval
+        
 
     def create_task(self, tasktype, params):
+        print "1"
         json_params = json.dumps(params)
+        print "2"
         task = Task(WAITING, tasktype, json_params)
+        print "3"
         db_session.add(task)
-        mtask =task.as_map()
+        commit_db()
+        print "4"
+        mtask = task.as_map()
+        print "5"
         return mtask
 
     def nuke(self, task):
         task_id = task.id
+        task_map = task.as_map()
         db_session.delete(task)
+        return task_map
 
     def delete_task(self, task_id):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))
