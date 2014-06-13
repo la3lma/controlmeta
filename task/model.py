@@ -150,7 +150,8 @@ class RDBQueueStorage():
             return {}
 
     def do_if_task_exists_error_if_not(self, taskid, function):
-        task_id=str(taskid)
+        # XXX This rampant stringification of taskid is unsound.
+        task_id = str(taskid)
         task = db_session.query(Task).get(task_id)
         if not task:
             raise ModelException("No such task taskid='%s'"%taskid, 404)
