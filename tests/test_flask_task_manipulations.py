@@ -13,7 +13,15 @@ import json
 import flask.ext.testing
 from control_meta_test_case import Control_meta_test_case
 
+
+
 class FullTaskLifecycleTest(Control_meta_test_case):
+
+    def assertReturnedListHasLength(self, url, length):
+        rv = self.app.get(url, headers=self.auth_headers)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(len(json_data), length)
 
     def test_full_lifecycle_for_single_task(self):
 
@@ -24,21 +32,12 @@ class FullTaskLifecycleTest(Control_meta_test_case):
             data='{"parameter": "parameter-value"}')
         self.assertEqual(rv.status_code, 201)
 
-        rv = self.app.get('/task/waiting', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 200)
-
-        rv = self.app.get('/task/running', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 200)
-        json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
-
-        rv = self.app.get('/task/done', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 200)
-        json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertReturnedListHasLength("task/waiting", 1)
+        self.assertReturnedListHasLength("task/running", 0)
+        self.assertReturnedListHasLength("task/done",    0)
 
 
-        # Pick the task up
+        # Pick the task up, and start it running
         rv = self.app.post('/task/waiting/type/face/pick',
                            headers=self.json_headers,
                            data='{"agentId":"007"}')
@@ -50,25 +49,17 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         parameter_value=params['parameter']
         self.assertEquals("parameter-value", parameter_value )
 
+        self.assertReturnedListHasLength("task/waiting", 0)
+        self.assertReturnedListHasLength("task/running", 1)
+        self.assertReturnedListHasLength("task/done",    0)
+
         # Then terminate the task
         url = "/task/id/" + str(taskid) + "/done" 
         rv = self.app.post(url, headers=self.auth_headers)
 
-    
-        rv = self.app.get('/task/waiting', headers=self.json_headers)
-        self.assertEqual(rv.status_code, 200)
-        json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
-
-        rv = self.app.get('/task/running', headers=self.json_headers)
-        self.assertEqual(rv.status_code, 200)
-        json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
-
-        rv = self.app.get('/task/done', headers=self.json_headers)
-        self.assertEqual(rv.status_code, 200)
-        json_data = json.loads(rv.data)
-        self.assertEqual(len(json_data), 1)
+        self.assertReturnedListHasLength("task/waiting", 0)
+        self.assertReturnedListHasLength("task/running", 0)
+        self.assertReturnedListHasLength("task/done",    1)
 
 
 if __name__ == '__main__':
