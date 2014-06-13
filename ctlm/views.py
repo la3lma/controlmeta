@@ -311,24 +311,18 @@ def declare_task_as_done(id):
 @requires_auth
 @catches_model_exception
 def create_task(type):
-    #XXX  Not sure about the semantics of this one.
-    print "Creating task: ", request
     params=request.json
-    print "Creating task:(params ", params
     if not params:
         params = request.stream.read()
         return expect_non_empty_map_return_as_json(
             {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
             errorcode=400)
-    print "Before creating task"
     retval = state.tqs.create_task(type, params)
-    print "create task retval = ", retval
     return expect_non_empty_map_return_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 @requires_auth
 @catches_model_exception
 def delete_task(taskid):
-    print "Deleting task ", taskid
     retval = state.tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)
