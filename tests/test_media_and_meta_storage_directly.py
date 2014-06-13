@@ -56,10 +56,14 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         mms.post_media_to_id(contentid, "text/plain", "zor")
 
 
-    def test_push_meta_for_specific_id(self):
+    def test_push_meta_for_specific_nonexistant_id(self):
         mms = RDBMSMediaAndMetaStorage("")
-        errors = mms.post_media_to_id("1", "text/plain", "this is plain text")
-        self.assertFalse(errors)
+        try:
+            result = mms.post_media_to_id("1", "text/plain", "this is plain text")
+        except MetaException as e:
+            self.assertFalse(True)
+        self.assertTrue(result)
+        # XXX Missing: Looking into result what1's there.
 
 
 if __name__ == '__main__':

@@ -59,14 +59,16 @@ class MediaUsecases(Control_meta_test_case):
         rv2 = self.app.get(mediaurl, headers=self.auth_headers)
         self.assertEqual(rv2.status_code, 200)
         self.assertEqual(rv2.data, payload)
-
-        
         
         # Then upload some real content to go with that
-        # content
+        # metadata
         payload2 = 'this is amazing'
+        url = '/media/id/' + str(contentid)
+
+        print "url = " , mediaurl
+
         rv3 = self.app.post(
-            '/media/id/1',
+            mediaurl,
             headers=self.plain_headers,
             data=payload2)
 

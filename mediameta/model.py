@@ -98,7 +98,7 @@ class RDBMSMediaAndMetaStorage:
         else:
             error_msg ="Attempt to post media to nonexistant id " + id
             raise ModelException(error_msg, http_returnvalue = 404)
-        return {}
+        return entry.location_as_map(self)
 
     def get_all_media(self):
         keys = []

@@ -157,8 +157,10 @@ def create_new_media_entry_from_upload():
 @requires_auth
 def post_media_to_id(id):
     "Write the media representation an identified asset"
+
+    ### XXX Don't return error values, just throw an exception!
     errors = state.mms.post_media_to_id(id, request.mimetype, request.data)
-    return expect_empty_map_return_error_as_json(errors, status=201)
+    return allow_empty_map_return_as_json(errors, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 @requires_auth
