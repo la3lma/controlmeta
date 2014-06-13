@@ -67,8 +67,6 @@ class SimpleCrudCases(Control_meta_test_case):
     def test_get_all_meta_of_type(self):
         rv = self.app.get('/media/id/1/metatype/faces', headers=self.headers)
         json_data = json.loads(rv.data)
-        print "json_data = ", json_data
-
         self.assertEqual(rv.status_code, 404)
 
     def test_get_specific_meta_item(self):

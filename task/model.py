@@ -41,41 +41,30 @@ class Task(Base):
     ##
     def start(self, runner):
         if (not runner):
-            # Use model exception instead.
-            return { "HTTP_error_code": 400,
-                     "Description":
-                     "Attempt to start processing, but no process runner specified" }
+            raise ModelException(
+                "Attempt to start processing, but no process runner specified",
+                400)
 
-        error_desc = self.state_transition(WAITING, RUNNING)
-        if (error_desc):
-            #  XXXX Raise model exception
-            return error_desc
+        self.state_transition(WAITING, RUNNING)
         self.runner = runner
-        return {}
 
     ##
     ## State transition model
     ##
     def state_transition(self, source, destination):
         if (self.status != source):
-            # XXX Raise model exception
-            return { "HTTP_error_code": 403,
-                     "Description":
-                     (("Attempt to change status to state '%s' " +
-                       "of a task that wasn't in state " +
-                       "'%s' but in state %s") % (destination, source, self.status)) }
+            attempted_transition =  "(%s -> %s)"%(source, destination)
+            message  = "Attempt to perform state transition " + attempted_transition
+            message += " while in state '" + self.status + "'"
+            raise ModelException(message, 403)
         else:
             self.status = destination
-            return {}
 
     def done(self):
-        return self.state_transition(RUNNING, DONE)
+        self.state_transition(RUNNING, DONE)
 
     def run(self, runner):
-        result = self.state_transition(WAITING, RUNNING)
-
-        if result:
-            return result
+        self.state_transition(WAITING, RUNNING)
         self.runner = runner
 
     def has_status(self, taskType):
@@ -185,9 +174,6 @@ class RDBQueueStorage():
 
     def declare_as_done(self, task_id):
         self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
-        retval = self.do_if_task_exists_error_if_not(task_id, self.do_done)
-        return retval
-        
 
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)

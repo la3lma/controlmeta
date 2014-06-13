@@ -141,9 +141,12 @@ class MkeepTestCase(unittest.TestCase):
 
         task = self.tqs.get_task(task_id)
         self.assertEqual("running", task['status'])
-
-        result  = self.tqs.declare_as_done(task_id)
-        self.assertFalse(result)
+        
+        try:
+            self.tqs.declare_as_done(task_id)
+        except ModelException as e:
+            print "Caught model exception " + e.message
+            self.assertFalse(True)
 
         task = self.tqs.get_task(task_id)
         self.assertEqual("done", task['status'])
