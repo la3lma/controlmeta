@@ -116,14 +116,22 @@ class RDBQueueStorage():
         return self.list_all_tasks_of_status(RUNNING)
 
     def list_all_done_tasks(self):
+        print "Done tasks invoked"
         return self.list_all_tasks_of_status(DONE)
 
-    def list_all_waiting_tasks_of_type(self, tasktype):
+    def list_all_tasks_of_type_with_status(self, tasktype, status):
         result = db_session.query(Task).filter(
-            Task.status == WAITING,
+            Task.status == status,
             Task.tasktype == tasktype).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result        
+
+    def list_all_waiting_tasks_of_type(self, tasktype):
+        return self.list_all_tasks_of_type_with_status(tasktype, WAITING)
+
+    def list_all_running_tasks_of_type(self, tasktype):
+        return self.list_all_tasks_of_type_with_status(tasktype, RUNNING)
+
 
     # The "runner" is the agent description, and it's a map
     # that needs to be serialized before being stored

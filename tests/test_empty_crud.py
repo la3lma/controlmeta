@@ -8,6 +8,7 @@
     :copyright: (c) 2014 by Bjørn Remseth
     :license: All rights reserved (at least for now)
 """
+
 import os
 import unittest
 import json
@@ -23,14 +24,14 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.get('/')
         self.assertEqual(rv.status_code, 200)        
 
-
     ##
     ## Test CRUD for media
     ##
     def test_get_all_media(self):
         rv = self.app.get('/media', headers=self.headers)
-        self.assertEqual(rv.status_code, 404)
-        
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
     def  test_get_specific_media(self):
         rv = self.app.get('/media/id/1', headers=self.headers)
@@ -65,6 +66,9 @@ class SimpleCrudCases(Control_meta_test_case):
     ## 
     def test_get_all_meta_of_type(self):
         rv = self.app.get('/media/id/1/metatype/faces', headers=self.headers)
+        json_data = json.loads(rv.data)
+        print "json_data = ", json_data
+
         self.assertEqual(rv.status_code, 404)
 
     def test_get_specific_meta_item(self):
@@ -120,25 +124,37 @@ class SimpleCrudCases(Control_meta_test_case):
         
     def test_all_waiting_tasks(self):
         rv = self.app.get('/task/waiting', headers = self.headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
     def test_all_waiting_tasks_of_type(self):
         rv = self.app.get('/task/waiting/type/face', headers= self.headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
     def test_get_in_progress_list(self):
-        rv = self.app.get('/task/type/face/in-progress', headers=self.headers)
-        self.assertEqual(rv.status_code, 404)
+        rv = self.app.get('/task/type/face/running', headers=self.headers)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
     def test_get_done_task_list(self):
         rv = self.app.get('/task/done', headers=self.headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
     def test_pick_task_of_type(self):
         rv = self.app.post('/task/waiting/type/face_pick_dummy/pick',
                            headers=self.json_headers,
                            data='{"agentId":"007"}')
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, None)
+
+
 
     def test_declare_task_done(self):
         rv = self.app.post(

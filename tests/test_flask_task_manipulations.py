@@ -28,32 +28,48 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         self.assertEqual(rv.status_code, 200)
 
         rv = self.app.get('/task/running', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
-        rv = self.app.get('/task/done')
-        self.assertEqual(rv.status_code, 404)
+        rv = self.app.get('/task/done', headers=self.auth_headers)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
+
 
         # Pick the task up
         rv = self.app.post('/task/waiting/type/face/pick',
                            headers=self.json_headers,
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 200)
-        taskdesc=json.loads(rv.data)
-        params=taskdesc['params']
+        taskdesc = json.loads(rv.data)
+        params = taskdesc['params']
+        taskid = taskdesc['taskId']
+
         parameter_value=params['parameter']
         self.assertEquals("parameter-value", parameter_value )
+
+        # Then terminate the task
+        url = "/task/id/" + str(taskid) + "/done" 
+        rv = self.app.post(url, headers=self.auth_headers)
+
     
         rv = self.app.get('/task/waiting', headers=self.json_headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
         rv = self.app.get('/task/running', headers=self.json_headers)
         self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
 
         rv = self.app.get('/task/done', headers=self.json_headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(len(json_data), 1)
 
-        # XXX Then finish the task off and check all the lists
-        
 
 if __name__ == '__main__':
      unittest.main()

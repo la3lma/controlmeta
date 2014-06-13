@@ -111,7 +111,7 @@ class MkeepTestCase(unittest.TestCase):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")
         self.assertFalse(errorDescription)
 
-    def test_list_all_nonexisting_done_tasks(self):        
+    def test_list_all_nonexisting_done_tasks(self):
         errorDescription = self.tqs.list_all_done_tasks()
         self.assertFalse(errorDescription)
 

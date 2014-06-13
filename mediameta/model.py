@@ -73,7 +73,6 @@ class RDBMSMediaAndMetaStorage:
 
 
     def create_new_media_entry(self, mimetype, data):
-
         object = MediaEntry(
             mimetype,
             data)
@@ -137,15 +136,17 @@ class RDBMSMediaAndMetaStorage:
         return self.store_new_meta(media_id, metatype, payload)
 
 
-    def store_new_meta_from_id_and_type(self, media_id, metatype, payload):
-        "Store new meta from a type for an existing media entry."
-        media_id = str(media_id)
-
+    def assert_that_media_id_exists(self, media_id):
         ret = db_session.query(exists().where(MediaEntry.id==media_id)).scalar()
 
         if not ret:
             raise ModelException("Unknown media ID " + media_id, 404)
 
+
+    def store_new_meta_from_id_and_type(self, media_id, metatype, payload):
+        "Store new meta from a type for an existing media entry."
+        media_id = str(media_id)
+        self.assert_that_media_id_exists(media_id)
         return self.store_new_meta(media_id,  metatype, payload)
 
 
@@ -183,7 +184,10 @@ class RDBMSMediaAndMetaStorage:
 
     
     def get_metadata_from_id_and_metatype(self, media_id, meta_type):
-
+        
+        media_id = str(media_id)
+        self.assert_that_media_id_exists(media_id)
+        
         entries = db_session.query(MetaEntry).filter_by(
             mediaid = media_id, 
             metatype = meta_type).all()

@@ -32,14 +32,18 @@ state = State()
 ## into response objects.
 ##
 
-def expect_non_empty_map_return_as_json(retval, errorcode=404, status=200):
+def response_as_json(retval, status=200):
+        commit_db()
+        return Response(json.dumps(retval), status=status, mimetype="application/json")
+
+def expect_non_empty_map_response_as_json(retval, errorcode=404, status=200):
     if (not retval):
         return Response(status=errorcode)
     else:
         commit_db()
         return Response(json.dumps(retval), status=status, mimetype="application/json")
 
-def allow_empty_map_return_as_json(retval, status=200):
+def allow_empty_map_response_as_json(retval, status=200):
     commit_db()
     if (not retval):
         return Response(status=status)
@@ -131,8 +135,7 @@ def hello_world():
 def get_all_media():
      "Get a list of all the available media's metadata."
      retval=state.mms.get_all_media()
-     rv =  expect_non_empty_map_return_as_json(retval)
-     return rv
+     return response_as_json(retval)
 
 @app.route('/media/id/<id>', methods = ['GET'])
 @requires_auth
@@ -149,14 +152,14 @@ def get_media(id):
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
      retval = state.mms.create_new_media_entry(request.mimetype, request.data)
-     return expect_non_empty_map_return_as_json(retval, status=201)
+     return response_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
 @requires_auth
 def post_media_to_id(id):
     "Write the media representation an identified asset"
     returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data)
-    return allow_empty_map_return_as_json(returnvalue, status=201)
+    return allow_empty_map_response_as_json(returnvalue, status=201)
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 @requires_auth
@@ -176,14 +179,14 @@ def delete_media_and_meta(id):
 def get_meta_list_from_id_and_metaid(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = state.mms.get_metadata_from_id_and_metatype(id, metatype)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 @app.route('/media/metaid/<metaid>', methods = ['GET'])
 @requires_auth
 @catches_model_exception
 def get_metadata_from_metaid(metaid):
     retval = state.mms.get_metadata_from_metaid(metaid)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 
 @app.route('/media/id/<id>', methods = ['GET'])
@@ -193,7 +196,7 @@ def get_metadata_from_id(id):
     "Get all the metadata for a particular media id."
 
     retval = state.mms.get_metadata_from_id(id)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
@@ -203,7 +206,7 @@ def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
     retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 
 @app.route('/media/metatype/<metatype>', methods = ['POST'])
@@ -213,7 +216,7 @@ def post_new_meta_with_metatype_only(metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
     retval = state.mms.store_new_meta_from_type(metatype, payload)
-    return expect_non_empty_map_return_as_json(retval,status=201)
+    return response_as_json(retval,status=201)
 
 
 @app.route('/media/metaid/<metaid>', methods = ['POST'])
@@ -223,7 +226,7 @@ def post_meta(metaid):
     "Post to a particular metadata instance"
     payload = request.json
     retval = state.mms.update_meta(metaid, request.json)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 
 @app.route('/media/metaid/<metaid>', methods = ['DELETE'])
@@ -232,7 +235,7 @@ def post_meta(metaid):
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
     retval = state.mms.delete_metaid(metaid)
-    return expect_non_empty_map_return_as_json(retval)
+    return response_as_json(retval)
 
 
 
@@ -246,39 +249,53 @@ def delete_meta(id, metaid):
 @catches_model_exception
 def list_all_tasks():
     tasks = state.tqs.list_all_tasks()
-    return expect_non_empty_map_return_as_json(tasks)
-
-
+    return response_as_json(tasks)
 
 @app.route('/task/waiting', methods = ['GET'])
 @requires_auth
 @catches_model_exception
 def list_all_waiting_tasks():
-    waiting_tasks = state.tqs.list_all_waiting_tasks()
-    return expect_non_empty_map_return_as_json(waiting_tasks)
+    tasks = state.tqs.list_all_waiting_tasks()
+    return response_as_json(tasks)
+
+@app.route('/task/done', methods = ['GET'])
+@requires_auth
+@catches_model_exception
+def list_all_done_tasks():
+    tasks = state.tqs.list_all_done_tasks()
+    return response_as_json(tasks)
 
 @app.route('/task/running', methods = ['GET'])
 @requires_auth
 @catches_model_exception
-def get_in_progress_task_list():
-    running_tasks = state.tqs.list_all_running_tasks()
-    returnvalue = expect_non_empty_map_return_as_json(running_tasks)
-    return returnvalue
+def get_running_tasks_list():
+    tasks = state.tqs.list_all_running_tasks()
+    return response_as_json(tasks)
+
+
+# XXX The state queries are inconsistent
+
+@app.route('/task/type/<tasktype>/running', methods = ['GET'])
+@requires_auth
+@catches_model_exception
+def get_running_tasks_of_type_list(tasktype):
+    tasks = state.tqs.list_all_running_tasks_of_type(tasktype)
+    return  response_as_json(tasks)
 
         
 @app.route('/task/type/<type>/done', methods = ['GET'])
 @requires_auth
 @catches_model_exception
 def get_done_task_list(type):
-    return_value = state.tqs.list_all_done_tasks()
-    return return_value
+    return response_as_json(state.tqs.list_all_done_tasks())
+
 
 @app.route('/task/waiting/type/<type>', methods = ['GET'])
 @requires_auth
 @catches_model_exception
 def list_waiting_task_of_type(type):
-    waiting_tasks = state.tqs.list_all_waiting_tasks_of_type(type)
-    return expect_non_empty_map_return_as_json(waiting_tasks)
+    tasks = state.tqs.list_all_waiting_tasks_of_type(type)
+    return  response_as_json(tasks)
         
 @app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
 @requires_auth
@@ -289,11 +306,10 @@ def pick_next_waiting_task(type):
     agent_description=request.json
     if not agent_description:
         data = request.stream.read()
-        return expect_non_empty_map_return_as_json(
-            {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
-            errorcode=400)
+        raise ModelException("Agent description was not legal JSON syntax: '%s' "%(data), 400)
+
     task = state.tqs.pick_next_waiting_task_of_type(type, agent_description)
-    return expect_non_empty_map_return_as_json(task)
+    return response_as_json(task)
 
 
 @app.route('/task/id/<id>/done', methods = ['POST'])
@@ -303,7 +319,7 @@ def declare_task_as_done(id):
     tqs = state.tqs
     # Will throw client exception on failure
     retval = tqs.declare_as_done(id)
-    return allow_empty_map_return_as_json({"this":"is", "bullshit":" yeah"}, status=204)
+    return allow_empty_map_response_as_json({"this":"is", "bullshit":" yeah"}, status=204)
 
     
 @app.route('/task/type/<type>', methods = ['POST'])
@@ -313,11 +329,9 @@ def create_task(type):
     params=request.json
     if not params:
         params = request.stream.read()
-        return expect_non_empty_map_return_as_json(
-            {"Error description:" : ("Agent description was not legal JSON syntax: '%s' "%(data)) },
-            errorcode=400)
+        raise ModelException("Agent description was not legal JSON syntax: '%s' "%(data), 400)
     retval = state.tqs.create_task(type, params)
-    return expect_non_empty_map_return_as_json(retval, status=201)
+    return response_as_json(retval, status=201)
 
 @app.route('/task/id/<taskid>', methods = ['DELETE'])
 @requires_auth

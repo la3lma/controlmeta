@@ -25,7 +25,10 @@ class MediaUsecases(Control_meta_test_case):
 
         # First there should be nothing there
         rv = self.app.get('/media', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
+
 
         payload="""{
              "Name": "Test",
@@ -89,7 +92,9 @@ class MediaUsecases(Control_meta_test_case):
 
         # Finally we check if it's gone
         rv = self.app.get('/media', headers=self.auth_headers)
-        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data)
+        self.assertEqual(json_data, [])
     
 if __name__ == '__main__':
     unittest.main()
