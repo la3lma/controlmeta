@@ -4,7 +4,8 @@ import sys
 
 from ctlm import app
 from database import Base, db_session, init_db, commit_db
-from mediameta.model import RDBMSMediaAndMetaStorage, ModelException
+from mediameta.model import RDBMSMediaAndMetaStorage
+from model_exception import ModelException
 from task.model import RDBQueueStorage
 import config
 

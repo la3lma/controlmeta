@@ -15,6 +15,7 @@ from database import init_db, commit_db
 
 from task.model import RDBQueueStorage
 from sqlalchemy import Table, Column, Integer, String, MetaData
+from model_exception import ModelException
 
 class MkeepTestCase(unittest.TestCase):
 
@@ -62,9 +63,12 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(task)
 
     def test_delete_nonexisting_task(self):
-        errorDescription = self.tqs.delete_task("9999")
-        # The error description should be nonempty
-        self.assertTrue(errorDescription)
+        exception_thrown = False
+        try:
+            self.tqs.delete_task("9999")
+        except ModelException as e:
+            exeption_thrown = True
+        self.assertFalse(exception_thrown)
 
     def test_delete_existing_task(self):
         tasktype="rubberduckie99"
@@ -96,7 +100,12 @@ class MkeepTestCase(unittest.TestCase):
         tasks = self.tqs.list_all_waiting_tasks_of_type(tasktype)
         self.assertFalse(tasks)
 
-        self.assertTrue(self.tqs.check_if_task_exists(task_id))
+        exception_thrown = False
+        try:
+            self.tqs.check_if_task_exists(task_id)
+        except ModelException as e:
+            exeption_thrown = True
+        self.assertFalse(exception_thrown)
         
     def test_pick_nonexisting_task(self):
         errorDescription = self.tqs.pick_next_waiting_task_of_type("jalla", "This runner")

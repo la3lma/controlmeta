@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
+from model_exception import ModelException
 import json
 
 WAITING="waiting"
@@ -48,7 +49,6 @@ class Task(Base):
         error_desc = self.state_transition(WAITING, RUNNING)
         if (error_desc):
             #  XXXX Raise model exception
-            print "State transition failed %r" % (error_desc)
             return error_desc
         self.runner = runner
         return {}
@@ -157,49 +157,37 @@ class RDBQueueStorage():
         task_id=str(taskid)
         task = db_session.query(Task).get(task_id)
         if not task:
-            # XXXX Use model exception instead
-            return { "HTTP_error_code": 404,
-                     "Description":
-                     ("No such task taskid='%s'"%taskid)}
+            raise ModelException("No such task taskid='%s'"%taskid, 404)
         else:
-            function(task)
-            return {} # XXX No need to return anything
+            return function(task)
 
     # XXX This design is a bit bogus. It's a bit too astonishing
     #     for its own good.
     def check_if_task_exists(self, task_id):
-        self.do_if_task_exists_error_if_not(task_id,
+        return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task )
         
 
     def declare_as_running(self, task_id, runner):
-        return self.do_if_task_exists_error_if_not(task_id,
+        self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task.run(runner))
 
     # Hack to ensure that task.done is invoked exactly once
     def do_done(self, task):
-        print "Do-done invoked"
         task.done()
 
     def declare_as_done(self, task_id):
-        print "Declaring task as done ", task_id
-#       self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
+        self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
         retval = self.do_if_task_exists_error_if_not(task_id, self.do_done)
-        print "declare_as_done retval = ", retval
         return retval
         
 
     def create_task(self, tasktype, params):
-        print "1"
         json_params = json.dumps(params)
-        print "2"
         task = Task(WAITING, tasktype, json_params)
-        print "3"
         db_session.add(task)
         commit_db()
-        print "4"
         mtask = task.as_map()
-        print "5"
         return mtask
 
     def nuke(self, task):
@@ -209,4 +197,4 @@ class RDBQueueStorage():
         return task_map
 
     def delete_task(self, task_id):
-        return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))
+        self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))
