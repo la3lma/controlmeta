@@ -5,8 +5,6 @@ class  UploadResult:
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
-        
-
     
 class ClientException(Exception):
 
@@ -66,15 +64,7 @@ class  ControlMetaClient:
         # json and interpret it as such, and return the
         # interpretation as a collection (or list, or whatever :-)
 
-        print "returning raw_response = ", raw_response
-        print "returning raw_response.text = ", raw_response.text
-
-        json_response = json.loads(raw_response.text)
-
-        print "returning raw_response.json = ", json_response
-
-        return json_response
-
+        return  json.loads(raw_response.text)
 
     def post(self, url, payload, expected_status, error_message):
         return self.process(requests.post,
@@ -96,7 +86,6 @@ class  ControlMetaClient:
         tasktypepath = "task/type/%s" % type
         url = "%s%s" %(self.base_url, tasktypepath)
         return self.post(url, parameters, 201, "Unable to upload task")
-
 
     def pick_task(self, type, agent_id):
         parameters = {'agentId':agent_id}
@@ -134,3 +123,4 @@ class  ControlMetaClient:
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
         return UploadResult(jrv['ContentId'], jrv['ContentURL'])
+        
