@@ -58,8 +58,13 @@ class  ControlMetaClient:
                     status_code, 
                     error_message)
 
+        # If there was no content, then return none
         if not raw_response.text:
             return None
+
+        # Since thee was a response we will assume it was
+        # json and interpret it as such, and return the
+        # interpretation as a collection (or list, or whatever :-)
 
         print "returning raw_response = ", raw_response
         print "returning raw_response.text = ", raw_response.text
