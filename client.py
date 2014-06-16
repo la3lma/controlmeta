@@ -8,7 +8,24 @@ class  UploadResult:
 
 def new_upload_result(rv):
         return UploadResult(rv['ContentId'], rv['ContentURL'])
-        
+
+
+class  Task:
+    def __init__(self, task_id, status, parameters, task_type):
+        self.status = status
+        self.parameters = parameters
+        self.task_id = task_id
+        self.task_type = task_type
+
+def new_task_result(rv):
+    print "new_task_result.rv = ", rv
+    return Task(
+        rv['taskId'],
+        rv['status'],
+        rv['params'],
+        rv['taskType']
+        )
+
     
 class ClientException(Exception):
 
@@ -83,7 +100,10 @@ class  ControlMetaClient:
     def upload_task(self, type, parameters):
         tasktypepath = "task/type/%s" % type
         url = "%s%s" %(self.base_url, tasktypepath)
-        return self.post(url, parameters, 201, "Unable to upload task")
+        jrv  = self.post(url, parameters, 201, "Unable to upload task")
+        print "jrv = ", jrv
+        return new_task_result(jrv)
+
 
     def pick_task(self, type, agent_id):
         parameters = {'agentId':agent_id}
@@ -101,7 +121,8 @@ class  ControlMetaClient:
         url="%s,media/metadata/%s" %(self.base_url, type)
         error_message="Unable to create naked  metadata instance."
         raw_response = self.post(url, data, 204, error_message)
-        return json.loads(raw_response.text)
+        jrv = json.loads(raw_response.text)
+        return new_upload_result(jrv)
 
     def upload_media_from_file(self, type, filepath):
         url="%smedia/" %(self.base_url)

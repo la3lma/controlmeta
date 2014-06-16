@@ -24,7 +24,7 @@ print "Tasks 1 = ", t1
 
 print " data -> ", data
 # pick up the task ID from the response
-task_id = data['taskId']
+task_id = data.task_id
 print "taskId=",task_id
 
 ## Then pick a task
