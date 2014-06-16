@@ -69,7 +69,7 @@ class control_meta_test_case(unittest.TestCase):
 
 
     def test_getting_metadata_from_metatype(self):
-        mms=RDBMSMediaAndMetaStorage("http://namuu/")
+        mms = RDBMSMediaAndMetaStorage("http://namuu/")
         meta_content = {"banana" : "apples" }
         meta_type = "eplegreie"
         retval = mms.store_new_meta_from_type(meta_type, meta_content)
