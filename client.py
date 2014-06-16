@@ -5,6 +5,10 @@ class  UploadResult:
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
+
+def new_upload_result(rv):
+        return UploadResult(rv['ContentId'], rv['ContentURL'])
+        
     
 class ClientException(Exception):
 
@@ -50,6 +54,7 @@ class  ControlMetaClient:
                     error_message)
 
         # If there was no content, then return none
+
         if not raw_response.text:
             return None
 
@@ -114,5 +119,4 @@ class  ControlMetaClient:
             data=data,
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
-        return UploadResult(jrv['ContentId'], jrv['ContentURL'])
-        
+        return new_upload_result(jrv)
