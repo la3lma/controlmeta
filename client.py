@@ -1,13 +1,13 @@
 import requests
 import json
 
-class  UploadResult:
+class  Media:
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
 
-def new_upload_result(rv):
-        return UploadResult(rv['ContentId'], rv['ContentURL'])
+def new_media_result(rv):
+        return Media(rv['ContentId'], rv['ContentURL'])
 
 
 class  Task:
@@ -122,7 +122,7 @@ class  ControlMetaClient:
         error_message="Unable to create naked  metadata instance."
         raw_response = self.post(url, data, 204, error_message)
         jrv = json.loads(raw_response.text)
-        return new_upload_result(jrv)
+        return new_media_result(jrv)
 
     def upload_media_from_file(self, type, filepath):
         url="%smedia/" %(self.base_url)
@@ -140,4 +140,4 @@ class  ControlMetaClient:
             data=data,
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
-        return new_upload_result(jrv)
+        return new_media_result(jrv)
