@@ -79,7 +79,7 @@ class control_meta_test_case(unittest.TestCase):
         r = mms.get_metadata_from_id_and_metatype(media_id, meta_type)
         self.assertTrue(r)
 
-        r_content = r[0]['content']
+        r_content = r[0].content
 
         self.assertEquals(r_content,  meta_content)
 

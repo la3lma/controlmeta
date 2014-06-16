@@ -10,6 +10,25 @@ def new_media_result(rv):
         return Media(rv['ContentId'], rv['ContentURL'])
 
 
+class  Meta:
+    def __init__(self, media_id, media_url, meta_id, meta_url, meta_type, meta_content):
+        self.media_id = media_id
+        self.media_url = media_url
+        self.meta_id = meta_id
+        self.url = meta_url
+        self.type = meta_type
+        self.content = meta_content
+
+def new_meta_result(rv):
+        return Media(
+            rv['media_id'],
+            rv['media_url'],
+            rv['meta_id'],
+            rv['meta_url'],
+            rv['meta_type'],
+            rv['meta_content']
+)
+
 class  Task:
     def __init__(self, task_id, status, parameters, task_type):
         self.status = status
@@ -118,11 +137,11 @@ class  ControlMetaClient:
         return self.post(url, payload,  204, error_message)
 
     def upload_metadata(self, type, data):
-        url="%s,media/metadata/%s" %(self.base_url, type)
+        url="%s/media/metatype/%s" %(self.base_url, type)
         error_message="Unable to create naked  metadata instance."
         raw_response = self.post(url, data, 204, error_message)
         jrv = json.loads(raw_response.text)
-        return new_media_result(jrv)
+        return new_meta_result(jrv)
 
     def upload_media_from_file(self, type, filepath):
         url="%smedia/" %(self.base_url)
