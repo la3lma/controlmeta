@@ -153,7 +153,6 @@ class SimpleCrudCases(Control_meta_test_case):
         self.assertEqual(json_data, {})
 
 
-
     def test_declare_task_done(self):
         rv = self.app.post(
                 '/task/id/9991234/done',

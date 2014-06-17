@@ -326,9 +326,7 @@ def pick_next_waiting_task(type):
 @requires_auth
 @catches_model_exception
 def declare_task_as_done(id):
-
     tqs = state.tqs
-
     params=request.json
     if not params:
         raise ModelException("No params specified when marking task as done", 400)
@@ -339,7 +337,8 @@ def declare_task_as_done(id):
     agent_id = params['agentId']
 
     retval = tqs.declare_as_done(id, agent_id)
-    return response_as_json(retval, status=204)
+    return  jsonify(retval)
+
 
     
 @app.route('/task/type/<type>', methods = ['POST'])

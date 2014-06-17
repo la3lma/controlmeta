@@ -144,13 +144,13 @@ class  ControlMetaClient:
         url="%stask/id/%s/done" %(self.base_url, task_id)
         payload={'agentId': agent_id}
         error_message="Unable to declare task " + str(task_id) + " as done."
-        task = self.post(url, payload,  204, error_message)
+        task = self.post(url, payload,  200, error_message)
         return new_task_result(task)
 
     def upload_metadata(self, type, data):
         url="%s/media/metatype/%s" %(self.base_url, type)
         error_message="Unable to create naked  metadata instance."
-        raw_response = self.post(url, data, 204, error_message)
+        raw_response = self.post(url, data, 200, error_message)
         jrv = json.loads(raw_response.text)
         return new_meta_result(jrv)
 
