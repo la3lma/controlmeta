@@ -53,9 +53,7 @@ if DATABASES:
 else:
     try:
         db_uri = os.environ["SQLALCHEMY_DATABASE_URI"]
-        print "Found environment variable"
     except KeyError:
-        print "Did not find environment variable"
         db_uri = config.SQLALCHEMY_DATABASE_URI
 
 print "db_uri = ", db_uri

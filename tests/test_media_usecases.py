@@ -27,7 +27,7 @@ class MediaUsecases(Control_meta_test_case):
         rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
 
         payload="""{
@@ -45,12 +45,12 @@ class MediaUsecases(Control_meta_test_case):
         rvj = json.loads(rv.data)
 
         # Pick up the content ID and the content URL
-        contentid = rvj.get('ContentId')
+        contentid = rvj.get('media_id')
 
         # Had we been really concerned with being
         # conformant we would have used this url instead
         # of the paths we use below.
-        contenturl = rvj.get('ContentURL')
+        contenturl = rvj.get('media_url')
 
         # Now there should be something here
         rv = self.app.get('/media', headers=self.auth_headers)
@@ -67,8 +67,6 @@ class MediaUsecases(Control_meta_test_case):
         # metadata
         payload2 = 'this is amazing'
         url = '/media/id/' + str(contentid)
-
-        print "url = " , mediaurl
 
         rv3 = self.app.post(
             mediaurl,
@@ -94,7 +92,7 @@ class MediaUsecases(Control_meta_test_case):
         rv = self.app.get('/media', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
     
 if __name__ == '__main__':
     unittest.main()

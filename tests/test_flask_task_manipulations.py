@@ -55,7 +55,8 @@ class FullTaskLifecycleTest(Control_meta_test_case):
 
         # Then terminate the task
         url = "/task/id/" + str(taskid) + "/done" 
-        rv = self.app.post(url, headers=self.auth_headers)
+        rv = self.app.post(url,   headers=self.json_headers,
+                           data='{"agentId":"007"}')
 
         self.assertReturnedListHasLength("task/waiting", 0)
         self.assertReturnedListHasLength("task/running", 0)

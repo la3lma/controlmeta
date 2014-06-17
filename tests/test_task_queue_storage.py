@@ -92,8 +92,9 @@ class MkeepTestCase(unittest.TestCase):
         task_id = task['taskId']
 
         # Then nuke it
-        errorDescription = self.tqs.delete_task(task_id)
-        self.assertFalse(errorDescription)
+        delete_retval = self.tqs.delete_task(task_id)
+        self.assertTrue(delete_retval)
+        self.assertEquals('deleted', delete_retval['status'])
         commit_db()
 
         # And check that it's no longer there in a couple of ways
@@ -137,13 +138,13 @@ class MkeepTestCase(unittest.TestCase):
         self.assertTrue(waiting)
 
         result  = self.tqs.declare_as_running(task_id, "gazonk runner")
-        self.assertFalse(result)
+        self.assertTrue(result)
 
         task = self.tqs.get_task(task_id)
         self.assertEqual("running", task['status'])
         
         try:
-            self.tqs.declare_as_done(task_id)
+            self.tqs.declare_as_done(task_id, "007")
         except ModelException as e:
             print "Caught model exception " + e.message
             self.assertFalse(True)

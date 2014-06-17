@@ -33,8 +33,18 @@ state = State()
 ##
 
 def response_as_json(retval, status=200):
-        commit_db()
-        return Response(json.dumps(retval), status=status, mimetype="application/json")
+
+    if not retval:
+        retval = {}
+
+    commit_db()
+
+    json_dump = json.dumps(retval)
+    response =  Response(json_dump, status=status, mimetype="application/json")
+#     response = jsonify(retval)
+#     response.status_code = status
+    return response
+
 
 def expect_non_empty_map_response_as_json(retval, errorcode=404, status=200):
     if (not retval):
@@ -316,10 +326,20 @@ def pick_next_waiting_task(type):
 @requires_auth
 @catches_model_exception
 def declare_task_as_done(id):
+
     tqs = state.tqs
-    # Will throw client exception on failure
-    retval = tqs.declare_as_done(id)
-    return allow_empty_map_response_as_json({"this":"is", "bullshit":" yeah"}, status=204)
+
+    params=request.json
+    if not params:
+        raise ModelException("No params specified when marking task as done", 400)
+
+    if  not 'agentId' in params:
+        raise ModelException("No agent specified when marking task as done", 400)
+
+    agent_id = params['agentId']
+
+    retval = tqs.declare_as_done(id, agent_id)
+    return response_as_json(retval, status=204)
 
     
 @app.route('/task/type/<type>', methods = ['POST'])

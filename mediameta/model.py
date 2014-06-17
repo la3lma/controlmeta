@@ -27,8 +27,8 @@ class MediaEntry(Base):
 
     def location_as_map(self, storage):
        return {
-           "ContentId": self.id, 
-           "ContentURL": storage.get_media_url(self.id)
+           "media_id": self.id, 
+           "media_url": storage.get_media_url(self.id)
            }
 
 
@@ -132,7 +132,7 @@ class RDBMSMediaAndMetaStorage:
         
     def store_new_meta_from_type(self, metatype, payload):
         meta_data = self.create_new_media_entry(None, None)
-        media_id = meta_data['ContentId']
+        media_id = meta_data['media_id']
         if not media_id:
             raise ModelException("Null media_id detected", 500)
         return self.store_new_meta(media_id, metatype, payload)

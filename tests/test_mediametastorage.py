@@ -56,7 +56,7 @@ class control_meta_test_case(unittest.TestCase):
     def test_metadata_roundtrip(self):
         mms=RDBMSMediaAndMetaStorage("http://namuu/")
         retval = mms.create_new_media_entry("text/plain", "jiha")
-        doc_id = retval['ContentId']
+        doc_id = retval['media_id']
         
         meta_type = 'bananas'
         payload   = {"amount": "a big bunch"}
@@ -64,7 +64,7 @@ class control_meta_test_case(unittest.TestCase):
         meta_id = r['meta_id']
         returned_meta = mms.get_metadata_from_metaid(meta_id)
         self.assertTrue(returned_meta)
-        returned_payload = returned_meta['content']
+        returned_payload = returned_meta['meta_content']
         self.assertEquals(payload, returned_payload)
 
 
@@ -79,7 +79,7 @@ class control_meta_test_case(unittest.TestCase):
         r = mms.get_metadata_from_id_and_metatype(media_id, meta_type)
         self.assertTrue(r)
 
-        r_content = r[0].content
+        r_content = r[0]['meta_content']
 
         self.assertEquals(r_content,  meta_content)
 

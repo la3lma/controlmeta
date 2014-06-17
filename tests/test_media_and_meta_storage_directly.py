@@ -30,7 +30,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
         self.assertTrue(not keys)
         
         metadata = mms.create_new_media_entry("text/plain", "foo")
-        id = metadata['ContentId']
+        id = metadata['media_id']
 
         commit_db()
 
@@ -47,7 +47,7 @@ class TestMediaAndMetaStorageDirectly(Control_meta_test_case):
     def test_create_meta_then_data(self):
         mms = RDBMSMediaAndMetaStorage("")
         return_metadata=mms.create_new_media_entry('text/plain', 'foo')
-        contentid = return_metadata['ContentId']
+        contentid = return_metadata['media_id']
         commit_db()
         
         # XXX VERY BOGUS!

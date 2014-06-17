@@ -7,7 +7,7 @@ class  Media:
         self.document_url = document_url
 
 def new_media_result(rv):
-        return Media(rv['ContentId'], rv['ContentURL'])
+    return Media(rv['media_id'], rv['media_url'])
 
 
 class  Meta:
@@ -26,18 +26,25 @@ def new_meta_result(rv):
             rv['meta_id'],
             rv['meta_url'],
             rv['meta_type'],
-            rv['meta_content']
-)
+            rv['meta_content'])
 
 class  Task:
     def __init__(self, task_id, status, parameters, task_type):
         self.status = status
         self.parameters = parameters
-        self.task_id = task_id
+        self.id = task_id
         self.task_type = task_type
 
+
+    def __repr__(self):
+        return "<Task id:'%r', type:'%r',  status:'%r', parameters:'%r'>" % \
+            (self.id, self.task_type, self.status, self.parameters)
+
 def new_task_result(rv):
-    print "new_task_result.rv = ", rv
+    if not rv: 
+        raise ClientException(None, "Attempt to create task instance from empty dictionary")
+    
+    # XXX Rewrite to underscored names
     return Task(
         rv['taskId'],
         rv['status'],
@@ -45,14 +52,19 @@ def new_task_result(rv):
         rv['taskType']
         )
 
+
+
     
 class ClientException(Exception):
 
     httpcode=None
     def __init__(self, httpcode, message):
         self.httpcode=httpcode
-        self.value = "HTTP return code %s: %s" % (str(httpcode), message)
-
+        if httpcode:
+            self.value = "HTTP return code %s: %s" % (str(httpcode), message)
+        else:
+            self.value = message
+        
     def __str__(self):
         return repr(self.value)
 
@@ -71,16 +83,13 @@ class  ControlMetaClient:
 
     def process(self, function,  url, payload, expected_status, error_message):
 
-        if payload:
-            raw_response  = function(
+        if not payload:
+            payload = {}
+
+        raw_response  = function(
                 url,
                 auth=self.auth,
                 data=json.dumps(payload),
-                headers=self.JSON_HEADERS)
-        else:
-            raw_response  = function(
-                url,
-                auth=self.auth,
                 headers=self.JSON_HEADERS)
 
         status_code = raw_response.status_code
@@ -94,7 +103,7 @@ class  ControlMetaClient:
         if not raw_response.text:
             return None
 
-        # Since thee was a response we will assume it was
+        # Since there was a response we will assume it was
         # json and interpret it as such, and return the
         # interpretation as a collection (or list, or whatever :-)
 
@@ -114,27 +123,29 @@ class  ControlMetaClient:
 
     def all_tasks(self):
         url = "%stask" %(self.base_url)
-        return self.get(url,  200, "Unable to get task list")
+        task_list = self.get(url,  200, "Unable to get task list")
+        return map(new_task_result, task_list)
         
     def upload_task(self, type, parameters):
         tasktypepath = "task/type/%s" % type
         url = "%s%s" %(self.base_url, tasktypepath)
-        jrv  = self.post(url, parameters, 201, "Unable to upload task")
-        print "jrv = ", jrv
-        return new_task_result(jrv)
+        task  = self.post(url, parameters, 201, "Unable to upload task")
+        return new_task_result(task)
 
 
     def pick_task(self, type, agent_id):
         parameters = {'agentId':agent_id}
         url = "%stask/waiting/type/%s/pick" %(self.base_url, type)
         error_message = "Unable to pick task of type %s for agent %s"%(type, agent_id)
-        return self.post(url, parameters, 200, error_message)
+        task = self.post(url, parameters, 200, error_message)
+        return new_task_result(task)
         
     def declare_task_done(self, task_id, agent_id):
         url="%stask/id/%s/done" %(self.base_url, task_id)
         payload={'agentId': agent_id}
         error_message="Unable to declare task " + str(task_id) + " as done."
-        return self.post(url, payload,  204, error_message)
+        task = self.post(url, payload,  204, error_message)
+        return new_task_result(task)
 
     def upload_metadata(self, type, data):
         url="%s/media/metatype/%s" %(self.base_url, type)

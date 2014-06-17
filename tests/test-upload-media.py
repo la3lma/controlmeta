@@ -38,8 +38,6 @@ upload_result=cmc.upload_media("text/plain", "jalla")
 # Retrieve the id and the url from the id
 doc_id = upload_result.document_id
 doc_url = upload_result.document_url
-print "Text ID = ", doc_id
-print "document url = ", doc_url
 
 # Construct an URL based on the base URL (config problems)
 # and use that to fetch the content
@@ -50,8 +48,6 @@ file_upload_result = cmc.upload_media_from_file('image/jpeg', filepath)
 image_id = file_upload_result.document_id
 image_url = file_upload_result.document_url
 
-print "image ID = ", image_id
-print "image document url = ", image_url
 
 if not image_id :
     logging.debug("Could not get image ID")
@@ -62,8 +58,6 @@ if not image_id :
 image_result=requests.get(image_url, auth=auth)
 
 
-print "image result.headers = ", image_result.headers
-print "image result.content = ", image_result.content
 
 with open(filepath, 'r') as content_file:
     content = content_file.read()

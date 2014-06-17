@@ -59,13 +59,15 @@ class Task(Base):
             raise ModelException(message, 403)
         else:
             self.status = destination
+        return self.as_map()
 
     def done(self):
-        self.state_transition(RUNNING, DONE)
+        return self.state_transition(RUNNING, DONE)
 
     def run(self, runner):
-        self.state_transition(WAITING, RUNNING)
+        retval = self.state_transition(WAITING, RUNNING)
         self.runner = runner
+        return retval
 
     def has_status(self, taskType):
         return self.taskType == taskType
@@ -166,15 +168,14 @@ class RDBQueueStorage():
         
 
     def declare_as_running(self, task_id, runner):
-        self.do_if_task_exists_error_if_not(task_id,
+        return self.do_if_task_exists_error_if_not(task_id,
                                             lambda task: task.run(runner))
 
-    # Hack to ensure that task.done is invoked exactly once
     def do_done(self, task):
-        task.done()
+        return task.done()
 
-    def declare_as_done(self, task_id):
-        self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
+    def declare_as_done(self, task_id, terminator):
+        return self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
 
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)
@@ -188,7 +189,8 @@ class RDBQueueStorage():
         task_id = task.id
         task_map = task.as_map()
         db_session.delete(task)
+        task_map['status'] = 'deleted'
         return task_map
 
     def delete_task(self, task_id):
-        self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))
+        return self.do_if_task_exists_error_if_not(task_id, lambda task: self.nuke(task))

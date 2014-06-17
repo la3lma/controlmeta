@@ -31,7 +31,7 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.get('/media', headers=self.headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
     def  test_get_specific_media(self):
         rv = self.app.get('/media/id/1', headers=self.headers)
@@ -83,7 +83,7 @@ class SimpleCrudCases(Control_meta_test_case):
         self.assertEqual(me.status_code, 201)
 
         returnvalue = json.loads(me.data)
-        index = returnvalue['ContentId']
+        index = returnvalue['media_id']
         url = '/media/id/'+str(index) + '/metatype/faces'
 
         rv = self.app.post(
@@ -124,25 +124,25 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.get('/task/waiting', headers = self.headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
     def test_all_waiting_tasks_of_type(self):
         rv = self.app.get('/task/waiting/type/face', headers= self.headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
     def test_get_in_progress_list(self):
         rv = self.app.get('/task/type/face/running', headers=self.headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
     def test_get_done_task_list(self):
         rv = self.app.get('/task/done', headers=self.headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, [])
+        self.assertEqual(json_data, {})
 
     def test_pick_task_of_type(self):
         rv = self.app.post('/task/waiting/type/face_pick_dummy/pick',
@@ -150,14 +150,15 @@ class SimpleCrudCases(Control_meta_test_case):
                            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        self.assertEqual(json_data, None)
+        self.assertEqual(json_data, {})
 
 
 
     def test_declare_task_done(self):
         rv = self.app.post(
                 '/task/id/9991234/done',
-                headers=self.headers)
+            headers=self.json_headers,
+            data='{"agentId":"007"}')
         self.assertEqual(rv.status_code, 404)
 
     def test_create_task(self):
