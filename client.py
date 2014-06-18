@@ -46,10 +46,10 @@ def new_task_result(rv):
     
     # XXX Rewrite to underscored names
     return Task(
-        rv['taskId'],
+        rv['task_id'],
         rv['status'],
-        rv['params'],
-        rv['taskType']
+        rv['parameters'],
+        rv['task_type']
         )
 
 

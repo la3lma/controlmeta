@@ -36,10 +36,10 @@ class Task(Base):
     ## as a json representation.
     ##
     def as_map(self):
-        return {"taskId": self.id,
+        return {"task_id": self.id,
                 "status": self.status,
-                "taskType": self.tasktype,
-                "params": json.loads(self.params) }
+                "task_type": self.tasktype,
+                "parameters": json.loads(self.params) }
 
     ##
     ## The start state needs some special case handling

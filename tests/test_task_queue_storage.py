@@ -36,14 +36,14 @@ class MkeepTestCase(unittest.TestCase):
     def test_create_task_with_no_params(self):
         task = self.tqs.create_task("rubberduck", {})
         self.assertTrue(task)
-        self.assertEqual("rubberduck", task['taskType'])
-        self.assertEqual({}, task['params'])
+        self.assertEqual("rubberduck", task['task_type'])
+        self.assertEqual({}, task['parameters'])
 
     def test_create_task_with_params(self):
         params={"apple":"fruit"}
         task = self.tqs.create_task("rubberduck", params)
         self.assertTrue(task)
-        self.assertEquals(params,  task['params'])
+        self.assertEquals(params,  task['parameters'])
 
         
     def test_list_empty_waiting_tasks_list(self):
@@ -89,7 +89,7 @@ class MkeepTestCase(unittest.TestCase):
         task = tasks[0]
         self.assertTrue(task)
 
-        task_id = task['taskId']
+        task_id = task['task_id']
 
         # Then nuke it
         delete_retval = self.tqs.delete_task(task_id)
@@ -132,7 +132,7 @@ class MkeepTestCase(unittest.TestCase):
         task = tasks[0]
         self.assertTrue(task)
 
-        task_id = task['taskId']
+        task_id = task['task_id']
 
         waiting = self.tqs.list_all_waiting_tasks()
         self.assertTrue(waiting)
