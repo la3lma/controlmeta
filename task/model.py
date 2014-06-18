@@ -26,6 +26,11 @@ class Task(Base):
       self.tasktype = tasktype
       self.params = params
 
+    # XXX This method should be identical to the one in client.py
+    def __repr__(self):
+        return "<Task id:'%r', type:'%r',  status:'%r', parameters:'%r'>" % \
+            (self.id, self.tasktype, self.status, self.params)
+
     ##
     ## Represent the task as a map.  To be used when moving it
     ## as a json representation.
@@ -172,10 +177,14 @@ class RDBQueueStorage():
                                             lambda task: task.run(runner))
 
     def do_done(self, task):
-        return task.done()
+        print "Doing the done for task: ", task
+        retval =  task.done()
+        print "    post doing the done for task: ", task
+        return retval
 
     def declare_as_done(self, task_id, terminator):
-        return self.do_if_task_exists_error_if_not(task_id, lambda task: task.done())
+        print "Declaring as done: ", task_id
+        return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
 
     def create_task(self, tasktype, params):
         json_params = json.dumps(params)

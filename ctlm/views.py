@@ -322,6 +322,14 @@ def pick_next_waiting_task(type):
     return response_as_json(task)
 
 
+@app.route('/task/id/<id>', methods = ['GET'])
+@requires_auth
+@catches_model_exception
+def get_task_from_id(id):
+    retval = state.tqs.get_task(id)
+    return  jsonify(retval)
+
+
 @app.route('/task/id/<id>/done', methods = ['POST'])
 @requires_auth
 @catches_model_exception
@@ -337,6 +345,7 @@ def declare_task_as_done(id):
     agent_id = params['agentId']
 
     retval = tqs.declare_as_done(id, agent_id)
+    commit_db()
     return  jsonify(retval)
 
 
