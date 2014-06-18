@@ -177,13 +177,10 @@ class RDBQueueStorage():
                                             lambda task: task.run(runner))
 
     def do_done(self, task):
-        print "Doing the done for task: ", task
         retval =  task.done()
-        print "    post doing the done for task: ", task
         return retval
 
     def declare_as_done(self, task_id, terminator):
-        print "Declaring as done: ", task_id
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
 
     def create_task(self, tasktype, params):

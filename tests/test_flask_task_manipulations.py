@@ -21,7 +21,6 @@ class FullTaskLifecycleTest(Control_meta_test_case):
         rv = self.app.get(url, headers=self.auth_headers)
         self.assertEqual(rv.status_code, 200)
         json_data = json.loads(rv.data)
-        print "The returned list =", json_data
         self.assertEqual(len(json_data), length)
 
     def test_full_lifecycle_for_single_task(self):
@@ -62,9 +61,7 @@ class FullTaskLifecycleTest(Control_meta_test_case):
             data='{"agentId":"007"}',
             headers=self.json_headers)
 
-        print "zont"
         foo = self.app.get(taskurl, headers = self.auth_headers)
-        print "foo = ", foo.data
 
         self.assertReturnedListHasLength("task/waiting", 0)
         self.assertReturnedListHasLength("task/running", 0)
