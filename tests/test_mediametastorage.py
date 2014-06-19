@@ -103,7 +103,7 @@ class control_meta_test_case(unittest.TestCase):
             self.mms.get_metadata_from_metaid(metaid)
         except ModelException as e:
             exists = False
-        self.assertTrue(exists)
+        self.assertEquals(expectation, exists)
 
     def assert_media_exists(self, expectation, mediaid):
         exists = True
@@ -130,8 +130,10 @@ class control_meta_test_case(unittest.TestCase):
         commit_db()
 
         # XXX This fails, no deletion happening
-        self.assert_media_exists(False, media_id)
-        self.assert_meta_exists(False, meta_id)
+        ## XXX THe presence of "str" here indicates bad design.
+        self.assert_meta_exists(False, str(meta_id))
+        self.assert_media_exists(False, media_id) # XXX This fails! The media isn't gone!
+
 
 
 if __name__ == '__main__':

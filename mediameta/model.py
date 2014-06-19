@@ -129,9 +129,8 @@ class RDBMSMediaAndMetaStorage:
             db_session.delete(result)
             return {}
         else:
-            # XXX This isn't right.  Throw a model exception instead!
-            retval = {"Unknown_media_id": id}
-            return retval
+            raise ModelException("Unknown media ID = " + str(id), 404)
+
         
     def store_new_meta_from_type(self, metatype, payload):
         meta_data = self.create_new_media_entry(None, None)

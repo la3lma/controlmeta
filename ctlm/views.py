@@ -175,8 +175,8 @@ def post_media_to_id(id):
 @requires_auth
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
-    errors = state.mms.delete_media(id)
-    return expect_empty_map_return_error_as_json(errors)
+    state.mms.delete_media(id)
+    return Response(status=204)
 
 ###
 ###  Meta CRUD
