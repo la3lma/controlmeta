@@ -46,6 +46,8 @@ class MetaEntry(Base):
         self.content = content
 
 
+    # XXX Rename the meta_type to be something else, such as "label"
+    #     to emphasize that its not a media type for the meta content.
     def as_map(self, storage):
         return {
             'meta_id': self.id, 
@@ -114,6 +116,8 @@ class RDBMSMediaAndMetaStorage:
             return (result.content_type, result.content)
         else:
             return (None, None)
+
+
 
     def delete_media(self, id):
         id=str(id)
@@ -207,6 +211,9 @@ class RDBMSMediaAndMetaStorage:
         else:
             raise ModelException("Unknown meta_id" +  meta_id, 404)
 
-
-
-
+    def clean(self):
+        "Nuke everything"
+        print "Cleaning"
+        db_session.query(MetaEntry).delete()
+        db_session.query(MediaEntry).delete()
+        db_session.commit()
