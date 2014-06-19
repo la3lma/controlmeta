@@ -1,11 +1,17 @@
 o Refactor
-  - Write at least one test that checks cascading deletes of
-    media with associated meta-items.
   - Fix XXXes all over the place.  There are way too many bloopers now.
-  - Avoid internal camelcases
   - Add comments to methods, use best practices
   - Consider extendig test coverage to some more 
     things that looks brittle.
+  - 
+
+o Test coverage
+  - A test that actually does something useful to an image (extracting
+    some metainfo and putting it in a metadata object is a nice start).
+  - Write 
+  - Write at least one test that checks cascading deletes of
+    media with associated meta-items.
+
 
 o Add users
   o Initially, add API users.  They should have an userid and an

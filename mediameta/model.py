@@ -51,7 +51,6 @@ class MetaEntry(Base):
             'meta_id': self.id, 
             'media_id': self.mediaid, 
             'meta_type': self.metatype, 
-            # XXX Should we force content to be json?
             'meta_content': json.loads(self.content),
             'meta_url': storage.get_meta_url(self.id),
             'media_url': storage.get_media_url(self.mediaid)
