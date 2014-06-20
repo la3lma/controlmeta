@@ -130,7 +130,6 @@ class control_meta_test_case(unittest.TestCase):
         commit_db()
 
         # XXX This fails, no deletion happening
-        ## XXX THe presence of "str" here indicates bad design.
         self.assert_meta_exists(False, meta_id)
         self.assert_media_exists(False, media_id) # XXX This fails! The media isn't gone!
 
