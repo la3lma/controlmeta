@@ -97,9 +97,9 @@ class control_meta_test_case(unittest.TestCase):
         self.assertEquals(r_content,  meta_content)
 
 
-    def assert_exists(self, getter, expectation, mid):
+    def assert_exists(self, getter, expectation, id):
         exists = True
-        metaid = str(id)
+        id =  str(id)
         try:
             # Will throw exception when something isn't found
             getter(id)
@@ -112,7 +112,7 @@ class control_meta_test_case(unittest.TestCase):
         self.assert_exists(self.mms.get_metadata_from_metaid, expectation, metaid)
 
     def assert_media_exists(self, expectation, mediaid):
-        self.assert_exists(self.mms.get_media, expectation, metaid)
+        self.assert_exists(self.mms.get_media, expectation, mediaid)
 
 
 
