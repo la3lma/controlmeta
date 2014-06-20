@@ -165,7 +165,7 @@ class RDBMSMediaAndMetaStorage:
         return entry.as_map(self)
 
                 
-    def basic_get_metadata_from_metaid(self, metaid):
+    def basic_get_metadata_from_id(self, metaid):
         meta_entry = db_session.query(MetaEntry).get(metaid)
         if not meta_entry:
                 raise ModelException(
@@ -176,12 +176,12 @@ class RDBMSMediaAndMetaStorage:
         return meta_entry
 
     def update_meta_meta(self, metaid, payload):
-        meta_entry = self.basic_get_metadata_from_metaid(metaid)
+        meta_entry = self.basic_get_metadata_from_id(metaid)
         meta_entry.content = payload
 
 
-    def get_metadata_from_metaid(self,  metaid):
-        meta_entry = self.basic_get_metadata_from_metaid(metaid)
+    def get_metadata_from_id(self,  metaid):
+        meta_entry = self.basic_get_metadata_from_id(metaid)
         return_value = meta_entry.as_map(self)
         return return_value
 
@@ -200,7 +200,7 @@ class RDBMSMediaAndMetaStorage:
         return result
 
 
-    def delete_metaid(self, meta_id):
+    def delete_meta_from_id(self, meta_id):
         "Empty map means that no data was deleted"
         result = db_session.query(MetaEntry).get(meta_id)
         if result:

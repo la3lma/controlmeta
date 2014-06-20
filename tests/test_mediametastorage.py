@@ -71,7 +71,7 @@ class control_meta_test_case(unittest.TestCase):
         payload   = {"amount": "a big bunch"}
         r = self.mms.store_new_meta_from_id_and_type(doc_id, meta_type, payload)
         meta_id = r['meta_id']
-        returned_meta = self.mms.get_metadata_from_metaid(meta_id)
+        returned_meta = self.mms.get_metadata_from_id(meta_id)
         self.assertTrue(returned_meta)
         returned_payload = returned_meta['meta_content']
         self.assertEquals(payload, returned_payload)
@@ -110,7 +110,7 @@ class control_meta_test_case(unittest.TestCase):
 
     
     def assert_meta_exists(self, expectation, metaid):
-        self.assert_exists(self.mms.get_metadata_from_metaid, expectation, metaid)
+        self.assert_exists(self.mms.get_metadata_from_id, expectation, metaid)
 
     def assert_media_exists(self, expectation, mediaid):
         self.assert_exists(self.mms.get_media, expectation, mediaid)

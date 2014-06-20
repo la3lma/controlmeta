@@ -192,7 +192,7 @@ def delete_media_and_meta(id):
 @app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
 @requires_auth
 @catches_model_exception
-def get_meta_list_from_id_and_metaid(id, metatype):
+def get_meta_list_from_id_and_metatype(id, metatype):
     "Get list of metadata assets associated with a media asset"
     retval = state.mms.get_metadata_from_id_and_metatype(id, metatype)
     return response_as_json(retval)
@@ -201,7 +201,7 @@ def get_meta_list_from_id_and_metaid(id, metatype):
 @requires_auth
 @catches_model_exception
 def get_metadata_from_metaid(metaid):
-    retval = state.mms.get_metadata_from_metaid(metaid)
+    retval = state.mms.get_metadata_from_id(metaid)
     return response_as_json(retval)
 
 
