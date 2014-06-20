@@ -176,6 +176,7 @@ def post_media_to_id(id):
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
     state.mms.delete_media(id)
+    commit_db()
     return Response(status=204)
 
 ###

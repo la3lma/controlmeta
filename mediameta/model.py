@@ -124,10 +124,9 @@ class RDBMSMediaAndMetaStorage:
         ## XXX This is wasteful. We sholdn't have
         ##     to get the full object, we shuld just
         ##     nuke it from orbit.
-        result = db_session.query(MediaEntry).get(id)
+        result = db_session.query(MediaEntry).get(str(id))
         if result:
             db_session.delete(result)
-            return {}
         else:
             raise ModelException("Unknown media ID = " + str(id), 404)
 
@@ -212,7 +211,6 @@ class RDBMSMediaAndMetaStorage:
 
     def clean(self):
         "Nuke everything"
-        print "Cleaning"
         db_session.query(MetaEntry).delete()
         db_session.query(MediaEntry).delete()
         db_session.commit()

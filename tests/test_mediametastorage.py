@@ -98,6 +98,7 @@ class control_meta_test_case(unittest.TestCase):
     
     def assert_meta_exists(self, expectation, metaid):
         exists = True
+        metaid = str(metaid)
         try:
             # XXX Make getter names more aligned
             self.mms.get_metadata_from_metaid(metaid)
@@ -107,6 +108,7 @@ class control_meta_test_case(unittest.TestCase):
 
     def assert_media_exists(self, expectation, mediaid):
         exists = True
+        mediaid = str(mediaid)
         try:
             self.mms.get_media(mediaid)
         except ModelException as e:
@@ -131,7 +133,7 @@ class control_meta_test_case(unittest.TestCase):
 
         # XXX This fails, no deletion happening
         ## XXX THe presence of "str" here indicates bad design.
-        self.assert_meta_exists(False, str(meta_id))
+        self.assert_meta_exists(False, meta_id)
         self.assert_media_exists(False, media_id) # XXX This fails! The media isn't gone!
 
 
