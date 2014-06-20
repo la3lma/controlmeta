@@ -103,6 +103,7 @@ class control_meta_test_case(unittest.TestCase):
         try:
             # Will throw exception when something isn't found
             getter(id)
+
         except ModelException as e:
             exists = False
         self.assertEquals(expectation, exists)
@@ -126,13 +127,14 @@ class control_meta_test_case(unittest.TestCase):
         self.assert_media_exists(True, media_id)
         self.assert_meta_exists(True, meta_id)
         
+        l = self.mms.get_all_media()
         r = self.mms.delete_media(media_id)
         commit_db()
+        l = self.mms.get_all_media()
 
         # XXX This fails, no deletion happening
         self.assert_meta_exists(False, meta_id)
         self.assert_media_exists(False, media_id) # XXX This fails! The media isn't gone!
-
 
 
 if __name__ == '__main__':

@@ -115,7 +115,7 @@ class RDBMSMediaAndMetaStorage:
         if  result:
             return (result.content_type, result.content)
         else:
-            return (None, None)
+            raise ModelException("Cannot find media with id = " + id, 404)
 
 
 

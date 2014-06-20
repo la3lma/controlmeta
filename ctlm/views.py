@@ -142,6 +142,7 @@ def hello_world():
 
 @app.route('/media', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_all_media():
      "Get a list of all the available media's metadata."
      retval=state.mms.get_all_media()
@@ -149,6 +150,7 @@ def get_all_media():
 
 @app.route('/media/id/<id>', methods = ['GET'])
 @requires_auth
+@catches_model_exception
 def get_media(id):
      "Get the media representation of identified asset"
      mimetype, data = state.mms.get_media(id)
@@ -159,6 +161,7 @@ def get_media(id):
 
 @app.route('/media/', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
      retval = state.mms.create_new_media_entry(request.mimetype, request.data)
@@ -166,6 +169,7 @@ def create_new_media_entry_from_upload():
 
 @app.route('/media/id/<id>', methods = ['POST'])
 @requires_auth
+@catches_model_exception
 def post_media_to_id(id):
     "Write the media representation an identified asset"
     returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data)
@@ -173,6 +177,7 @@ def post_media_to_id(id):
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 @requires_auth
+@catches_model_exception
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
     state.mms.delete_media(id)
