@@ -56,11 +56,74 @@ class Parser:
 
     def parse_lines(self, line_source):
         result = {}
+        indent_stack = []
+        result_stack = []
+        tag_stack = []
+        dangling_tag = None
+        current_indent_level = 0
         line = line_source.get_line()
         while line:
-            (indentlevel, payload) = self.split(line)
+            (line_indent_level, payload) = self.split(line)
+
+            if (line_indent_level > current_indent_level):
+                print "Case 2, increasing indent level"
+                if not dangling_tag:
+                    raise RuntimeError("No dangling tag available when increasing indent!")
+                indent_stack.append(current_indent_level)
+                tag_stack.append(dangling_tag)
+                result_stack.append(result)
+                current_indent_level = line_indent_level
+                result = {}
+
+            elif (line_indent_level < current_indent_level):
+                print "case 3"
+                while (line_indent_level < current_indent_level):
+                    print "line_indent_level =", line_indent_level
+                    print "current_indent_level =", current_indent_level
+                    current_indent_level = indent_stack.pop()
+                    dangling_tag = tag_stack.pop()
+                    higher_result = result_stack.pop()
+                    higher_result[dangling_tag] = result
+                    result = higher_result
+
+                if (line_indent_level != current_idnent_level):
+                    raise RuntimeError("Dude,line_indent_level != current_idnent_level!")
+
+            print "case 1"
             (tag, content) = self.parse_line_content(payload)
+            print "  tag = ", tag
+            print "  content = ", content
             if content:
                 result[tag] = content
+                dangling_tag = None
+            else:
+                dangling_tag = tag
+                print "setting dangling tag to ", dangling_tag
+                
             line = line_source.get_line()
+
+            print "case 4, unwinding indent levels to top"
+            print "  Pre: line_indent_level =", line_indent_level
+            print "  Pre: current_indent_level =", current_indent_level
+            print "  pre: Indent level stack =", indent_stack
+
+            while (indent_stack):
+                print "line_indent_level =", line_indent_level
+                print "current_indent_level =", current_indent_level
+                print "result =", result
+                current_indent_level = indent_stack.pop()
+                dangling_tag = tag_stack.pop()
+                higher_result = result_stack.pop()
+                print "higher_result =", higher_result
+                higher_result[dangling_tag] = result
+                result = higher_result
+
+            print "  Post: line_indent_level =", line_indent_level
+            print "  Post: current_indent_level =", current_indent_level
+            print "  Post: Indent level stack =", indent_stack
+
+                
+            if (current_indent_level != 0):
+                raise RuntimeError("Dude, top indent level is not zero, it's " + str(line_indent_level) + ", result is :" + str(result))
+
         return result

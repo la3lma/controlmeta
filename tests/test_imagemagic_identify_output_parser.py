@@ -82,6 +82,18 @@ class SimpleCrudCases(unittest.TestCase):
         result = self.parser.parse_lines(ls)
         self.assertEqual({"a":"b"}, result)
 
+    def test_parse_two_lines_same_indentation_level(self):
+        ls = ListLineSource(["a: b", "c: d"])
+        result = self.parser.parse_lines(ls)
+        self.assertEqual({"a":"b", "c": "d"}, result)
+
+    def test_parse_two_lines_different_indent_levels(self):
+        ls = ListLineSource(["f:", "  g: h"])
+        result = self.parser.parse_lines(ls)
+        self.assertEqual({"f":{"g": "h"}}, result)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
