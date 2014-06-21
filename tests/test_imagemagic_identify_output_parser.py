@@ -92,6 +92,58 @@ class SimpleCrudCases(unittest.TestCase):
         result = self.parser.parse_lines(ls)
         self.assertEqual({"f":{"g": "h"}}, result)
 
+    def test_parsing_channel_statistics(self):
+        stats = ["Channel statistics:",
+                 "  Red:",
+                 "    min: 3 (0.0117647)",
+                  "    max: 255 (1)",
+                  "    mean: 136.073 (0.53362)",
+                  "    standard deviation: 51.494 (0.201937)",
+                  "    kurtosis: -0.782758",
+                  "    skewness: -0.169742",
+                  "  Green:",
+                  "    min: 0 (0)",
+                  "    max: 232 (0.909804)",
+                  "    mean: 82.3407 (0.322905)",
+                  "    standard deviation: 37.9124 (0.148676)",
+                  "    kurtosis: 0.140211",
+                  "    skewness: 0.553692",
+                  "  Blue:",
+                  "    min: 0 (0)",
+                  "    max: 220 (0.862745)",
+                  "    mean: 68.011 (0.26671)",
+                  "    standard deviation: 31.4847 (0.123469)",
+                  "    kurtosis: 1.43816",
+                  "    skewness: 1.0309"
+                 ]
+        stats_as_dictionary =  \
+        {'Channel statistics': 
+         {'Blue': 
+          {'skewness': '1.0309', 
+           'min': '0 (0)', 
+           'max': '220 (0.862745)', 
+           'standard deviation': '31.4847 (0.123469)', 
+           'kurtosis': '1.43816', 
+           'mean': '68.011 (0.26671)'}, 
+          'Green': {'skewness': '0.553692', 
+                    'min': '0 (0)', 
+                    'max': '232 (0.909804)', 
+                    'standard deviation': '37.9124 (0.148676)', 
+                    'kurtosis': '0.140211', 
+                    'mean': '82.3407 (0.322905)'}, 
+          'Red': {'skewness': '-0.169742', 
+                  'min': '3 (0.0117647)', 
+                  'max': '255 (1)', 
+                  'standard deviation': '51.494 (0.201937)', 
+                  'kurtosis': '-0.782758', 
+                  'mean': '136.073 (0.53362)'}
+          }
+         }
+
+        ls = ListLineSource(stats)
+        result = self.parser.parse_lines(ls)
+        self.assertEqual(stats_as_dictionary, result)
+
 
 
 
