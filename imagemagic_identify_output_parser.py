@@ -5,9 +5,6 @@ import re
 
 
 
-def parse_stdin():
-    for line in fileinput.input():
-        pass
 
 class LineSource:
     def get_line(self):
@@ -26,6 +23,19 @@ class ListLineSource(LineSource):
             returnvalue = self.lines[self.index]
             self.index = self.index + 1
             return returnvalue
+
+class FileLineSource(LineSource):
+
+    def __init__(self, filename):
+        self.filename = filename
+        self.file = open(filename, "r")
+
+    def get_line(self):
+        l = self.file.readline()
+        if l:
+            l = l.rstrip()
+        return l
+
 
 class Parser:
 
@@ -88,7 +98,7 @@ class Parser:
             (tag, content) = self.parse_line_content(payload)
             if content:
                 result[tag] = content
-                dangling_tag = None
+                dangling_tag = tag # XXX This will drop whatever was there previously!
             else:
                 dangling_tag = tag
                 

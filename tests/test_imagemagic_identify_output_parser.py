@@ -11,7 +11,7 @@
 import os
 import unittest
 import json
-from  imagemagic_identify_output_parser import Parser, LineSource, ListLineSource
+from  imagemagic_identify_output_parser import Parser, LineSource, ListLineSource, FileLineSource
 
 
 class SimpleCrudCases(unittest.TestCase):
@@ -144,6 +144,30 @@ class SimpleCrudCases(unittest.TestCase):
         result = self.parser.parse_lines(ls)
         self.assertEqual(stats_as_dictionary, result)
 
+    def test_parsing_image_doc(self):
+        image_doc = ["Image: tests/images/lena1.jpeg",
+                     "  Format: JPEG (Joint Photographic Experts Group JFIF format)"]
+        # We expect the original attribute of "Image:" to be replaced by what's in the
+        # sub parts.  That's not  awfully nice, but in practice, for images from
+        # imagemagic, it's ok.
+        parsed_image = {'Image': {'Format': 'JPEG (Joint Photographic Experts Group JFIF format)'}}
+
+        ls = ListLineSource(image_doc)
+
+        result = self.parser.parse_lines(ls)
+        self.assertEqual(parsed_image, result)
+
+##
+## TODO
+##
+
+    def test_parsing_imagemagic_output_from_static_file(self):
+        ls = FileLineSource("tests/imagemagick-identify-output.txt")
+        result = self.parser.parse_lines(ls)
+        print "Result = ", result
+
+    def test_parsing_imagemagic_output_from_running_process(self):
+        pass
 
 
 
