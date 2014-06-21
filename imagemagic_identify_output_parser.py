@@ -28,8 +28,17 @@ class Parser:
     def parse_line_content(self, line):
        "Parse the line, add to indentation if necessary"
        m = re.match('^.+: ', line)
+       if m:
+           index = len(m.group())
+           tag = line[:index - 2]
+           content = line[index:]
+           return tag, content
+       m = re.match('^.+:', line)
        index = len(m.group())
-       tag = line[:index - 2]
-       content = line[index:]
-       return { tag : content }
+       tag = line[:index - 1]
+       return tag, None
+
+
+
+
         

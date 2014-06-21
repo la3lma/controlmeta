@@ -60,5 +60,16 @@ class SimpleCrudCases(unittest.TestCase):
         self.assertEqual({"min": "0 (0)"}, r)
 
 
+    def test_parse_line_content_min(self):
+        tag, content = self.parser.parse_line_content("min: 0 (0)")
+
+        self.assertEqual("min", tag)
+        self.assertEqual("0 (0)", content)
+
+    def test_parse_line_content_properties(self):
+        tag, content = self.parser.parse_line_content("Properties:")
+        self.assertEqual("Properties", tag)
+        self.assertEqual(None, content)
+
 if __name__ == '__main__':
     unittest.main()
