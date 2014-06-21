@@ -29,7 +29,6 @@ class ListLineSource(LineSource):
 
 class Parser:
 
-
     def get_indentation_of_line(self, txt):
         m = re.match('^\s+', txt)
         if not m:
