@@ -36,6 +36,17 @@ class FileLineSource(LineSource):
             l = l.rstrip()
         return l
 
+class ImagemagickIdentifyOutput(LineSource):
+
+    def __init__(self, imagefile):
+        self.filename = imagefile
+
+    # XXX TODO: Rewrite to set up a processing pipeline
+    #     doing "identify -verbose tests/images/lena1.jpeg"
+    #     piping the output to stdout, and picking it up using
+    #     popen.
+    def get_line(self):
+        return None
 
 class Parser:
 
