@@ -109,8 +109,8 @@ class control_meta_test_case(unittest.TestCase):
         self.assertEquals(expectation, exists)
 
     
-    def assert_meta_exists(self, expectation, metaid):
-        self.assert_exists(self.mms.get_metadata_from_id, expectation, metaid)
+    def assert_meta_exists(self, expectation, meta_id):
+        self.assert_exists(self.mms.get_metadata_from_id, expectation, meta_id)
 
     def assert_media_exists(self, expectation, mediaid):
         self.assert_exists(self.mms.get_media, expectation, mediaid)

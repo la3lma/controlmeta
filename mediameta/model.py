@@ -165,23 +165,23 @@ class RDBMSMediaAndMetaStorage:
         return entry.as_map(self)
 
                 
-    def basic_get_metadata_from_id(self, metaid):
-        meta_entry = db_session.query(MetaEntry).get(metaid)
+    def basic_get_metadata_from_id(self, meta_id):
+        meta_entry = db_session.query(MetaEntry).get(meta_id)
         if not meta_entry:
                 raise ModelException(
                     "No metadata instance for object "
                     + ", with metaid = " 
-                    + metaid, 
+                    + meta_id,
                     404)
         return meta_entry
 
-    def update_meta_meta(self, metaid, payload):
-        meta_entry = self.basic_get_metadata_from_id(metaid)
+    def update_meta_meta(self, meta_id, payload):
+        meta_entry = self.basic_get_metadata_from_id(meta_id)
         meta_entry.content = payload
 
 
-    def get_metadata_from_id(self,  metaid):
-        meta_entry = self.basic_get_metadata_from_id(metaid)
+    def get_metadata_from_id(self,  meta_id):
+        meta_entry = self.basic_get_metadata_from_id(meta_id)
         return_value = meta_entry.as_map(self)
         return return_value
 

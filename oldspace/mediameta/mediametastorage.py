@@ -79,11 +79,12 @@ class MediaAndMetaStorage:
             retval = {"Unknown_media_id": id}
             return retval
 
+    # XXXX This is f-ed up.   Delete or fix
     def get_meta_list(self, id, metatype):
         # Empty map means no metadata found
         return {}
 
-    def get_metadata_from_id(self, id, metaid):
+    def get_metadata_from_id(self, id, meta_id):
         # Empty map means no metadata found
         return {}
 

@@ -196,6 +196,7 @@ def post_meta(id, metaid):
 @requires_auth
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
+    ## XXX This is f...ed up.
     retval = state.mms.delete_metaid(id, metaid)
     return expect_non_empty_map_return_as_json(retval)
 

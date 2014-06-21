@@ -42,9 +42,10 @@ class  Task:
 
 def new_task_result(rv):
     if not rv: 
-        raise ClientException(None, "Attempt to create task instance from empty dictionary")
-    
-    # XXX Rewrite to underscored names
+        raise ClientException(
+            None, 
+            "Attempt to create task instance from empty dictionary")
+
     return Task(
         rv['task_id'],
         rv['status'],
@@ -147,6 +148,11 @@ class  ControlMetaClient:
         task = self.post(url, payload,  200, error_message)
         return new_task_result(task)
 
+    def upload_metadata_for_media(self, id, type, data):
+        # XXX TBD
+        raise ClientException(None, "upload_metadata_for_media not implemented")
+        pass
+
     def upload_metadata(self, type, data):
         url="%s/media/metatype/%s" %(self.base_url, type)
         error_message="Unable to create naked  metadata instance."
@@ -159,6 +165,13 @@ class  ControlMetaClient:
         with open(filepath, 'r') as content_file:
             content = content_file.read()
             return self.upload_media(type, content)
+
+    def get_media(self, id):
+        url="%smedia/id/%s" %(self.base_url, str(id))
+        result = requests.get(url, auth=self.auth)
+        print "result = ", result
+        # XXX What is it alled?
+        return (result.content, result.content_type)
     
     # Upload unidentified metadata, get a data ID back
     # XXX Rewrite using the post method.
