@@ -13,6 +13,20 @@ class LineSource:
     def get_line(self):
         return None
 
+class ListLineSource(LineSource):
+
+    def __init__(self, lines):
+        self.lines = lines
+        self.index = 0
+
+    def get_line(self):
+        if self.index >= len(self.lines):
+            return None
+        else:
+            returnvalue = self.lines[self.index]
+            self.index = self.index + 1
+            return returnvalue
+
 class Parser:
 
 
@@ -44,12 +58,10 @@ class Parser:
     def parse_lines(self, line_source):
         result = {}
         line = line_source.get_line()
-        if not line:
-            return result
-        return None
-        
-
-
-
-
-        
+        while line:
+            (indentlevel, payload) = self.split(line)
+            (tag, content) = self.parse_line_content(payload)
+            if content:
+                result[tag] = content
+            line = line_source.get_line()
+        return result
