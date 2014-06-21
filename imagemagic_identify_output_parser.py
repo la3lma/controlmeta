@@ -9,6 +9,9 @@ def parse_stdin():
     for line in fileinput.input():
         pass
 
+class LineSource:
+    def get_line(self):
+        return None
 
 class Parser:
 
@@ -37,6 +40,14 @@ class Parser:
        index = len(m.group())
        tag = line[:index - 1]
        return tag, None
+
+    def parse_lines(self, line_source):
+        result = {}
+        line = line_source.get_line()
+        if not line:
+            return result
+        return None
+        
 
 
 

@@ -11,7 +11,7 @@
 import os
 import unittest
 import json
-from  imagemagic_identify_output_parser import Parser
+from  imagemagic_identify_output_parser import Parser, LineSource
 
 
 class SimpleCrudCases(unittest.TestCase):
@@ -70,6 +70,13 @@ class SimpleCrudCases(unittest.TestCase):
         tag, content = self.parser.parse_line_content("Properties:")
         self.assertEqual("Properties", tag)
         self.assertEqual(None, content)
+
+    def test_parse_empty_lines(self):
+        # An empty line source
+        ls = LineSource()
+        result = self.parser.parse_lines(ls)
+        self.assertEqual({}, result)
+
 
 if __name__ == '__main__':
     unittest.main()
