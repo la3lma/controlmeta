@@ -11,7 +11,7 @@
 import os
 import unittest
 import json
-from  imagemagic_identify_output_parser import Parser, LineSource, ListLineSource, FileLineSource, ImagemagickIdentifyOutput
+from  imagemagic_identify_output_parser import Parser, LineSource, ListLineSource, NamedFileLineSource, ImagemagickIdentifyOutput
 
 
 class SimpleCrudCases(unittest.TestCase):
@@ -241,7 +241,7 @@ class SimpleCrudCases(unittest.TestCase):
 
 
     def test_parsing_imagemagic_output_from_static_file(self):
-        ls = FileLineSource("tests/imagemagick-identify-output.txt")
+        ls = NamedFileLineSource("tests/imagemagick-identify-output.txt")
         result = self.parser.parse_lines(ls)
         self.assertEqual(self.full_file_expected_result, result)
 
@@ -252,7 +252,7 @@ class SimpleCrudCases(unittest.TestCase):
 
 
     def test_parsing_imagemagic_output_from_running_process(self):
-        ls = ImagemagickIdentifyOutput("tests/images/lena1.jpg")
+        ls = ImagemagickIdentifyOutput("tests/images/lena1.jpeg")
         result = self.parser.parse_lines(ls)
         self.assertEqual(self.full_file_expected_result, result)
 

@@ -2,7 +2,7 @@
 
 import fileinput
 import re
-
+import os
 
 
 
@@ -24,29 +24,40 @@ class ListLineSource(LineSource):
             self.index = self.index + 1
             return returnvalue
 
+
 class FileLineSource(LineSource):
+   def __init__(self, file):
+       self.file = file
+
+   def get_line(self):
+       l = self.file.readline()
+       if l:
+           l = l.rstrip()
+       return l
+
+class NamedFileLineSource(LineSource):
 
     def __init__(self, filename):
-        self.filename = filename
         self.file = open(filename, "r")
-
+        self.fls = FileLineSource(self.file)
+        
     def get_line(self):
-        l = self.file.readline()
-        if l:
-            l = l.rstrip()
-        return l
+        return self.fls.get_line()
 
 class ImagemagickIdentifyOutput(LineSource):
 
     def __init__(self, imagefile):
+        #XXX Missing test for existance of imagefile. Should fail
+        #    immediately if it can't be located.
         self.filename = imagefile
+        identify = "/usr/local/bin/identify"
+        popen_args = '%s -verbose  "%s"' % (identify, imagefile)
+        popen_result = os.popen(popen_args).read().split("\n")
+        self.lls = ListLineSource(popen_result)
 
-    # XXX TODO: Rewrite to set up a processing pipeline
-    #     doing "identify -verbose tests/images/lena1.jpeg"
-    #     piping the output to stdout, and picking it up using
-    #     popen.
     def get_line(self):
-        return None
+        return self.lls.get_line()
+
 
 class Parser:
 
