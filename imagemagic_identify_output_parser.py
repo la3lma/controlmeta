@@ -5,7 +5,6 @@ import re
 import os
 
 
-
 class LineSource:
     def get_line(self):
         return None
@@ -23,7 +22,6 @@ class ListLineSource(LineSource):
             returnvalue = self.lines[self.index]
             self.index = self.index + 1
             return returnvalue
-
 
 class FileLineSource(LineSource):
    def __init__(self, file):
@@ -53,6 +51,7 @@ class ImagemagickIdentifyOutput(LineSource):
         identify = "/usr/local/bin/identify"
         popen_args = '%s -verbose  "%s"' % (identify, imagefile)
         popen_result = os.popen(popen_args).read().split("\n")
+        # XXX The results must be chomped!
         self.lls = ListLineSource(popen_result)
 
     def get_line(self):
@@ -138,3 +137,9 @@ class Parser:
             raise RuntimeError("Dude, top indent level is not zero, it's " + str(line_indent_level) + ", result is :" + str(result))
 
         return result
+
+def parse_image_file(image_file):
+    ls = ImagemagickIdentifyOutput(image_file)
+    parser = Parser()
+    result = parser.parse_lines(ls)
+    return result

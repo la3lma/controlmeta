@@ -1,5 +1,6 @@
 import requests
 import json
+import tempfile 
 
 class  Media:
     def __init__(self, document_id, document_url):
@@ -169,9 +170,23 @@ class  ControlMetaClient:
     def get_media(self, id):
         url="%smedia/id/%s" %(self.base_url, str(id))
         result = requests.get(url, auth=self.auth)
+        content_type = result.headers['Content-Type']
         print "result = ", result
-        # XXX What is it alled?
-        return (result.content, result.content_type)
+        # XXX What is it called?
+        return (result.content, content_type)
+
+    def  get_new_tempfile_name(self):
+        filename = tempfile.NamedTemporaryFile()
+        return filename.name
+
+    def get_media_to_tempfile(self, id):
+        (content, content_type) = self.get_media(id)
+        tempfile_name = self.get_new_tempfile_name()
+        tempfile = open(tempfile_name, "w")
+        tempfile.write(content)
+        tempfile.close()
+        return (tempfile_name, content_type)
+
     
     # Upload unidentified metadata, get a data ID back
     # XXX Rewrite using the post method.
