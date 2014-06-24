@@ -48,11 +48,17 @@ class ImagemagickIdentifyOutput(LineSource):
         #XXX Missing test for existance of imagefile. Should fail
         #    immediately if it can't be located.
         self.filename = imagefile
+        print "filename = ", imagefile
         identify = "/usr/local/bin/identify"
         popen_args = '%s -verbose  "%s"' % (identify, imagefile)
         popen_result = os.popen(popen_args).read().split("\n")
+        print "popeN_result = ", popen_result
+        print "len = ", len(popen_result)
+        if len(popen_result) <= 1:
+            raise Exception("Empty output from identify function")
         # XXX The results must be chomped!
         self.lls = ListLineSource(popen_result)
+
 
     def get_line(self):
         return self.lls.get_line()
@@ -136,10 +142,13 @@ class Parser:
         if (current_indent_level != 0):
             raise RuntimeError("Dude, top indent level is not zero, it's " + str(line_indent_level) + ", result is :" + str(result))
 
+        print "parser returning reuslt =", result
         return result
 
 def parse_image_file(image_file):
     ls = ImagemagickIdentifyOutput(image_file)
     parser = Parser()
     result = parser.parse_lines(ls)
+    if not result:
+        raise Exception("No result found when parsing image file ", image_file)
     return result

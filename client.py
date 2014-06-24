@@ -21,7 +21,7 @@ class  Meta:
         self.content = meta_content
 
 def new_meta_result(rv):
-        return Media(
+        return Meta(
             rv['media_id'],
             rv['media_url'],
             rv['meta_id'],
@@ -83,16 +83,16 @@ class  ControlMetaClient:
         self.base_url = base_url
         self.auth = auth
 
-    def process(self, function,  url, payload, expected_status, error_message):
+    def process(self, function,  url, payload, expected_status, error_message, null_allowed=True):
 
         if not payload:
             payload = {}
 
         raw_response  = function(
                 url,
-                auth=self.auth,
-                data=json.dumps(payload),
-                headers=self.JSON_HEADERS)
+                auth = self.auth,
+                data = json.dumps(payload),
+                headers = self.JSON_HEADERS)
 
         status_code = raw_response.status_code
         if status_code != expected_status:
@@ -102,26 +102,31 @@ class  ControlMetaClient:
 
         # If there was no content, then return none
 
-        if not raw_response.text:
+        if not raw_response.text and  null_allowed:
             return None
+        elif not raw_response.text:
+            raise ClientException("Illegal null response for %s request %s detected." %\
+                                      (function, url))
 
         # Since there was a response we will assume it was
         # json and interpret it as such, and return the
         # interpretation as a collection (or list, or whatever :-)
 
-        return  json.loads(raw_response.text)
+        return json.loads(raw_response.text)
 
-    def post(self, url, payload, expected_status, error_message):
+    
+
+    def post(self, url, payload, expected_status, error_message, null_allowed=True):
         return self.process(requests.post,
-                            url, payload, expected_status, error_message)
+                            url, payload, expected_status, error_message, null_allowed=True)
 
     def get(self, url,  expected_status, error_message):
         return self.process(requests.get,
-                            url, None, expected_status, error_message)
+                            url, None, expected_status, error_message, null_allowed=True)
 
     def delete(self, url, payload, expected_status, error_message):
         return self.process(requests.delete, 
-                            url, payload, expected_status, error_message)
+                            url, payload, expected_status, error_message,  null_allowed=True)
 
     def all_tasks(self):
         url = "%stask" %(self.base_url)
@@ -139,7 +144,7 @@ class  ControlMetaClient:
         parameters = {'agentId':agent_id}
         url = "%stask/waiting/type/%s/pick" %(self.base_url, type)
         error_message = "Unable to pick task of type %s for agent %s"%(type, agent_id)
-        task = self.post(url, parameters, 200, error_message)
+        task = self.post(url, parameters, 200, error_message, null_allowed=False)
         return new_task_result(task)
         
     def declare_task_done(self, task_id, agent_id):
@@ -149,10 +154,17 @@ class  ControlMetaClient:
         task = self.post(url, payload,  200, error_message)
         return new_task_result(task)
 
-    def upload_metadata_for_media(self, id, type, data):
-        # XXX TBD
-        raise ClientException(None, "upload_metadata_for_media not implemented")
-        pass
+    def upload_metadata_for_media(self, media_id, metadata_type, metadata):
+        print "upload_metadata_for_media: "
+        url = "%smedia/id/%s/metatype/%s" %(self.base_url, media_id, metadata_type)
+        print "Metadata = ", metadata
+        payload = json.dumps(metadata)
+        error_message = "Unable to  upload metadata of type  "\
+            + str(metadata_type ) + \
+            " to media with id " + \
+            media_id
+        meta = self.post(url, payload,  200, error_message)
+        return new_meta_result(meta)
 
     def upload_metadata(self, type, data):
         url="%s/media/metatype/%s" %(self.base_url, type)
@@ -171,7 +183,6 @@ class  ControlMetaClient:
         url="%smedia/id/%s" %(self.base_url, str(id))
         result = requests.get(url, auth=self.auth)
         content_type = result.headers['Content-Type']
-        print "result = ", result
         # XXX What is it called?
         return (result.content, content_type)
 
@@ -181,7 +192,7 @@ class  ControlMetaClient:
 
     def get_media_to_tempfile(self, id):
         (content, content_type) = self.get_media(id)
-        tempfile_name = self.get_new_tempfile_name()
+        tempfile_name = self.get_new_tempfile_name()                                      
         tempfile = open(tempfile_name, "w")
         tempfile.write(content)
         tempfile.close()
