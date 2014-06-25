@@ -83,7 +83,7 @@ class  ControlMetaClient:
         self.base_url = base_url
         self.auth = auth
 
-    def process(self, function,  url, payload, expected_status, error_message, null_allowed=True):
+    def process(self, function,  url, payload, expected_status, error_message, null_allowed=True, null_json_allowed=True):
 
         if not payload:
             payload = {}
@@ -105,20 +105,24 @@ class  ControlMetaClient:
         if not raw_response.text and  null_allowed:
             return None
         elif not raw_response.text:
-            raise ClientException("Illegal null response for %s request %s detected." %\
+            raise ClientException(status_code, "Illegal null response for %s request %s detected." %\
                                       (function, url))
 
         # Since there was a response we will assume it was
         # json and interpret it as such, and return the
         # interpretation as a collection (or list, or whatever :-)
 
-        return json.loads(raw_response.text)
+        json_retval = json.loads(raw_response.text)
+        if not json_retval and not null_json_allowed:
+            raise ClientException(status_code, "Illegal empty json response for %s request %s detected." %\
+                                      (function, url))
+        return json_retval
 
     
 
-    def post(self, url, payload, expected_status, error_message, null_allowed=True):
+    def post(self, url, payload, expected_status, error_message, null_allowed=True, null_json_allowed=True):
         return self.process(requests.post,
-                            url, payload, expected_status, error_message, null_allowed=True)
+                            url, payload, expected_status, error_message, null_allowed=null_allowed, null_json_allowed=null_json_allowed)
 
     def get(self, url,  expected_status, error_message):
         return self.process(requests.get,
@@ -144,7 +148,8 @@ class  ControlMetaClient:
         parameters = {'agentId':agent_id}
         url = "%stask/waiting/type/%s/pick" %(self.base_url, type)
         error_message = "Unable to pick task of type %s for agent %s"%(type, agent_id)
-        task = self.post(url, parameters, 200, error_message, null_allowed=False)
+        task = self.post(url, parameters, 200, error_message, null_allowed=False, null_json_allowed=False)
+        print "task = ", task
         return new_task_result(task)
         
     def declare_task_done(self, task_id, agent_id):
