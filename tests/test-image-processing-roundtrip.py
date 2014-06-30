@@ -151,4 +151,9 @@ os.remove(tempfile_name)
 for x1, y1, x2, y2 in faces:
     metadata = {"location": {"x1":str(x1), "y1":str(y1), "x2":str(x2), "y2":str(y2)}}
     cmc.upload_metadata_for_media(task_image_id, "face", metadata)
+    # XXX Missing
+    #     Create a new image containing the face and upload it. It should be linked
+    #     to the original image in some way, or perhaps to the metadata in some other
+    #     strange way. In any case, when the original image dissapears, this copy should
+    #     also get zapped.
 
