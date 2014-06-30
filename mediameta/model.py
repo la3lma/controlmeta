@@ -39,6 +39,16 @@ class MetaEntry(Base):
     metatype = Column(String)
     content = Column(LargeBinary)
 
+    # XXX This is supposed to be a one to one relationship between
+    #     metadata (perhaps one to many) indicating that a piece of media
+    #     relates to a piece of meta, and if the meta goes, so should
+    #     the media.
+    supplementing_relationship = relationship(
+        "MediaEntry",
+        single_parent=True,
+        order_by="MediaEntry.id",
+        backref='supplementing_meta_id',
+        cascade="all, delete, delete-orphan")
 
     def __init__(self, mediaid,  metatype, content):
         self.mediaid = mediaid
