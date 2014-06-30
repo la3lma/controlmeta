@@ -149,11 +149,32 @@ os.remove(tempfile_name)
 
 # If faces were found, add them as individual metadata-pices
 for x1, y1, x2, y2 in faces:
-    metadata = {"location": {"x1":str(x1), "y1":str(y1), "x2":str(x2), "y2":str(y2)}}
+
+    # Extract the face
+    face  = img[y1:y2, x1:x2]
+    cv2.imwrite('detected_face.jpg', face)
+
+    # Upload it
+    file_upload_result = cmc.upload_media_from_file('image/jpeg', 'detected_face.jpg')
+    image_id = file_upload_result.document_id
+    image_url = file_upload_result.document_url
+
+
+    # Upload metadata about where the image is located
+    metadata = {"location_in_original": {"x1":str(x1), "y1":str(y1), "x2":str(x2), "y2":str(y2)},
+                "media_id_of_subimage": str(image_id)}
     cmc.upload_metadata_for_media(task_image_id, "face", metadata)
+
+
     # XXX Missing
     #     Create a new image containing the face and upload it. It should be linked
     #     to the original image in some way, or perhaps to the metadata in some other
     #     strange way. In any case, when the original image dissapears, this copy should
     #     also get zapped.
+
+
+## 
+## XXX  Test that the metadata about the location of the faces  was actually
+##      written  to storage.
+
 
