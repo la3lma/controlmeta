@@ -2,9 +2,11 @@ o Refactor
   - Fix XXXes all over the place.  There are way too many bloopers now.
   - Add comments to methods, use best practices
   - Consider extendig test coverage to some more 
-    things that looks brittle.
+    things that looks brittle (cascading comes to mind).
+  - Look over the whole return-value/exception thing wrt return values.
+    - It does not make sense to raise a 404 when in reality an empty list is
+      what's realy there
   - Add an ability to delete meta-instances
-
 
 
 o Add users
@@ -16,12 +18,14 @@ o Add users
     to access "their" data, and trigger agents
     to work on their behalf.
 
-o Extend functionality to a level where it's actually useful to 
-  the task at hand.
+o Refactor the client design into becoming (more) complex workers.
 
-o Make the metadata management sane.
-  o Redesign API.
-  o Write tests to ensure workitude.
+o Make some kind of API that makes it possible to add lingering
+  clients that activates when somethign of interest happens.
+
+  - Probe for interesting tasks?
+  - Probe for interesting media types (to add tasks?)
+  - 0MQ or RMQ?
 
 o Write management scripts for elastic beanstalk that will let us
   create a new database instance when required.
@@ -49,9 +53,4 @@ o Possibly useful features
   o Access control lists
   o Oauth? Using Google IDs or perhaps Yahoo IDs.
   o Ensure that we can upload really big data objects (images, movies)
-
-o Actually doing something useful
-  o Make a small worker that does something to an image.
-  o Write some code that actually uses the ting to do something useful,
-    such as identifying images with faces.
 
