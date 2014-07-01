@@ -3,14 +3,8 @@ o Refactor
   - Add comments to methods, use best practices
   - Consider extendig test coverage to some more 
     things that looks brittle.
-  - 
+  - Add an ability to delete meta-instances
 
-o Test coverage
-  - A test that actually does something useful to an image (extracting
-    some metainfo and putting it in a metadata object is a nice start).
-  - Write 
-  - Write at least one test that checks cascading deletes of
-    media with associated meta-items.
 
 
 o Add users
