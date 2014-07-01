@@ -168,7 +168,6 @@ for x1, y1, x2, y2 in faces:
     meta_result = cmc.upload_metadata_for_media(task_image_id, "face", metadata)
     cmc.supplement_meta_with_media(image_id, meta_result.meta_id)
     new_images.append(task_image_id)
-    
 
 # Now we check that all the newly created images are there
 for img in new_images:
