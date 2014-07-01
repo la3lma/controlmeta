@@ -159,6 +159,19 @@ def get_media(id):
      else:
          return Response(data, mimetype=mimetype, status=200)
 
+
+@app.route('/media/id/<id>/exists', methods = ['GET'])
+@requires_auth
+@catches_model_exception
+def exists_media(id):
+     "Get the media representation of identified asset"
+     exists = state.mms.exists_media(id)
+     if (not exists):
+         return Response(status=404)
+     else:
+         return Response(status=200)
+
+
 @app.route('/media/', methods = ['POST'])
 @requires_auth
 @catches_model_exception
@@ -174,6 +187,15 @@ def post_media_to_id(id):
     "Write the media representation an identified asset"
     returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data)
     return allow_empty_map_response_as_json(returnvalue, status=201)
+
+@app.route('/media/id/<mediaid>/supplement-meta/<metaid>', methods = ['POST'])
+@requires_auth
+@catches_model_exception
+def post_supplement_meta_with_media(mediaid, metaid):
+    "Write the media representation an identified asset"
+    returnvalue = state.mms.supplement_media_to_meta(mediaid, metaid)
+    return expect_non_empty_map_response_as_json(returnvalue, status=200)
+
 
 @app.route('/media/id/<id>', methods = ['DELETE'])
 @requires_auth

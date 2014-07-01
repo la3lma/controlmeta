@@ -159,10 +159,20 @@ class  ControlMetaClient:
         task = self.post(url, payload,  200, error_message)
         return new_task_result(task)
 
+
+    def supplement_meta_with_media(self, media_id, meta_id):
+        url = "%smedia/id/%s/supplement-meta/%s" %(self.base_url, media_id, meta_id)
+        error_message = "Unable to  supplement metadata with with id  "\
+            + str(meta_id) + \
+            " with media with id  " + \
+            str(media_id)
+        result = self.post(url, {},  200, error_message)
+        return new_media_result(result)
+
+
+
     def upload_metadata_for_media(self, media_id, metadata_type, metadata):
-        print "upload_metadata_for_media: "
         url = "%smedia/id/%s/metatype/%s" %(self.base_url, media_id, metadata_type)
-        print "Metadata = ", metadata
         payload = json.dumps(metadata)
         error_message = "Unable to  upload metadata of type  "\
             + str(metadata_type ) + \
@@ -191,6 +201,20 @@ class  ControlMetaClient:
         # XXX What is it called?
         return (result.content, content_type)
 
+    def delete_media(self, id):
+        url="%smedia/id/%s" %(self.base_url, str(id))
+        result = requests.delete(url, auth=self.auth)
+        if result.status_code != 204:
+            raise ClientException("Could not delete media with id " + str(id))
+
+    def exists_media(self, id):
+        url="%smedia/id/%s/exists" %(self.base_url, str(id))
+        result = requests.get(url, auth=self.auth)
+        content_type = result.headers['Content-Type']
+        return (result.status_code == 200)
+
+
+
     def  get_new_tempfile_name(self):
         filename = tempfile.NamedTemporaryFile()
         return filename.name
@@ -215,3 +239,4 @@ class  ControlMetaClient:
             headers= {'content-type': type})
         jrv=json.loads(raw_response.text)
         return new_media_result(jrv)
+

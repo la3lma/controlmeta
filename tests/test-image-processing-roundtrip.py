@@ -148,6 +148,7 @@ faces, img = detect(tempfile_name)
 os.remove(tempfile_name)
 
 # If faces were found, add them as individual metadata-pices
+new_images = []
 for x1, y1, x2, y2 in faces:
 
     # Extract the face
@@ -161,20 +162,29 @@ for x1, y1, x2, y2 in faces:
 
 
     # Upload metadata about where the image is located
-    metadata = {"location_in_original": {"x1":str(x1), "y1":str(y1), "x2":str(x2), "y2":str(y2)},
+    metadata = {"location_in_original":
+                    {"x1":str(x1), "y1":str(y1), "x2":str(x2), "y2":str(y2)},
                 "media_id_of_subimage": str(image_id)}
-    cmc.upload_metadata_for_media(task_image_id, "face", metadata)
+    meta_result = cmc.upload_metadata_for_media(task_image_id, "face", metadata)
+    cmc.supplement_meta_with_media(image_id, meta_result.meta_id)
+    new_images.append(task_image_id)
+    
+
+# Now we check that all the newly created images are there
+for img in new_images:
+    if not cmc.exists_media(img):
+        raise Exception("Could not find subimage " + str(img))
+
+# Nuke the original image
+cmc.delete_media(task_image_id)
 
 
-    # XXX Missing
-    #     Create a new image containing the face and upload it. It should be linked
-    #     to the original image in some way, or perhaps to the metadata in some other
-    #     strange way. In any case, when the original image dissapears, this copy should
-    #     also get zapped.
+# Then, if everything is right, there will be no newly created images
+for img in new_images:
+    if cmc.exists_media(img):
+        raise Exception("Subimage wasn't detected: " + str(img))
 
-
-## 
-## XXX  Test that the metadata about the location of the faces  was actually
-##      written  to storage.
+# If we get to this point, we can assume that casading deletes work
+# quite well.
 
 

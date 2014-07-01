@@ -127,6 +127,13 @@ class RDBMSMediaAndMetaStorage:
         else:
             raise ModelException("Cannot find media with id = " + id, 404)
 
+    def exists_media(self, media_id):
+        id=str(media_id)
+        result = db_session.query(exists().where(MediaEntry.id==id)).scalar()
+        return result
+
+
+
 
 
     def delete_media(self, id):
@@ -154,6 +161,14 @@ class RDBMSMediaAndMetaStorage:
 
         if not ret:
             raise ModelException("Unknown media ID " + media_id, 404)
+
+    # XXX Repeated code, refactor
+
+    def assert_that_meta_id_exists(self, meta_id):
+        ret = db_session.query(exists().where(MetaEntry.id==meta_id)).scalar()
+
+        if not ret:
+            raise ModelException("Unknown meta ID " + meta_id, 404)
 
 
     def store_new_meta_from_id_and_type(self, media_id, metatype, payload):
@@ -224,3 +239,13 @@ class RDBMSMediaAndMetaStorage:
         db_session.query(MetaEntry).delete()
         db_session.query(MediaEntry).delete()
         db_session.commit()
+        
+    def supplement_media_to_meta(self, media_id, meta_id):
+        print "supplement_media_to_meta (%s, %s)"%(media_id, meta_id)
+        self.assert_that_media_id_exists(media_id)
+        print "supplement_media_to_meta:  Media exists "
+        meta = self.basic_get_metadata_from_id(meta_id)
+        print "supplement_media_to_meta:  Media exists "
+        meta.supplementing_meta_id = media_id # XXX Bogus naming
+        return meta.as_map(self)
+
