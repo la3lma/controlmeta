@@ -32,5 +32,10 @@ class UserDatabaseTestCases(unittest.TestCase):
         efoo = encrypt(foo)
         self.assertNotEqual(foo, efoo)
 
+    def check_successfulemail_verification_test(self):
+        secret = "lkasdjf9jdsaf"
+        emvc = EmailVerificationCode(secret)
+        self.assertTrue(emvc.verify_secret(secret))
+
 if __name__ == '__main__':
      unittest.main()

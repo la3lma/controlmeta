@@ -35,8 +35,8 @@ class EmailVerificationCode(Base):
     #     of here.
 
     def check_email_verification(self, email_verification_code):
-        code_match = (self.email_verification_code == email_verifcation_code)
-        # Check dates,  etc.
+        verify_secret  = (self.email_verification_code == email_verifcation_code)
+        #  XXX Check dates,  etc.
         return code_match
     
 class UserEntry(Base):
