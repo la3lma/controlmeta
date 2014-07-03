@@ -15,6 +15,7 @@ from control_meta_test_case import Control_meta_test_case
 from  users.model import encrypt
 from  users.model import UserVerification
 from  users.model import UserEntry
+from  users.model import UserStorage
 
 
 class UserDatabaseTestCases(unittest.TestCase):
@@ -52,7 +53,39 @@ class UserDatabaseTestCases(unittest.TestCase):
         ue.set_api_keys(key, secret)
         self.assertTrue(ue.check_api_key(secret))
         self.assertFalse(ue.check_api_key(secret + "nonce"))
-    
+
+
+    def check_user_url(self, base_url):
+        expected_user_url  = "http://localhost/user/1"
+        us = UserStorage(base_url)
+        url = us.get_user_url(1)
+        self.assertEqual(expected_user_url, url)
+
+    def test_user_url_with_trailing_base_slash(self):
+        self.check_user_url("http://localhost/")
+
+    def test_user_url_without_trailing_base_slash(self):
+        self.check_user_url("http://localhost/")
+
+    def test_user_url_without_trailing_base_slash(self):
+        base_url = "http://localhost"
+        expected_user_url  = "http://localhost/user/1"
+        us = UserStorage(base_url)
+        url = us.get_user_url(1)
+        self.assertEqual(expected_user_url, url)
+
+    def check_verification_url(self, base_url):
+        expected_user_url  = "http://localhost/user/1/verification"
+        us = UserStorage(base_url)
+        url = us.get_user_verification_url(1)
+        self.assertEqual(expected_user_url, url)
+
+    def test_verification_url_without_trailing_base_slash(self):
+        self.check_verification_url( "http://localhost")
+
+    def test_verification_url_with_trailing_base_slash(self):
+        self.check_verification_url( "http://localhost/")
+        
 
 if __name__ == '__main__':
      unittest.main()

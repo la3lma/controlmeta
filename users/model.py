@@ -41,8 +41,6 @@ class UserVerification(Base):
     #     of here.
 
     def verify(self, code):
-        print "self.code = ", self.code
-        print "code = ", code
         result  = (self.code == code)
         #  XXX Check dates,  etc.
         return result
@@ -96,11 +94,11 @@ class UserStorage:
             self.base_url = base_url + "/"
 
     def get_user_url(self, id):
-        return self.base_url + "/user/" + str(id)
+        return self.base_url + "user/" + str(id)
 
 
     def get_user_verification_url(self, secret):
-        return self.base_url + "/user/verification/" + str(secret)
+        return self.base_url + "user/" + str(secret) + "/verification"
 
     def get_user_verification(self, code):
         secret = str(secret)
