@@ -8,6 +8,8 @@ from model_exception import ModelException
 
 import json
 
+# XXX REFACTOR! USE SHORTER NAMES!!!
+
 ## XXX
 ## Placeholder for an one-way hash function (deterministic).
 ## The encryption thingy should have a secret salt from somewhere, just to
@@ -19,10 +21,14 @@ def encrypt(arg):
     return arg + "foo"
 
 
-class EmailVerificationCode(Base):
-    __tablename__ = 'email_verification_codes'
+class UserVerification(Base):
+    __tablename__ = 'user_verification_codes'
     id = schema.Column(Integer, primary_key=True)
-    email_verification_code = Column(String)
+    code = Column(String)
+
+    def __init__(self, 
+                 code):
+        self.code  = code
     
     # XXX Missing date issued, date verified
     #     verification status, user being verified
@@ -34,10 +40,12 @@ class EmailVerificationCode(Base):
     #     to verification), but it's not something we should keep track
     #     of here.
 
-    def check_email_verification(self, email_verification_code):
-        verify_secret  = (self.email_verification_code == email_verifcation_code)
+    def verify(self, code):
+        print "self.code = ", self.code
+        print "code = ", code
+        result  = (self.code == code)
         #  XXX Check dates,  etc.
-        return code_match
+        return result
     
 class UserEntry(Base):
     __tablename__ = 'user'
@@ -47,38 +55,35 @@ class UserEntry(Base):
     #     is automatically generated.
     api_key = Column(String)
     hashed_api_secret  = Column(String)
-    flickr_userid = Column(String)
     email_address = Column(String)
     # XXX Reference to email verification code is missing.
     #     Once the email is verified, we can just nuke it.
-    email_verified = Column(Boolean)
+    user_verified = Column(Boolean)
     hashed_password = Column(String)
 
     def __init__(self, 
-                 flickr_userid,
                  email_address):
-        self.flickr_userid = flickr_userid
         self.email_address = email_address
-        # XXX Create email verification code
+        # XXX Create user verification code
 
     def set_password(self, clairtext_password):
         self.hashed_password =  encrypt(clairtext_password)
 
-    def set_api_keys(self, api_key, hashed_api_secret):
+    def set_api_keys(self, api_key, clairtext_secret):
         self.api_key = api_key
-        self.hashed_api_secret = hashed_api_secret
+        self.hashed_api_secret = encrypt(clairtext_secret)
 
     def check_password(self, clairtext_password):
         return self.hashed_password == encrypt(clairtext_password)
 
-    def check_api_key(self, clairtext_api_key):
-        return self.hashed_password == encrypt(clairtext_password)
+    def check_api_key(self, clairtext_api_secret):
+        ekey = encrypt(clairtext_api_secret)
+        return self.hashed_api_secret == ekey
 
     def as_map(self):
         return {
             "id" : self.id,
             "clairtext_user_id": self.clairtext_user_id,
-            "flickr_userid":     self.flickr_userid,
             "email_address":     self.email_address
             }
 
@@ -91,12 +96,20 @@ class UserStorage:
             self.base_url = base_url + "/"
 
     def get_user_url(self, id):
-        return self.base_url + "media/user/" + str(id)
+        return self.base_url + "/user/" + str(id)
 
-    # XXX BOgus
-    def get_user_verification_url(self, id):
-        return self.base_url + "media/user/" + str(id)
 
+    def get_user_verification_url(self, secret):
+        return self.base_url + "/user/verification/" + str(secret)
+
+    def get_user_verification(self, code):
+        secret = str(secret)
+        verification = db_session.query(UserVerification.code == code).first()
+        return verification
+
+    def verify_user(self, code):
+        vc = get_user_verification(code)
+        return vc and vc.check_user_verification(code)
 
     def find_user_by_api_key(self, api_key):
         id=str(id)
