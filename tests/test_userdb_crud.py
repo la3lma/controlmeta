@@ -18,7 +18,7 @@ from  users.model import UserEntry
 from  users.model import UserStorage
 
 
-class UserDatabaseTestCases(unittest.TestCase):
+class UserDatabaseTestCases(Control_meta_test_case):
 
     def test_encryption(self):
         foo = "xyxxif"
@@ -85,7 +85,19 @@ class UserDatabaseTestCases(unittest.TestCase):
 
     def test_verification_url_with_trailing_base_slash(self):
         self.check_verification_url( "http://localhost/")
-        
+
+    
+    def new_user_storage(self):
+        base_url = "http://localhost"
+        us = UserStorage(base_url)
+        return us
+
+    def test_new_unused_api_key(self):
+        us = self.new_user_storage()
+        key = us.new_unused_api_key()
+        self.assertTrue(key)
+
+
 
 if __name__ == '__main__':
      unittest.main()

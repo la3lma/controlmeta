@@ -110,14 +110,18 @@ class UserStorage:
         return vc and vc.check_user_verification(code)
 
     def find_user_by_api_key(self, api_key):
-        id=str(id)
+        api_key = str(api_key)
         user = db_session.query(UserEntry.api_key == api_key).first()
         return user
 
+    def random_string(self, n):
+        # XXX A not entirely effective random string generator.
+        return "asdldsoiudsoildsuiyoiuysdoiuysadfiuysdfaiuy"
+
     def new_unused_api_key(self):
         api_key = None
-        while api_key and this.find_user_by_api_key(api_key):
-            api_key = random_string(50)
+        while not api_key or self.find_user_by_api_key(api_key):
+            api_key = self.random_string(50)
         return api_key
 
     def new_api_keys(self, user_id):
