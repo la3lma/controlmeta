@@ -96,7 +96,6 @@ class UserStorage:
     def get_user_url(self, id):
         return self.base_url + "user/" + str(id)
 
-
     def get_user_verification_url(self, secret):
         return self.base_url + "user/" + str(secret) + "/verification"
 
@@ -104,6 +103,13 @@ class UserStorage:
         secret = str(secret)
         verification = db_session.query(UserVerification.code == code).first()
         return verification
+
+    def new_user(self, email):
+        # XXX Check that the email isn't already used
+        # XXX Actually, enforce that as a key restreaint int the data model
+        user = UserEntry(email)
+        return user
+
 
     def verify_user(self, code):
         vc = get_user_verification(code)
@@ -113,6 +119,16 @@ class UserStorage:
         api_key = str(api_key)
         user = db_session.query(UserEntry.api_key == api_key).first()
         return user
+
+    def find_user_by_id(self, id):
+        id = str(id)
+        user = db_session.query(UserEntry.id == id).first()
+        return user[0] #  XXX why the [0]?
+
+    def find_user_by_email(self, email):
+        email = str(email)
+        user = db_session.query(UserEntry.email_address == email).first()
+        return user # XXX Why not the [0]?
 
     def random_string(self, n):
         # XXX A not entirely effective random string generator.
@@ -124,10 +140,10 @@ class UserStorage:
             api_key = self.random_string(50)
         return api_key
 
-    def new_api_keys(self, user_id):
+    def new_api_keys(self, user):
         api_key = self.new_unused_api_key()
-        hashed_api_secret = random_string(50)
-        hashed_secret = encrypt(api_secret)
+        api_secret = self.random_string(50)
+        hashed_api_secret = encrypt(api_secret)
         user.set_api_keys(api_key, hashed_api_secret)
         return (api_key, api_secret)
 
@@ -136,7 +152,7 @@ class UserStorage:
     #      CRUD into a helper class, and thus compress the model classes somewhat?
     def check_and_return(user, checker, secret):
         if user and checker(secret):
-            return user.as_map()
+            user
         else:
             return None
 
@@ -146,16 +162,22 @@ class UserStorage:
         if result:
             db_session.delete(result)
         else:
-            raise ModelException(explanation + str(id), 404)
+            raise ModelException(explanation + " " + str(id), 404)
 ###############
         
     def verify_api_login(self, api_key, api_secret):
         user = self.find_user_by_api_key(api_key)
-        return self.check_and_return(user, user.check_api_key, api_secret)
+        if not user:
+            return None
+        else: 
+            return self.check_and_return(user, user.check_api_key, api_secret)
 
-    def verify_user_login(email_address, clairtext_password):
-        user = self.find_user_by_email_address(email_address)
-        return self.check_and_return(user, user.check_password, clairtext_password)
+    def verify_user_login(self, email_address, clairtext_password):
+        user = self.find_user_by_email(email_address)
+        if  not user:
+            return None
+        else:
+            return self.check_and_return(user, user.check_password, clairtext_password)
 
     def create_new_user_entry(self, clairtext_user_id, hashed_secret_key):
         object = UserEntry() # XXXX Missing
