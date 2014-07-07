@@ -216,7 +216,6 @@ class UserDatabaseTestCases(Control_meta_test_case):
         api_user = us.verify_api_login(api_key, api_secret + "aslfj")
         self.assertFalse(api_user)
 
-
         # Wrong secret and API key
         api_user = us.verify_api_login(api_key + "sdf", api_secret + "aslfj")
         self.assertFalse(api_user)
@@ -224,7 +223,6 @@ class UserDatabaseTestCases(Control_meta_test_case):
         # Empty API key
         api_user = us.verify_api_login("", api_secret)
         self.assertFalse(api_user)
-
 
         # Empty API key
         api_user = us.verify_api_login(api_key, "")
