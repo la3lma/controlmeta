@@ -8,6 +8,7 @@ from model_exception import ModelException
 import string
 import random
 import json
+import hashlib
 
 
 ## XXX
@@ -18,6 +19,7 @@ import json
 
 def encrypt(arg):
     # XXX  Obviously something better is required
+    # return hashlib.sha256(arg)
     return arg + "+foo"
 
 lower_and_uppercase_characters = \
