@@ -73,10 +73,12 @@ class UserEntry(Base):
         self.api_key = api_key
         self.hashed_api_secret = cryptohash(clairtext_secret)
 
+
     def check_password(self, clairtext_password):
         cryptohashed_password = cryptohash(clairtext_password)
         retval = (self.hashed_password == cryptohashed_password)
         return retval
+
 
     def check_api_key(self, clairtext_api_secret):
         ekey = cryptohash(clairtext_api_secret)
@@ -89,7 +91,7 @@ class UserEntry(Base):
             "email_address":     self.email_address,
             "api_key":           self.api_key,
             "hashed_password":   self.hashed_password,
-            "hashed_api_secret": self.hashed_api_secret # XXX Just for debugging
+            "hashed_api_secret": self.hashed_api_secret # XXX Just for debuggingl
             }
 
 
