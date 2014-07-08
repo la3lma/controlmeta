@@ -86,10 +86,10 @@ class UserEntry(Base):
     def as_map(self):
         return {
             "id" : self.id,
-            "email_address": self.email_address,
-            "api_key":      self.api_key,
-            "hashed_password":      self.hashed_password,
-            "hashed_api_secret":      self.hashed_api_secret # XXX Just for debugging
+            "email_address":     self.email_address,
+            "api_key":           self.api_key,
+            "hashed_password":   self.hashed_password,
+            "hashed_api_secret": self.hashed_api_secret # XXX Just for debugging
             }
 
 
