@@ -18,9 +18,8 @@ import hashlib
 ## Apart from that, just use SHA-1 or something, it's probably good enough.
 
 def encrypt(arg):
-    # XXX  Obviously something better is required
-    # return hashlib.sha256(arg)
-    return arg + "+foo"
+    return hashlib.sha256(arg).hexdigest()
+
 
 lower_and_uppercase_characters = \
     string.ascii_uppercase + string.ascii_lowercase + string.digits
