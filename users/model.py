@@ -11,13 +11,8 @@ import json
 import hashlib
 
 
-## XXX
-## Placeholder for an one-way hash function (deterministic).
-## The encryption thingy should have a secret salt from somewhere, just to
-## make it that much more difficult to guess what the hashes are going to be.
-## Apart from that, just use SHA-1 or something, it's probably good enough.
 
-def encrypt(arg):
+def cryptohash(arg):
     return hashlib.sha256(arg).hexdigest()
 
 
@@ -72,19 +67,19 @@ class UserEntry(Base):
         # XXX Create user verification code
 
     def set_password(self, clairtext_password):
-        self.hashed_password =  encrypt(clairtext_password)
+        self.hashed_password =  cryptohash(clairtext_password)
 
     def set_api_keys(self, api_key, clairtext_secret):
         self.api_key = api_key
-        self.hashed_api_secret = encrypt(clairtext_secret)
+        self.hashed_api_secret = cryptohash(clairtext_secret)
 
     def check_password(self, clairtext_password):
-        encrypted_password = encrypt(clairtext_password)
-        retval = (self.hashed_password == encrypted_password)
+        cryptohashed_password = cryptohash(clairtext_password)
+        retval = (self.hashed_password == cryptohashed_password)
         return retval
 
     def check_api_key(self, clairtext_api_secret):
-        ekey = encrypt(clairtext_api_secret)
+        ekey = cryptohash(clairtext_api_secret)
         retval = (self.hashed_api_secret == ekey)
         return retval
 
