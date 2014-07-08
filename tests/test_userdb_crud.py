@@ -21,6 +21,7 @@ from database import commit_db, db_session
 
 class UserDatabaseTestCases(Control_meta_test_case):
 
+    
     def test_encryption(self):
         foo = "xyxxif"
         efoo = encrypt(foo)
@@ -54,7 +55,6 @@ class UserDatabaseTestCases(Control_meta_test_case):
         ue.set_api_keys(key, secret)
         self.assertTrue(ue.check_api_key(secret))
         self.assertFalse(ue.check_api_key(secret + "nonce"))
-
 
     def check_user_url(self, base_url):
         expected_user_url  = "http://localhost/user/1"
@@ -238,9 +238,11 @@ class UserDatabaseTestCases(Control_meta_test_case):
         self.assertFalse(api_user)
 
 
-    def disabled_test_login_verification(self):
+    def test_login_verification(self):
         # Create user and assign API keys
         us   = self.create_user_storage()
+        us.clean()
+
         email = "foo@bar.bzz"
         password = "deepsecret"
         user = us.new_user(email)

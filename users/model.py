@@ -9,7 +9,6 @@ import string
 import random
 import json
 
-# XXX REFACTOR! USE SHORTER NAMES!!!
 
 ## XXX
 ## Placeholder for an one-way hash function (deterministic).
@@ -79,7 +78,9 @@ class UserEntry(Base):
         self.hashed_api_secret = encrypt(clairtext_secret)
 
     def check_password(self, clairtext_password):
-        return self.hashed_password == encrypt(clairtext_password)
+        encrypted_password = encrypt(clairtext_password)
+        retval = (self.hashed_password == encrypted_password)
+        return retval
 
     def check_api_key(self, clairtext_api_secret):
         ekey = encrypt(clairtext_api_secret)
@@ -91,6 +92,7 @@ class UserEntry(Base):
             "id" : self.id,
             "email_address": self.email_address,
             "api_key":      self.api_key,
+            "hashed_password":      self.hashed_password,
             "hashed_api_secret":      self.hashed_api_secret # XXX Just for debugging
             }
 
@@ -108,6 +110,13 @@ class UserStorage:
             self.base_url = base_url
         else:
             self.base_url = base_url + "/"
+
+    # XXX This shouldn't be necessary, but for some reason it is
+    def clean(self):
+        # Delete everything
+        UserVerification.query.delete()
+        UserEntry.query.delete()
+        
 
     def get_user_url(self, id):
         return self.base_url + "user/" + str(id)
