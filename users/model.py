@@ -19,7 +19,7 @@ import json
 
 def encrypt(arg):
     # XXX  Obviously something better is required
-    return arg + "foo"
+    return arg + "+foo"
 
 lower_and_uppercase_characters = \
     string.ascii_uppercase + string.ascii_lowercase + string.digits
@@ -79,14 +79,12 @@ class UserEntry(Base):
         self.hashed_api_secret = encrypt(clairtext_secret)
 
     def check_password(self, clairtext_password):
-        print "checking password, clairtext_password = ", clairtext_password
-        print "                   stored_hash = ", self.hashed_password
-        print "                computed_hash  = ",  encrypt(clairtext_password)
         return self.hashed_password == encrypt(clairtext_password)
 
     def check_api_key(self, clairtext_api_secret):
         ekey = encrypt(clairtext_api_secret)
-        return self.hashed_api_secret == ekey
+        retval = (self.hashed_api_secret == ekey)
+        return retval
 
     def as_map(self):
         return {
@@ -173,8 +171,7 @@ class UserStorage:
     def new_api_keys(self, user):
         api_key = self.new_unused_api_key()
         api_secret = random_string(50)
-        hashed_api_secret = encrypt(api_secret)
-        user.set_api_keys(api_key, hashed_api_secret)
+        user.set_api_keys(api_key, api_secret)
         return (api_key, api_secret)
 
 ###############
@@ -184,7 +181,7 @@ class UserStorage:
 
     def check_and_return(self, user, checker, secret):
         if user and checker(secret):
-            user
+            return user
         else:
             return None
 
@@ -200,10 +197,8 @@ class UserStorage:
     def verify_api_login(self, api_key, api_secret):
         user = self.find_user_by_api_key(api_key)
         if not user:
-            print "verify_api_login found no user"
             return None
         else: 
-            print "verify_api_login found  user=" , user
             return self.check_and_return(user, user.check_api_key, api_secret)
 
     def verify_user_login(self, email_address, clairtext_password):
