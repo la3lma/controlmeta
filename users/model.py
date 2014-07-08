@@ -5,7 +5,8 @@ from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
 from sqlalchemy.orm import backref, relationship
 from model_exception import ModelException
-
+import string
+import random
 import json
 
 # XXX REFACTOR! USE SHORTER NAMES!!!
@@ -19,6 +20,12 @@ import json
 def encrypt(arg):
     # XXX  Obviously something better is required
     return arg + "foo"
+
+lower_and_uppercase_characters = \
+    string.ascii_uppercase + string.ascii_lowercase + string.digits
+
+def random_string(size=50, chars=lower_and_uppercase_characters):
+        return ''.join(random.choice(chars) for _ in range(size))
 
 
 class UserVerification(Base):
@@ -56,7 +63,7 @@ class UserEntry(Base):
     email_address = Column(String)
     # XXX Reference to email verification code is missing.
     #     Once the email is verified, we can just nuke it.
-    user_verified = Column(Boolean)
+    verified = Column(Boolean)
     hashed_password = Column(String)
 
     def __init__(self, 
@@ -72,6 +79,9 @@ class UserEntry(Base):
         self.hashed_api_secret = encrypt(clairtext_secret)
 
     def check_password(self, clairtext_password):
+        print "checking password, clairtext_password = ", clairtext_password
+        print "                   stored_hash = ", self.hashed_password
+        print "                computed_hash  = ",  encrypt(clairtext_password)
         return self.hashed_password == encrypt(clairtext_password)
 
     def check_api_key(self, clairtext_api_secret):
@@ -81,9 +91,17 @@ class UserEntry(Base):
     def as_map(self):
         return {
             "id" : self.id,
-            "clairtext_user_id": self.clairtext_user_id,
-            "email_address":     self.email_address
+            "email_address": self.email_address,
+            "api_key":      self.api_key,
+            "hashed_api_secret":      self.hashed_api_secret # XXX Just for debugging
             }
+
+
+    def __repr__(self):
+        return "UserEntry(%r)"%self.as_map()
+
+    def __str__(self):
+        return self.__repr__()
 
 class UserStorage:
 
@@ -108,41 +126,53 @@ class UserStorage:
         # XXX Check that the email isn't already used
         # XXX Actually, enforce that as a key restreaint int the data model
         user = UserEntry(email)
+        db_session.add(user)
         return user
 
 
+    # XXX This is a rather bogus method.
     def verify_user(self, code):
-        vc = get_user_verification(code)
-        return vc and vc.check_user_verification(code)
+        vc = self.get_user_verification(code)
+        if not vc:
+            return False # XXX Throw exception?
+        elif not vc.verify(code):
+            return False # Throw exception?
+        else:
+            self.verified = true
+
+
+    # XXX Why not just use .all()?
+    def find_all_users(self):
+        users = []
+        for u in db_session.query(UserEntry):
+            users.append(u)
+        return users
 
     def find_user_by_api_key(self, api_key):
         api_key = str(api_key)
-        user = db_session.query(UserEntry.api_key == api_key).first()
+        user = db_session.query(UserEntry).filter(UserEntry.api_key == api_key).first()
         return user
 
     def find_user_by_id(self, id):
         id = str(id)
-        user = db_session.query(UserEntry.id == id).first()
-        return user[0] #  XXX why the [0]?
+        user = db_session.query(UserEntry).filter(UserEntry.id == id).first()
+        return user
 
     def find_user_by_email(self, email):
         email = str(email)
-        user = db_session.query(UserEntry.email_address == email).first()
-        return user # XXX Why not the [0]?
-
-    def random_string(self, n):
-        # XXX A not entirely effective random string generator.
-        return "asdldsoiudsoildsuiyoiuysdoiuysadfiuysdfaiuy"
+        user = db_session.query(UserEntry).filter(UserEntry.email_address == email).first()
+        return user
+    
 
     def new_unused_api_key(self):
         api_key = None
         while not api_key or self.find_user_by_api_key(api_key):
-            api_key = self.random_string(50)
+            api_key = random_string(50)
         return api_key
 
     def new_api_keys(self, user):
         api_key = self.new_unused_api_key()
-        api_secret = self.random_string(50)
+        api_secret = random_string(50)
         hashed_api_secret = encrypt(api_secret)
         user.set_api_keys(api_key, hashed_api_secret)
         return (api_key, api_secret)
@@ -150,7 +180,9 @@ class UserStorage:
 ###############
     # XXX  Move to helper class Can we move the existance, deletion (basically
     #      CRUD into a helper class, and thus compress the model classes somewhat?
-    def check_and_return(user, checker, secret):
+    # XXX  This is dubious design!
+
+    def check_and_return(self, user, checker, secret):
         if user and checker(secret):
             user
         else:
@@ -168,8 +200,10 @@ class UserStorage:
     def verify_api_login(self, api_key, api_secret):
         user = self.find_user_by_api_key(api_key)
         if not user:
+            print "verify_api_login found no user"
             return None
         else: 
+            print "verify_api_login found  user=" , user
             return self.check_and_return(user, user.check_api_key, api_secret)
 
     def verify_user_login(self, email_address, clairtext_password):
@@ -178,13 +212,6 @@ class UserStorage:
             return None
         else:
             return self.check_and_return(user, user.check_password, clairtext_password)
-
-    def create_new_user_entry(self, clairtext_user_id, hashed_secret_key):
-        object = UserEntry() # XXXX Missing
-        db_session.add(object)
-        db_session.commit()
-
-        return object.location_as_map(self)
 
     def exists_user(self, id):
         id=str(id)

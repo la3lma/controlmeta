@@ -123,8 +123,11 @@ class UserDatabaseTestCases(Control_meta_test_case):
         email = "foo@bar.baz"
         us = self.create_user_storage()
         user = us.new_user(email)
-        db_session.add(user)
         commit_db()
+
+        all_after_adding = us.find_all_users()
+        self.assertTrue(all_after_adding)
+
         user_id = user.id
         self.assertTrue(user)
         self.assertTrue(user_id)
@@ -133,7 +136,6 @@ class UserDatabaseTestCases(Control_meta_test_case):
         # Then check that we can indeed find that user by looking
         # it up through email and id (api_key si something we'll check
         # later)
-
 
         user_by_id = us.find_user_by_id(id)
         self.assertTrue(user_by_id)
@@ -170,8 +172,12 @@ class UserDatabaseTestCases(Control_meta_test_case):
         us   = self.create_user_storage()
         email = "foo@bar.bzz"
         user = us.new_user(email)
+        commit_db()
+        all_after_adding = us.find_all_users()
+        self.assertTrue(all_after_adding)
         (api_key, api_secret) = us.new_api_keys(user)
         commit_db()
+
         
         # Then do a bit of lookup using the API key
         user_found = us.find_user_by_api_key(api_key)
@@ -200,6 +206,9 @@ class UserDatabaseTestCases(Control_meta_test_case):
         user = us.new_user(email)
         (api_key, api_secret) = us.new_api_keys(user)
         commit_db()
+
+        all_after_adding = us.find_all_users()
+        self.assertTrue(all_after_adding)
 
         # Then test using the api_key/secret to log in
         # as an user
@@ -237,6 +246,8 @@ class UserDatabaseTestCases(Control_meta_test_case):
         user = us.new_user(email)
         user.set_password(password)
         commit_db()
+        all_after_adding = us.find_all_users()
+        self.assertTrue(all_after_adding)
 
         # Then test using the api_key/secret to log in
         # as an user
