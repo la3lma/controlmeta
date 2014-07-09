@@ -146,10 +146,9 @@ class UserDatabaseTestCases(Control_meta_test_case):
         self.assertEquals(user_id, user_by_email.id)
 
 
-    # XXX Bad design!!# 
     def assert_user_id_exists(self, us,  userid):
         user = us.find_user_by_id(userid)
-        return True and user
+        self.assertTrue(user)
 
     def assert_user_id_does_not_exists(self, us, userid):
         return not self.assert_user_id_exists(us, userid)
