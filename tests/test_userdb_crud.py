@@ -198,13 +198,45 @@ class UserDatabaseTestCases(Control_meta_test_case):
         self.assertEquals(user.id, new_user_found.id)
 
 
-    def test_api_key_verification(self):
+    def test_verification_mechanism(self, verifier, key, password):
+
+        # The positive case
+        result  = verifier(key, password)
+        self.assertTrue(result)
+
+        # Wrong username
+        result  = verifier(key + "jklfadjkl", password)
+        self.assertFalse(result)
+
+        # Wrong password
+        result  = verifier(key, password + "kdjkldfsjlj")
+        self.assertFalse(result)
+
+        # empty username
+        result  = verifier("", password)
+        self.assertFalse(result)
+
+        # empty username
+        result = verifier("", password)
+        self.assertFalse(result)
+
+
+    def create_test_user(self):
         # Create user and assign API keys
         us   = self.create_user_storage()
+        us.clean()
         email = "foo@bar.bzz"
+        password = "ljafdjl"
         user = us.new_user(email)
+        user.set_password(password)
         (api_key, api_secret) = us.new_api_keys(user)
         commit_db()
+        return (us, email, user, api_key, api_secret, password)
+
+
+    def test_api_key_verification(self):
+        # Create user and assign API keys
+        (us, email, user, api_key, api_secret, password) = self.create_test_user()
 
         all_after_adding = us.find_all_users()
         self.assertTrue(all_after_adding)
@@ -215,63 +247,33 @@ class UserDatabaseTestCases(Control_meta_test_case):
         api_user = us.verify_api_login(api_key, api_secret)
         self.assertTrue(api_user)
         self.assertEquals(user.id, api_user.id)
-
-        # Wrong API key
-        api_user = us.verify_api_login(api_key + "lasdf", api_secret)
-        self.assertFalse(api_user)
-
-        # Wrong secret
-        api_user = us.verify_api_login(api_key, api_secret + "aslfj")
-        self.assertFalse(api_user)
-
-        # Wrong secret and API key
-        api_user = us.verify_api_login(api_key + "sdf", api_secret + "aslfj")
-        self.assertFalse(api_user)
-
-        # Empty API key
-        api_user = us.verify_api_login("", api_secret)
-        self.assertFalse(api_user)
-
-        # Empty API key
-        api_user = us.verify_api_login(api_key, "")
-        self.assertFalse(api_user)
+        
+        # Then test for allt he other stuff that can go wrong
+        self.test_verification_mechanism(
+            us.verify_api_login,
+            api_key,
+            api_secret)
 
 
     def test_login_verification(self):
         # Create user and assign API keys
-        us   = self.create_user_storage()
-        us.clean()
+        (us, email, user, api_key, api_secret, password) = self.create_test_user()
 
-        email = "foo@bar.bzz"
-        password = "deepsecret"
-        user = us.new_user(email)
-        user.set_password(password)
-        commit_db()
         all_after_adding = us.find_all_users()
         self.assertTrue(all_after_adding)
 
         # Then test using the api_key/secret to log in
-        # as an user
+        # as an user, and get that user object.r
         login_user = us.verify_user_login(email, password)
         self.assertTrue(login_user)
         self.assertEquals(user.id, login_user.id)
 
-
-        # Wrong username
-        login_user = us.verify_user_login(email + "lkadfshj", password)
-        self.assertFalse(login_user)
-
-        # Wrong password
-        login_user = us.verify_user_login(email, password + "lkadfshj")
-        self.assertFalse(login_user)
-
-        # empty username
-        login_user = us.verify_user_login("", password)
-        self.assertFalse(login_user)
-
-        # empty username
-        login_user = us.verify_user_login(email, "")
-        self.assertFalse(login_user)
+        # Then test a bunch of ways it could go wrong, but
+        # shouldn't
+        self.test_verification_mechanism(
+            us.verify_user_login,
+            email,
+            password)
 
 
 if __name__ == '__main__':
