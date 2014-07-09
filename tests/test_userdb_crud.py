@@ -233,6 +233,9 @@ class UserDatabaseTestCases(Control_meta_test_case):
         return (us, email, user, api_key, api_secret, password)
 
 
+    # XXX The code repetition in the two methods below
+    #     annoys me!
+
     def test_api_key_verification(self):
         # Create user and assign API keys
         (us, email, user, api_key, api_secret, password) = self.create_test_user()
