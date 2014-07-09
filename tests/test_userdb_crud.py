@@ -198,8 +198,7 @@ class UserDatabaseTestCases(Control_meta_test_case):
         self.assertEquals(user.id, new_user_found.id)
 
 
-    def test_verification_mechanism(self, verifier, key, password):
-
+    def verification_mechanism_tester(self, verifier, key, password):
         # The positive case
         result  = verifier(key, password)
         self.assertTrue(result)
@@ -249,12 +248,12 @@ class UserDatabaseTestCases(Control_meta_test_case):
         self.assertEquals(user.id, api_user.id)
         
         # Then test for allt he other stuff that can go wrong
-        self.test_verification_mechanism(
+        self.verification_mechanism_tester(
             us.verify_api_login,
-            api_key,
+             api_key,
             api_secret)
-
-
+        
+        
     def test_login_verification(self):
         # Create user and assign API keys
         (us, email, user, api_key, api_secret, password) = self.create_test_user()
@@ -270,11 +269,11 @@ class UserDatabaseTestCases(Control_meta_test_case):
 
         # Then test a bunch of ways it could go wrong, but
         # shouldn't
-        self.test_verification_mechanism(
+        self.verification_mechanism_tester(
             us.verify_user_login,
             email,
             password)
-
+        
 
 if __name__ == '__main__':
      unittest.main()
