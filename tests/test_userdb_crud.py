@@ -250,7 +250,7 @@ class UserDatabaseTestCases(Control_meta_test_case):
         # Then test for allt he other stuff that can go wrong
         self.verification_mechanism_tester(
             us.verify_api_login,
-             api_key,
+            api_key,
             api_secret)
         
         
