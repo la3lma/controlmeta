@@ -22,24 +22,18 @@ class MediaEntry(Base):
         backref='media_id',
         cascade="all, delete, delete-orphan")
     
-    # XXX The intent behind this relationship is:
-    #     o All media entries should have an owner.
-    #     o When the owner is deleted, so should all the
-    #       content that user owns.
+    owner_id  = Column(Integer, 
+                       ForeignKey("user.id"), 
+                       # XXX Uncomment when it works ;)
+                       # nullable=False
+                       )
 
-# XXX This declaration doesn't work. It should
-#     fulfill the intent stated above, but it gives
-#     a NoForeignKeysError, which probably means
-#     something is wrong :-)
-#     
-#     I'll keep it as commented out until it works.
-#
-#     owner  = relationship(
-#         "UserEntry", 
-#         order_by="UserEntry.id",
-#         #       backref='user_id',
-#         cascade="all, delete, delete-orphan")
-    
+    owner = relationship(
+        "UserEntry",
+        backref=backref('media_entries', order_by=id),
+        single_parent=True,
+        cascade="all, delete, delete-orphan")
+
     def __init__(self, content_type, content):
       self.content_type = content_type
       self.content = content
