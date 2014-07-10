@@ -5,9 +5,9 @@ from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
 from sqlalchemy.orm import backref, relationship
 from model_exception import ModelException
+from users.model import UserEntry
 
 import json
-
 
 class MediaEntry(Base):
     __tablename__ = 'media'
@@ -15,12 +15,31 @@ class MediaEntry(Base):
     id = schema.Column(Integer, primary_key=True)
     content_type = Column(String)
     content = Column(LargeBinary)
+
     metadatax  = relationship(
         "MetaEntry", 
         order_by="MetaEntry.id",
         backref='media_id',
         cascade="all, delete, delete-orphan")
+    
+    # XXX The intent behind this relationship is:
+    #     o All media entries should have an owner.
+    #     o When the owner is deleted, so should all the
+    #       content that user owns.
 
+# XXX This declaration doesn't work. It should
+#     fulfill the intent stated above, but it gives
+#     a NoForeignKeysError, which probably means
+#     something is wrong :-)
+#     
+#     I'll keep it as commented out until it works.
+#
+#     owner  = relationship(
+#         "UserEntry", 
+#         order_by="UserEntry.id",
+#         #       backref='user_id',
+#         cascade="all, delete, delete-orphan")
+    
     def __init__(self, content_type, content):
       self.content_type = content_type
       self.content = content
@@ -131,9 +150,6 @@ class RDBMSMediaAndMetaStorage:
         id=str(media_id)
         result = db_session.query(exists().where(MediaEntry.id==id)).scalar()
         return result
-
-
-
 
 
     def delete_media(self, id):

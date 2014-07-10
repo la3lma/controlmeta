@@ -10,8 +10,6 @@ import random
 import json
 import hashlib
 
-
-
 def cryptohash(arg):
     return hashlib.sha256(arg).hexdigest()
 
