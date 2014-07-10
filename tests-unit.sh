@@ -8,7 +8,8 @@ TESTS="test_empty_crud.py \
       test_task_queue_storage.py \
       test_media_usecases.py \
       test_database.py \
-      test_flask_task_manipulations.py "
+      test_flask_task_manipulations.py \
+      test_userdb_crud.py"
 
 # Use the memory-only version of sqlite for
 # unit tests.
