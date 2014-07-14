@@ -7,6 +7,7 @@ from database import Base, db_session, init_db, commit_db
 from mediameta.model import RDBMSMediaAndMetaStorage
 from model_exception import ModelException
 from task.model import RDBQueueStorage
+from users.model import UserStorage
 import config
 
 import logging
@@ -16,7 +17,9 @@ logging.basicConfig(level=logging.DEBUG)
 # holds the state of the application.                                                  
 # XXX This is a kludge, for sure.
 
+# Promote into a separate class perhaps?
 class State:
+
 
     def __init__(self):
         base_url=config.DEFAULT_HOME_URL
@@ -24,6 +27,8 @@ class State:
             base_url=str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
         self.tqs = RDBQueueStorage()
+        self.us  = UserStorage(base_url)
+
 
 state = State()
 
@@ -111,6 +116,9 @@ def requires_auth(f):
             return authenticate()
 
         else:
+            # XXX Send the user object on to the
+            #     the processor (or a reference to it?)
+            #     Wrap an authenticated user
             return f(*args, **kwargs)
     return decorated
 
@@ -172,12 +180,26 @@ def exists_media(id):
          return Response(status=200)
 
 
+# XXX 
+def get_dummy_user():
+     # Monkey-patching to create an user, just to satisfy
+     # data model constraints.
+     email = "foo@bar.baz"
+     user = state.us.find_user_by_email(email)
+     if not user:
+         user = state.us.new_user(email)
+     return user
+
+
 @app.route('/media/', methods = ['POST'])
 @requires_auth
 @catches_model_exception
 def create_new_media_entry_from_upload():
      "Write the media representation an unidentified asset, returns the asset ID"
-     retval = state.mms.create_new_media_entry(request.mimetype, request.data)
+     
+     user = get_dummy_user()
+
+     retval = state.mms.create_new_media_entry(request.mimetype, request.data, user)
      return response_as_json(retval, status=201)
 
 @app.route('/media/id/<id>', methods = ['POST'])
@@ -185,7 +207,8 @@ def create_new_media_entry_from_upload():
 @catches_model_exception
 def post_media_to_id(id):
     "Write the media representation an identified asset"
-    returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data)
+    user = get_dummy_user()
+    returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data, user)
     return allow_empty_map_response_as_json(returnvalue, status=201)
 
 @app.route('/media/id/<mediaid>/supplement-meta/<metaid>', methods = ['POST'])
@@ -193,7 +216,8 @@ def post_media_to_id(id):
 @catches_model_exception
 def post_supplement_meta_with_media(mediaid, metaid):
     "Write the media representation an identified asset"
-    returnvalue = state.mms.supplement_media_to_meta(mediaid, metaid)
+    user = get_dummy_user()
+    returnvalue = state.mms.supplement_media_to_meta(mediaid, metaid, user)
     return expect_non_empty_map_response_as_json(returnvalue, status=200)
 
 
@@ -202,7 +226,8 @@ def post_supplement_meta_with_media(mediaid, metaid):
 @catches_model_exception
 def delete_media_and_meta(id):
     "Delete both media and metadata for an identified asset"
-    state.mms.delete_media(id)
+    user = get_dummy_user()
+    state.mms.delete_media(id, user)
     commit_db()
     return Response(status=204)
 
@@ -216,14 +241,16 @@ def delete_media_and_meta(id):
 @catches_model_exception
 def get_meta_list_from_id_and_metatype(id, metatype):
     "Get list of metadata assets associated with a media asset"
-    retval = state.mms.get_metadata_from_id_and_metatype(id, metatype)
+    user = get_dummy_user()
+    retval = state.mms.get_metadata_from_id_and_metatype(id, metatype, user)
     return response_as_json(retval)
 
 @app.route('/media/metaid/<metaid>', methods = ['GET'])
 @requires_auth
 @catches_model_exception
 def get_metadata_from_metaid(metaid):
-    retval = state.mms.get_metadata_from_id(metaid)
+    user = get_dummy_user()
+    retval = state.mms.get_metadata_from_id(metaid, user)
     return response_as_json(retval)
 
 
@@ -232,8 +259,8 @@ def get_metadata_from_metaid(metaid):
 @catches_model_exception
 def get_metadata_from_id(id):
     "Get all the metadata for a particular media id."
-
-    retval = state.mms.get_metadata_from_id(id)
+    user = get_dummy_user()
+    retval = state.mms.get_metadata_from_id(id, user)
     return response_as_json(retval)
 
 
@@ -243,7 +270,8 @@ def get_metadata_from_id(id):
 def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
-    retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload)
+    user = get_dummy_user()
+    retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload, user)
     return response_as_json(retval)
 
 
@@ -253,7 +281,8 @@ def post_new_meta(id, metatype):
 def post_new_meta_with_metatype_only(metatype):
     "Post a new bit of metadata for a media item"
     payload = request.json
-    retval = state.mms.store_new_meta_from_type(metatype, payload)
+    user = get_dummy_user()
+    retval = state.mms.store_new_meta_from_type(metatype, payload, user)
     return response_as_json(retval,status=201)
 
 
@@ -263,7 +292,8 @@ def post_new_meta_with_metatype_only(metatype):
 def post_meta(metaid):
     "Post to a particular metadata instance"
     payload = request.json
-    retval = state.mms.update_meta(metaid, request.json)
+    user = get_dummy_user()
+    retval = state.mms.update_meta(metaid, request.json, user)
     return response_as_json(retval)
 
 
@@ -272,7 +302,8 @@ def post_meta(metaid):
 @catches_model_exception
 def delete_meta(id, metaid):
     "Delete a particular metadata instance"
-    retval = state.mms.delete_metaid(metaid)
+    user = get_dummy_user()
+    retval = state.mms.delete_metaid(metaid, user)
     return response_as_json(retval)
 
 
@@ -286,6 +317,8 @@ def delete_meta(id, metaid):
 @requires_auth
 @catches_model_exception
 def list_all_tasks():
+    # XXX Need to send users in to all of these methods too, but
+    #     later.
     tasks = state.tqs.list_all_tasks()
     return response_as_json(tasks)
 

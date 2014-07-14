@@ -6,7 +6,7 @@ import tempfile
 from base64 import b64encode
 import ctlm
 from database import init_db
-
+from users.model import UserStorage
 class Control_meta_test_case(unittest.TestCase):
 
 
@@ -35,9 +35,22 @@ class Control_meta_test_case(unittest.TestCase):
         plain_headers = {'Content-Type': 'text/plain'}
         self.plain_headers =  dict(self.auth_headers.items() + plain_headers.items())
         
+        self.base_url = "http://namuu/"
+        self.us  = UserStorage(self.base_url)
+
+        email = "control_meta_test_case_dummy_user@bar.baz"
+        self.dummy_user = self.us.find_user_by_email(email)
+        if not self.dummy_user:
+            self.dummy_user = self.us.new_user(email)
 
     
     def tearDown(self):
         "Tear down the tmpfile database"
         pass
+
+
+    def get_dummy_user(self):
+        return self.dummy_user
+
+
 

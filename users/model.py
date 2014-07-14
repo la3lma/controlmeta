@@ -221,3 +221,4 @@ class UserStorage:
     def delete_user(self, id):
         self.delete_by_id(UserEntry, "Unknown User id", id)
 
+

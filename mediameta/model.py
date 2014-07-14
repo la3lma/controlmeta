@@ -34,9 +34,13 @@ class MediaEntry(Base):
         single_parent=True,
         cascade="all, delete, delete-orphan")
 
-    def __init__(self, content_type, content):
+
+    def __init__(self, content_type, content, user):
       self.content_type = content_type
       self.content = content
+      if not user:
+          raise ModelException("No user owning media content", 500)
+      self.owner_id = user.id
 
     def location_as_map(self, storage):
        return {
@@ -98,10 +102,11 @@ class RDBMSMediaAndMetaStorage:
         return self.base_url + "media/metaid/" + str(id)
 
 
-    def create_new_media_entry(self, mimetype, data):
+    def create_new_media_entry(self, mimetype, data, user):
         object = MediaEntry(
             mimetype,
-            data)
+            data,
+            user)
 
         db_session.add(object)
         db_session.commit()
@@ -112,8 +117,9 @@ class RDBMSMediaAndMetaStorage:
         return object.location_as_map(self)
 
 
-    def post_media_to_id(self, id, mimetype, data):
+    def post_media_to_id(self, id, mimetype, data, user):
         id=str(id)
+        # XXX Ignoring user
 
         entry = db_session.query(MediaEntry).get(id)
 
@@ -146,7 +152,8 @@ class RDBMSMediaAndMetaStorage:
         return result
 
 
-    def delete_media(self, id):
+    def  delete_media(self, id, user):
+        # XXX Ignoring user argument
         id=str(id)
         ## XXX This is wasteful. We sholdn't have
         ##     to get the full object, we shuld just
@@ -158,8 +165,9 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException("Unknown media ID = " + str(id), 404)
 
         
-    def store_new_meta_from_type(self, metatype, payload):
-        meta_data = self.create_new_media_entry(None, None)
+    def store_new_meta_from_type(self, metatype, payload, user):
+        # XXX Ignoring user!
+        meta_data = self.create_new_media_entry(None, None, user)
         media_id = meta_data['media_id']
         if not media_id:
             raise ModelException("Null media_id detected", 500)
@@ -181,8 +189,9 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException("Unknown meta ID " + meta_id, 404)
 
 
-    def store_new_meta_from_id_and_type(self, media_id, metatype, payload):
+    def store_new_meta_from_id_and_type(self, media_id, metatype, payload, user):
         "Store new meta from a type for an existing media entry."
+        # XXX Ignoring user!
         media_id = str(media_id)
         self.assert_that_media_id_exists(media_id)
         return self.store_new_meta(media_id,  metatype, payload)
@@ -221,8 +230,8 @@ class RDBMSMediaAndMetaStorage:
         return return_value
 
     
-    def get_metadata_from_id_and_metatype(self, media_id, meta_type):
-        
+    def get_metadata_from_id_and_metatype(self, media_id, meta_type, user):
+        # XXX Ignoring user
         media_id = str(media_id)
         self.assert_that_media_id_exists(media_id)
         
@@ -250,7 +259,8 @@ class RDBMSMediaAndMetaStorage:
         db_session.query(MediaEntry).delete()
         db_session.commit()
         
-    def supplement_media_to_meta(self, media_id, meta_id):
+    def supplement_media_to_meta(self, media_id, meta_id, user):
+        # XXX Ignoring user param
         print "supplement_media_to_meta (%s, %s)"%(media_id, meta_id)
         self.assert_that_media_id_exists(media_id)
         print "supplement_media_to_meta:  Media exists "
