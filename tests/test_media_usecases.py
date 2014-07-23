@@ -79,8 +79,6 @@ class MediaUsecases(Control_meta_test_case):
         self.assertEqual(rv4.status_code, 200)
         self.assertEqual(rv4.data, payload2)
 
-        
-
         # XXX Here we should look up a lot more stuff just to
         # see what we can do roundtripping for.
 
