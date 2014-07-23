@@ -92,17 +92,6 @@ from functools import wraps
 from flask import request, Response
 
 
-
-# XXX 
-def get_dummy_user_from_email(email):
-     # Monkey-patching to create an user, just to satisfy
-     # data model constraints.
-     user = state.us.find_user_by_email(email)
-     if not user:
-         user = state.us.new_user(email)
-     return user
-
-
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
