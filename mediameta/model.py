@@ -28,11 +28,13 @@ class MediaEntry(Base):
                        # nullable=False
                        )
 
+    # XXX We want all media entries of nonexistant users to 
+    #     disappear. Don't know how to set up the 
+    #     deletion cascade for that.
     owner = relationship(
         "UserEntry",
         backref=backref('media_entries', order_by=id),
-        single_parent=True,
-        cascade="all, delete, delete-orphan")
+        single_parent=True)
 
 
     def __init__(self, content_type, content, user):
