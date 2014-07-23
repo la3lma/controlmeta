@@ -114,6 +114,9 @@ def requires_auth(f):
             return authenticate()
 
         elif  not state.us.check_auth(auth.username, auth.password):
+
+            print "Failed to authenticate %r/%r"%(auth.username, auth.password) 
+            print "All users = %r"% state.us.find_all_users()
             return authenticate()
 
         else:

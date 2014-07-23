@@ -82,9 +82,13 @@ class MediaUsecases(Control_meta_test_case):
         # XXX Here we should look up a lot more stuff just to
         # see what we can do roundtripping for.
 
+        from ctlm.views import state
+        print "prior to deleting All users = %r"% state.us.find_all_users()
         # Then we nuke everything
         rv = self.app.delete('/media/id/1', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 204)
+
+        print "After deleting All users = %r"% state.us.find_all_users()
 
         # Finally we check if it's gone
         rv = self.app.get('/media', headers=self.auth_headers)
