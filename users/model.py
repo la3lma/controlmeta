@@ -112,6 +112,14 @@ class UserStorage:
         # Delete everything
         UserVerification.query.delete()
         UserEntry.query.delete()
+
+    
+    def check_auth(self, email, password):
+        user = self.find_user_by_email(email)
+        if not user:
+            return False
+        else:
+            return user.check_password(password)
         
 
     def get_user_url(self, id):

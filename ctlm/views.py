@@ -102,15 +102,6 @@ def get_dummy_user_from_email(email):
          user = state.us.new_user(email)
      return user
 
-# XXX This method should be in the user database, not
-#     here.
-def check_auth_for_real(email, password):
-     user = state.us.find_user_by_email(email)
-     if not user:
-         return False
-     else:
-         return user.check_password(password)
-
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -133,7 +124,7 @@ def requires_auth(f):
         if not auth:
             return authenticate()
 
-        elif  not check_auth_for_real(auth.username, auth.password):
+        elif  not state.us.check_auth(auth.username, auth.password):
             print "failing auth for username='%s',pw='%s'"%(auth.username, auth.password)
             return authenticate()
 
