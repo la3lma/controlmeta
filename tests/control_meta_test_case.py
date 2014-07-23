@@ -59,6 +59,3 @@ class Control_meta_test_case(unittest.TestCase):
 
     def get_dummy_user(self):
         return self.dummy_user
-
-
-
