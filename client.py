@@ -237,6 +237,9 @@ class  ControlMetaClient:
             auth=self.auth,
             data=data,
             headers= {'content-type': type})
+        if raw_response.status_code != 200:
+            msg = "Could not upload media."
+            raise ClientException(raw_response.status_code, msg)
         jrv=json.loads(raw_response.text)
         return new_media_result(jrv)
 
