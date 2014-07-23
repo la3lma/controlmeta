@@ -125,7 +125,6 @@ def requires_auth(f):
             return authenticate()
 
         elif  not state.us.check_auth(auth.username, auth.password):
-            print "failing auth for username='%s',pw='%s'"%(auth.username, auth.password)
             return authenticate()
 
         else:
