@@ -20,7 +20,6 @@ logging.basicConfig(level=logging.DEBUG)
 # Promote into a separate class perhaps?
 class State:
 
-
     def __init__(self):
         base_url=config.DEFAULT_HOME_URL
         if (len(sys.argv) > 1):
@@ -46,8 +45,10 @@ def response_as_json(retval, status=200):
 
     json_dump = json.dumps(retval)
     response =  Response(json_dump, status=status, mimetype="application/json")
-#     response = jsonify(retval)
-#     response.status_code = status
+
+# XXX Why is this commented out?  Can't grok it, should I nuke it?
+#   response = jsonify(retval)
+#   response.status_code = status
     return response
 
 
@@ -93,13 +94,6 @@ from flask import request, Response
 
 
 # XXX 
-def get_dummy_user():
-     # Monkey-patching to create an user, just to satisfy
-     # data model constraints.
-    return get_dummy_user_from_email("Dummy-user-from-views.py@gazonk.foo")
-
-
-# XXX 
 def get_dummy_user_from_email(email):
      # Monkey-patching to create an user, just to satisfy
      # data model constraints.
@@ -108,7 +102,9 @@ def get_dummy_user_from_email(email):
          user = state.us.new_user(email)
      return user
 
-def check_auth_for_real(username, password):
+# XXX This method should be in the user database, not
+#     here.
+def check_auth_for_real(email, password):
      user = state.us.find_user_by_email(email)
      if not user:
          return False
@@ -137,11 +133,13 @@ def requires_auth(f):
         if not auth:
             return authenticate()
 
-        elif  not check_auth(auth.username, auth.password):
+        elif  not check_auth_for_real(auth.username, auth.password):
+            print "failing auth for username='%s',pw='%s'"%(auth.username, auth.password)
             return authenticate()
 
         else:
-            request.authenticated_user = get_dummy_user_from_email(auth.username)
+            request.authenticated_user =  \
+                 state.us.find_user_by_email(auth.username)
             
             return f(*args, **kwargs)
     return decorated
@@ -282,7 +280,6 @@ def get_metadata_from_id(id):
 @catches_model_exception
 def post_new_meta(id, metatype):
     "Post a new bit of metadata for a media item"
-    print "request.authenticated_user = ", request.authenticated_user
     payload = request.json
     user = request.authenticated_user
     retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload, user)
