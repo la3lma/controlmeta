@@ -27,18 +27,14 @@ class Control_meta_test_case(unittest.TestCase):
         self.us  = UserStorage(self.base_url)
 
         email = "control_meta_test_case_dummy_user@bar.baz"
-        self.dummy_user = self.us.find_user_by_email(email)
-        if not self.dummy_user:
-            self.dummy_user = self.us.new_user(email)
-
-        self.username = "admin"
+        self.username = email
         self.password = "secret"
-
         user = state.us.new_user(self.username)
         user.set_password(self.password)
         commit_db()
 
-        all_users = state.us.find_all_users()
+        self.dummy_user = self.us.find_user_by_email(email)
+        self.assertTrue(self.dummy_user)
 
         self.auth_headers = {
             'Authorization': 'Basic ' +
