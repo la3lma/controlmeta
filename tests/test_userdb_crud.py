@@ -77,7 +77,7 @@ class UserDatabaseTestCases(Control_meta_test_case):
 
     def create_user_storage(self):
         base_url = "http://localhost"
-        us = UserStorage(base_url)        
+        us = UserStorage(base_url)
         return us
 
     def check_verification_url(self, base_url):
