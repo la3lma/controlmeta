@@ -1,6 +1,12 @@
+o Add functionality
+  - Make the bootstrap-injected users actually present in the
+    running environment. Some tests are failing because they are
+    apparently not present.
+
 o Refactor
   - Fix XXXes all over the place.  There are way too many bloopers now.
   - Add comments to methods, use best practices
+  - remove the references to the base url everywhere in the client
   - Consider extendig test coverage to some more 
     things that looks brittle (cascading comes to mind).
   - Look over the whole return-value/exception thing wrt return values.
@@ -10,6 +16,7 @@ o Refactor
 
 
 o Add users
+  o Add more API support for user management.
   o Associate media/meta/jobs with users in the sense that
     only authorized users will get access to things. 
   o Consider adding OAUth users, that log in using
