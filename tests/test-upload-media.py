@@ -9,6 +9,7 @@ from requests.auth import HTTPBasicAuth
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import errno, sys
+from get_test_auth import get_test_auth
 
 
 # Pick a base url from the command line
@@ -24,13 +25,20 @@ httplib.HTTPConnection.debuglevel = 1
 logging.basicConfig(level=logging.DEBUG) # you need to initialize logging, 
                       # otherwise you will not see anything from requests
 
-#
 
-# Use the very secret admin password for testing
-auth=HTTPBasicAuth('admin','secret')
+# Get auth parameters from environment variables
+auth = get_test_auth()
+
 
 # Then set up a client against that server
 cmc = client.ControlMetaClient(base_url, auth=auth)
+
+# Then get the usedata for all the users
+def print_all_users(location):
+    users = cmc.get_users()
+    print "All users @%r = %r "% (location, users)
+
+print_all_users("beginning")
 
 # Upload a piece of text
 upload_result=cmc.upload_media("text/plain", "jalla")
@@ -58,6 +66,7 @@ if not image_id :
 image_result=requests.get(image_url, auth=auth)
 
 
+print_all_users("before_upload")
 
 with open(filepath, 'r') as content_file:
     content = content_file.read()

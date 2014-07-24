@@ -29,8 +29,7 @@ class Control_meta_test_case(unittest.TestCase):
         email = "control_meta_test_case_dummy_user@bar.baz"
         self.username = email
         self.password = "secret"
-        user = state.us.new_user(self.username)
-        user.set_password(self.password)
+        state.us.new_user_with_password(self.username, self.password)
         commit_db()
 
         self.dummy_user = self.us.find_user_by_email(email)
