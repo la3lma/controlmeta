@@ -157,7 +157,7 @@ class  ControlMetaClient:
         payload={'agentId': agent_id}
         error_message="Unable to declare task " + str(task_id) + " as done."
         task = self.post(url, payload,  200, error_message)
-        return new_task_result(task)
+        return new_task_resulto(task)
 
 
     def supplement_meta_with_media(self, media_id, meta_id):
@@ -213,8 +213,6 @@ class  ControlMetaClient:
         content_type = result.headers['Content-Type']
         return (result.status_code == 200)
 
-
-
     def  get_new_tempfile_name(self):
         filename = tempfile.NamedTemporaryFile()
         return filename.name
@@ -226,7 +224,6 @@ class  ControlMetaClient:
         tempfile.write(content)
         tempfile.close()
         return (tempfile_name, content_type)
-
     
     # Upload unidentified metadata, get a data ID back
     # XXX Rewrite using the post method.
@@ -242,4 +239,11 @@ class  ControlMetaClient:
             raise ClientException(raw_response.status_code, msg)
         jrv=json.loads(raw_response.text)
         return new_media_result(jrv)
+
+    def get_users(self):
+        # XXX References to self.base_url should be factored out
+        url="%susers" %(self.base_url)
+        error_message = "Unable to get list of users from url %r"%url
+        users = self.get(url, 200, error_message)
+        return users
 

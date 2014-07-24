@@ -31,6 +31,16 @@ class State:
 
 state = State()
 
+def bootstrap_username_password(username, password):
+    print "bootstrap_username_password(%r, %r)"%(username, password)
+    if  not state.us.find_user_by_email(username):
+        print "bootstrap_username_password: Creating user %r" % username
+        state.us.new_user_with_password(username, password)
+        commit_db()
+        print "All users = %r"% state.us.find_all_users()
+    else:
+        print "bootstrap_username_password: User %r already exists." % username
+
 ##
 ## Helper functions to make it simpler to translate return values
 ## into response objects.
@@ -421,3 +431,14 @@ def create_task(type):
 def delete_task(taskid):
     retval = state.tqs.delete_task(taskid)
     return expect_empty_map_return_error_as_json(retval)
+
+
+# XXX This method is not reachable through the web server.  Why not?
+# @requires_auth
+@app.route('/users', methods = ['GET'])
+@catches_model_exception
+def get_users():
+    print "server:get_users was hit"
+    retval = state.us.find_all_users()
+    return allow_empty_map_response_as_json(retval)
+# XXX More user management needed, all of it is missing :-)
