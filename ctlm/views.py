@@ -37,9 +37,10 @@ def bootstrap_username_password(username, password):
         print "bootstrap_username_password: Creating user %r" % username
         state.us.new_user_with_password(username, password)
         commit_db()
-        print "All users = %r"% state.us.find_all_users()
     else:
         print "bootstrap_username_password: User %r already exists." % username
+    print "All users = %r"% state.us.find_all_users()
+
 
 ##
 ## Helper functions to make it simpler to translate return values
@@ -440,5 +441,6 @@ def delete_task(taskid):
 def get_users():
     print "server:get_users was hit"
     retval = state.us.find_all_users()
+    print "server:get_users returning users = %r" % retval
     return allow_empty_map_response_as_json(retval)
 # XXX More user management needed, all of it is missing :-)
