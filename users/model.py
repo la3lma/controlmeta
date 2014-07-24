@@ -140,6 +140,10 @@ class UserStorage:
         db_session.add(user)
         return user
 
+    def new_user_with_password(self, email, password):
+        user = self.new_user(email)
+        user.set_password(password)
+
 
     # XXX This is a rather bogus method.
     def verify_user(self, code):
