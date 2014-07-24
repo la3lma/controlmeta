@@ -11,6 +11,9 @@ if [ ! -d "$TMPDIRR" ] ;  then
 fi
 
 
+export USERNAME="dummy-user@acceptance-tests.org"
+export PASSWORD="VeRySeCReTpAsSw0Rd"
+
 # The base url is the url the application is running at.
 # it is necessary to send in as parameter, since I don't yet
 # know how to pick it up from within application.py.
