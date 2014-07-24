@@ -29,7 +29,6 @@ logging.basicConfig(level=logging.DEBUG) # you need to initialize logging,
 # Get auth parameters from environment variables
 auth = get_test_auth()
 
-
 # Then set up a client against that server
 cmc = client.ControlMetaClient(base_url, auth=auth)
 
@@ -37,6 +36,8 @@ cmc = client.ControlMetaClient(base_url, auth=auth)
 def print_all_users(location):
     users = cmc.get_users()
     print "All users @%r = %r "% (location, users)
+    if not users:
+        raise Exception("Could not find any users")
 
 print_all_users("beginning")
 
