@@ -41,6 +41,9 @@ def bootstrap_username_password(username, password):
         print "bootstrap_username_password: User %r already exists." % username
     print "All users = %r"% state.us.find_all_users()
 
+def dump_users_to_stdout(msg):
+    print "dump_users_to_stdout %r" % msg
+    print "All users = %r"% state.us.find_all_users()
 
 ##
 ## Helper functions to make it simpler to translate return values
