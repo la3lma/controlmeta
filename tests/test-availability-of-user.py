@@ -3,7 +3,6 @@
 import sys
 import client
 import logging
-logging.basicConfig(level=logging.DEBUG)
 import errno
 from get_test_auth import get_test_auth
 
