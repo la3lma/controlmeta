@@ -2,7 +2,7 @@
 
 import flask
 import ctlm
-from ctlm.views import bootstrap_username_password
+from ctlm.views import bootstrap_username_password, dump_users_to_stdout
 import os
 from database import commit_db
 
@@ -35,5 +35,6 @@ if __name__ == '__main__':
         print "Server found no bootstrap username/password parameters"
 
 
-
+    dump_users_to_stdout("pre run")
     application.run(host='0.0.0.0', debug=True)
+    dump_users_to_stdout("post run")
