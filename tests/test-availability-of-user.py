@@ -3,12 +3,8 @@
 import sys
 import client
 import logging
-import requests
-from requests.auth import HTTPDigestAuth
-from requests.auth import HTTPBasicAuth
-import logging
 logging.basicConfig(level=logging.DEBUG)
-import errno, sys
+import errno
 from get_test_auth import get_test_auth
 
 # Pick a base url from the command line
