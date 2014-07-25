@@ -22,8 +22,9 @@ except ImportError:
     
 httplib.HTTPConnection.debuglevel = 1
 
-logging.basicConfig(level=logging.DEBUG) # you need to initialize logging, 
-                      # otherwise you will not see anything from requests
+# you need to initialize logging, 
+# otherwise you will not see anything from requests
+logging.basicConfig(level=logging.DEBUG) 
 
 
 # Get auth parameters from environment variables

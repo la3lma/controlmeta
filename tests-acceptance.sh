@@ -58,7 +58,7 @@ if [ ! -z "$START_SERVER" ] ; then
     echo "Server running, starting tests."
 fi
 
-TESTS="test-upload-media.py test-upload-task.py test-image-processing-roundtrip.py"
+TESTS="test-availability-of-user.py test-upload-media.py test-upload-task.py test-image-processing-roundtrip.py"
 
 SUCCESS_OR_FAILURE="succeeded"
 
