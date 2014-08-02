@@ -183,13 +183,13 @@ class RDBQueueStorage():
     def declare_as_done(self, task_id, terminator):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
 
-    def create_task(self, tasktype, params):
+    def create_task(self, task_type, params):
         json_params = json.dumps(params)
-        task = Task(WAITING, tasktype, json_params)
+        task = Task(WAITING, task_type, json_params)
         db_session.add(task)
         commit_db()
-        mtask = task.as_map()
-        return mtask
+        new_task = task.as_map()
+        return new_task
 
     def nuke(self, task):
         task_id = task.id
