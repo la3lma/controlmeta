@@ -1,4 +1,5 @@
 o Add functionality
+  - Modify to use in a pure python environment?
   - Make the bootstrap-injected users actually present in the
     running environment. Some tests are failing because they are
     apparently not present.
