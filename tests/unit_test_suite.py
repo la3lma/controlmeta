@@ -18,12 +18,14 @@ unit_tests = [SimpleCrudCases,
               DatabaseTestCase,
               UserDatabaseTestCases]
 
-def suite(unit_tests):
+
+def suite(tests_to_add):
     new_suite = unittest.TestSuite()
-    for s in unit_tests :
+    for s in tests_to_add :
         tests = unittest.TestLoader().loadTestsFromTestCase(s)
         new_suite.addTests(tests)
     return new_suite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
