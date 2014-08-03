@@ -62,6 +62,11 @@ fi
 # Very useful URL to reset the user database
 RESET_URL="${BASE_URL}reset"
 
+# Very useful URL to reset the user database
+USERS_URL="${BASE_URL}users"
+
+
+
 TESTS="test-availability-of-user.py test-upload-media.py test-upload-task.py test-image-processing-roundtrip.py"
 
 SUCCESS_OR_FAILURE="succeeded"
@@ -82,6 +87,8 @@ for test in $TESTS ; do
 
    # Reset the user database (so that we can log in)
    curl "$RESET_URL" > /dev/null 2>&1
+
+   open "$USERS_URL"
 
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"

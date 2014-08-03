@@ -8,6 +8,7 @@ from imagemagic_identify_output_parser import parse_image_file
 from requests.auth import HTTPDigestAuth
 from requests.auth import HTTPBasicAuth
 import errno, sys
+from get_test_auth import get_test_auth
 
 
 # This is a simple test of a full roundtrip where we
@@ -33,8 +34,8 @@ except ImportError:
     
 httplib.HTTPConnection.debuglevel = 1
 
-# Use the very secret admin password for testing
-auth=HTTPBasicAuth('admin','secret')
+# Get auth parameters from environment variables
+auth = get_test_auth()
 
 # Then set up a client against that server
 cmc = client.ControlMetaClient(base_url, auth=auth)
