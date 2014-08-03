@@ -1,3 +1,9 @@
+o Rewrite test suite
+  - Use native test suites for unit tests, if at all possible.
+
+o Squash bug:
+  - Make acceptance tests work!
+
 o Add functionality
   - Modify to use in a pure python environment?
   - Make the bootstrap-injected users actually present in the
