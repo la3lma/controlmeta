@@ -160,7 +160,11 @@ class UserStorage:
             pass # What?
 
     def find_all_users(self):
-        return db_session.query(UserEntry).all()
+        users = db_session.query(UserEntry).all()
+        if not users:
+            users = [] # ?? XXX
+        users_mapped = map(lambda u: u.as_map(), users)
+        return users_mapped
 
     def find_user_by_api_key(self, api_key):
         api_key = str(api_key)

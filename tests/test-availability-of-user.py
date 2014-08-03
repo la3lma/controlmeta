@@ -25,4 +25,7 @@ cmc = client.ControlMetaClient(base_url, auth=auth)
 users = cmc.get_users()
 print ("All users (test-availability-of-user) = %r "% users)
 if not users:
+    print ("Users not found, bailing out")
     sys.exit(errno.ENOENT)
+else:
+    sys.exit(0)

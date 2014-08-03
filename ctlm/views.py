@@ -10,6 +10,7 @@ from model_exception import ModelException
 from task.model import RDBQueueStorage
 from users.model import UserStorage
 import config
+import os
 
 
 # A class to hold a singleton instance. That instance                                  
@@ -36,6 +37,9 @@ class State:
 
 state = State()
 
+# XXX This stuff for bootstrapping usernames/passwords is a kludge
+#     a symptom of bad design that should be fixed asap, after it
+#     works!
 
 def bootstrap_username_password(username, password):
     print("bootstrap_username_password(%r, %r)" % (username, password))
@@ -48,6 +52,26 @@ def bootstrap_username_password(username, password):
         print("bootstrap_username_password: User %r already exists." % username)
         print(" User is %r" % user)
         print("All users (1)= %r" % state.us.find_all_users())
+
+
+def reset_username_and_password():
+    print("Bootstrapping user database")
+    username = None
+    password = None
+
+    if 'USERNAME' in os.environ:
+        username = os.environ["USERNAME"]
+
+    if 'PASSWORD' in os.environ:
+        password = os.environ["PASSWORD"]
+
+    if username and password:
+        bootstrap_username_password(username, password)
+        print( "Committing bootstrap parameters")
+        commit_db()
+    else:
+        print("Server found no bootstrap username/password parameters")
+
 
 
 def dump_users_to_stdout(msg):
@@ -474,5 +498,14 @@ def get_users():
     return_value = state.us.find_all_users()
     print("server:get_users returning users = %r" % return_value)
     return allow_empty_map_response_as_json(return_value)
+
+#  XXXX Very bogus, only for use during debugging, should be disabled in production!
+# @requires_auth
+@app.route('/reset', methods=['GET'])
+@catches_model_exception
+def reset_users():
+    print("server:reset_users was hit")
+    reset_username_and_password()
+    return get_users()
 
 # XXX More user management needed, all of it is missing :-)

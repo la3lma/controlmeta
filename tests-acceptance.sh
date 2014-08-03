@@ -58,6 +58,10 @@ if [ ! -z "$START_SERVER" ] ; then
     echo "Server running, starting tests."
 fi
 
+
+# Very useful URL to reset the user database
+RESET_URL="${BASE_URL}reset"
+
 TESTS="test-availability-of-user.py test-upload-media.py test-upload-task.py test-image-processing-roundtrip.py"
 
 SUCCESS_OR_FAILURE="succeeded"
@@ -76,34 +80,21 @@ for test in $TESTS ; do
    # Nuke old testdb if present.
    (cd "$BASEDIR" && $PYTHON create_database.py)
 
+   # Reset the user database (so that we can log in)
+   curl "$RESET_URL" > /dev/null 2>&1
+
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"
 
    EXIT_CODE=$?
    if  [ "$EXIT_CODE" != "0" ] ; then
        echo ""
-       echo "ERROR: The test $test failed.  Aborting acceptance testing."
+       echo "ERROR: The test $test failed (exit code = $EXIT_CODE).  Aborting acceptance testing."
        echo "  See stderr from the test in $STDERR"
        echo "  See stdout from the test in $STDOUT"
        SUCCESS_OR_FAILURE="failed"
    fi
 
-   if [ -f "$SERVER_STDERR" ] ;  then 
-       SERVER_ERROR_MESSAGES=$(egrep -v 'DEBUG|INFO' "$SERVER_STDERR")
-       if [ -n "$SERVER_ERROR_MESSAGES"  ] ; then 
-	   echo ""
-	   echo "ERROR: The test $test failed.  Aborting acceptance testing."
-	   echo "  See stderr from the test in $STDERR"
-	   echo "  See stdout from the test in $STDOUT"
-	   echo "  Server output contains error, see $SERVER_STDERR"
-	   echo "  Summary of errors found in server log:"
-	   echo
-	   echo "  ======================================"
-	   echo "$SERVER_ERROR_MESSAGES" | sed 's/^/   /g'
-	   echo "  ======================================"
-	   SUCCESS_OR_FAILURE="failed"
-       fi
-   fi
 
    if [ "$SUCCESS_OR_FAILURE" = "failed" ] ; then
        break
@@ -126,10 +117,10 @@ if [ ! -z "$START_SERVER" ] ; then
     done
     
     if pgrep "$SERVER_PID" ; then 
-	kill -KILL  $SERVER_PID
+	    kill -KILL  $SERVER_PID
     fi
     for pid in $(pgrep -P $SERVER_PID) ; do 
-	kill -KILL $pid
+	    kill -KILL $pid
     done
 fi
 

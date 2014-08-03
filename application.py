@@ -2,7 +2,7 @@
 
 import flask
 import ctlm
-from ctlm.views import bootstrap_username_password, dump_users_to_stdout
+from ctlm.views import  reset_username_and_password, dump_users_to_stdout
 import os
 from database import commit_db
 
@@ -22,22 +22,7 @@ dump_users_to_stdout("pre __main__")
 if __name__ == '__main__':
 
     print("starting application")
-    username = None
-    password = None
-
-    if 'USERNAME' in os.environ:
-        username = os.environ["USERNAME"]
-
-    if 'PASSWORD' in os.environ:
-        password = os.environ["PASSWORD"]
-
-    if username and password:
-        bootstrap_username_password(username, password)
-        print( "Committing bootstrap parameters")
-        commit_db()
-    else:
-        print("Server found no bootstrap username/password parameters")
-
+    reset_username_and_password()
 
     dump_users_to_stdout("pre run")
     application.run(host='0.0.0.0', debug=True)
