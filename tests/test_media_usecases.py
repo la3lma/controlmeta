@@ -8,11 +8,9 @@
   :copyright: (c) 2014 by Bjørn Remseth
   :license: All rights reserved (at least for now)
 """
-import os
 import ctlm
 import unittest
 import json
-
 from control_meta_test_case import Control_meta_test_case
 
 class MediaUsecases(Control_meta_test_case):
@@ -30,8 +28,7 @@ class MediaUsecases(Control_meta_test_case):
         json_data = json.loads(rv.data)
         self.assertEqual(json_data, {})
 
-
-        payload="""{
+        payload = """{
              "Name": "Test",
              "Latitude": 12.59817,
              "Longitude": 52.12873
@@ -67,7 +64,6 @@ class MediaUsecases(Control_meta_test_case):
         # Then upload some real content to go with that
         # metadata
         payload2 = 'this is amazing'
-        url = '/media/id/' + str(contentid)
 
         rv3 = self.app.post(
             mediaurl,
@@ -84,12 +80,12 @@ class MediaUsecases(Control_meta_test_case):
         # see what we can do roundtripping for.
 
         from ctlm.views import state
-        print "prior to deleting All users = %r"% state.us.find_all_users()
+        print "prior to deleting All users = %r" % state.us.find_all_users()
         # Then we nuke everything
         rv = self.app.delete('/media/id/1', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 204)
 
-        print "After deleting All users = %r"% state.us.find_all_users()
+        print "After deleting All users = %r" % state.us.find_all_users()
 
         # Finally we check if it's gone
         rv = self.app.get('/media', headers=self.auth_headers)
@@ -99,4 +95,3 @@ class MediaUsecases(Control_meta_test_case):
     
 if __name__ == '__main__':
     unittest.main()
-

@@ -54,6 +54,5 @@ class Control_meta_test_case(unittest.TestCase):
         self.us.clean() # XXX !!! Bogus!!
         state.clean()
 
-
     def get_dummy_user(self):
         return self.dummy_user
