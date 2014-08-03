@@ -18,12 +18,9 @@ class Control_meta_test_case(unittest.TestCase):
         # Get the test client
         self.app = ctlm.app.test_client()
 
-        # INject test user
-
-        base_url = "http://localhost"
-        self.user_storage = UserStorage(base_url)
-
+        # Inject test user
         self.base_url = "http://namuu/"
+        # XXX This is highly bogus.!
         self.us  = UserStorage(self.base_url)
 
         email = "control_meta_test_case_dummy_user@bar.baz"
@@ -52,8 +49,9 @@ class Control_meta_test_case(unittest.TestCase):
         
     
     def tearDown(self):
-        "Tear down the tmpfile database"
-        pass
+        self.us.clean()
+        state.clean()
+
 
 
     def get_dummy_user(self):
