@@ -169,7 +169,6 @@ def catches_model_exception(f):
                 json.dumps(e.message),
                 status=e.http_returnvalue,
                 mimetype="application/json")
-
     return decorated
 
 
