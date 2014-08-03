@@ -157,7 +157,7 @@ class  ControlMetaClient:
         payload={'agentId': agent_id}
         error_message="Unable to declare task " + str(task_id) + " as done."
         task = self.post(url, payload,  200, error_message)
-        return new_task_resulto(task)
+        return new_task_result(task)
 
 
     def supplement_meta_with_media(self, media_id, meta_id):
