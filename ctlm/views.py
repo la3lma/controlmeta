@@ -31,6 +31,12 @@ class State:
         self.us  = UserStorage(base_url)
 
 
+    def clean(self):
+        self.mms.clean()
+        self.tqs.clean()
+        self.us.clean()
+
+
 state = State()
 
 def bootstrap_username_password(username, password):
