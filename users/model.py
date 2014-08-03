@@ -112,10 +112,8 @@ class UserStorage:
     # XXX This shouldn't be necessary, but for some reason it is
     def clean(self):
         # Delete everything
-        print "users.model::clean()"
         UserVerification.query.delete()
         UserEntry.query.delete()
-
     
     def report(self):
         pass
