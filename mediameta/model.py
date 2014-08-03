@@ -240,6 +240,7 @@ class RDBMSMediaAndMetaStorage:
         entries = db_session.query(MetaEntry).filter_by(
             mediaid = media_id, 
             metatype = meta_type).all()
+        # XXX Use map?
         result = []
         for item in entries:
             result.append(item.as_map(self))
