@@ -23,6 +23,8 @@ class Control_meta_test_case(unittest.TestCase):
         # XXX This is highly bogus.!
         self.us  = UserStorage(self.base_url)
 
+        self.tearDown() # XXX A kludge
+
         email = "control_meta_test_case_dummy_user@bar.baz"
         self.username = email
         self.password = "secret"
