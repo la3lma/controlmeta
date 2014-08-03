@@ -153,8 +153,8 @@ class RDBQueueStorage():
         #     update_result isn't empty.
         return result.as_map()
 
-    def get_task(self, taskid):
-        result = db_session.query(Task).get(taskid)
+    def get_task(self, task_id):
+        result = db_session.query(Task).get(task_id)
         if result:
             return result.as_map()
         else:
