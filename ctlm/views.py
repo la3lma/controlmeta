@@ -60,7 +60,7 @@ def dump_users_to_stdout(msg):
 
 # #
 # # Helper functions to make it simpler to translate return values
-## into response objects.
+# # into response objects.
 ##
 
 def response_as_json(return_value, status=200):
