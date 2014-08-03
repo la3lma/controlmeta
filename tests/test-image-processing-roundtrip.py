@@ -3,13 +3,10 @@
 import sys
 import os
 import client
-import logging
 import requests
 from imagemagic_identify_output_parser import parse_image_file
 from requests.auth import HTTPDigestAuth
 from requests.auth import HTTPBasicAuth
-import logging
-logging.basicConfig(level=logging.DEBUG)
 import errno, sys
 
 
@@ -35,10 +32,6 @@ except ImportError:
     import http.client as httplib
     
 httplib.HTTPConnection.debuglevel = 1
-
-logging.basicConfig(level=logging.DEBUG) # you need to initialize logging, 
-                      # otherwise you will not see anything from requests
-
 
 # Use the very secret admin password for testing
 auth=HTTPBasicAuth('admin','secret')

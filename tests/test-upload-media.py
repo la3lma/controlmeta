@@ -2,12 +2,9 @@
 
 import sys
 import client
-import logging
 import requests
 from requests.auth import HTTPDigestAuth
 from requests.auth import HTTPBasicAuth
-import logging
-logging.basicConfig(level=logging.DEBUG)
 import errno, sys
 from get_test_auth import get_test_auth
 
@@ -21,10 +18,6 @@ except ImportError:
     import http.client as httplib
     
 httplib.HTTPConnection.debuglevel = 1
-
-# you need to initialize logging, 
-# otherwise you will not see anything from requests
-logging.basicConfig(level=logging.DEBUG) 
 
 
 # Get auth parameters from environment variables
@@ -60,7 +53,7 @@ image_url = file_upload_result.document_url
 
 
 if not image_id :
-    logging.debug("Could not get image ID")
+    print("Could not get image ID")
     sys.exit(errno.ENOENT)
 
 # XXX This fails !!
@@ -74,7 +67,7 @@ with open(filepath, 'r') as content_file:
     content = content_file.read()
 
 if content != image_result.content :
-    logging.debug("content != image_result.content, so we fail")
+    print("content != image_result.content, so we fail")
     sys.exit(errno.ENOENT)
 
 

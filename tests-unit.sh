@@ -12,4 +12,3 @@ test="unit_test_suite.py"
 echo "======"
 echo "Running tests in ${test}"
 $PYTHON "tests/${test}"
- 

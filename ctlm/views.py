@@ -1,6 +1,5 @@
 import json
 import sys
-import logging
 
 from flask import jsonify
 
@@ -12,8 +11,6 @@ from task.model import RDBQueueStorage
 from users.model import UserStorage
 import config
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  

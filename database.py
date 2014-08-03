@@ -4,9 +4,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, MetaData
 import config
 import os
-import logging
-
-logging.getLogger("controlmeta.database")
 
 # XXX A very kludgy way of getting access to a database.
 # This file should refactored for readability and maintainability when
@@ -59,7 +56,7 @@ else:
     except KeyError:
         db_uri = config.SQLALCHEMY_DATABASE_URI
 
-logging.debug("db_uri =  %r" % db_uri)
+print ("db_uri =  %r" % db_uri)
 
 # At this point we should have a non-empty db_uri, or else we're screwed.
 if (db_uri == ""):
