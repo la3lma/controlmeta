@@ -172,11 +172,6 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.delete('/task/id/40400', headers=self.headers)
         self.assertEqual(rv.status_code, 404)
 
-
-    # When being invoked as a test suite, but, this looks very bogus! XXX
-    def runTest(self):
-        return unittest.main()
-
 # When being run from the command line
 if __name__ == '__main__':
      unittest.main()
