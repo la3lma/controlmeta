@@ -49,9 +49,8 @@ class Control_meta_test_case(unittest.TestCase):
         
     
     def tearDown(self):
-        self.us.clean()
+        self.us.clean() # XXX !!! Bogus!!
         state.clean()
-
 
 
     def get_dummy_user(self):

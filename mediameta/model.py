@@ -133,7 +133,7 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException(error_msg, http_returnvalue = 404)
         return entry.location_as_map(self)
 
-    def get_all_media(self):
+    def get_all_media(self): # XXX Use .all() instead?
         keys = []
         for key in db_session.query(MediaEntry.id):
             k = key[0]

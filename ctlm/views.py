@@ -33,6 +33,7 @@ class State:
 
     def clean(self):
         self.mms.clean()
+        self.mms.clean()
         self.tqs.clean()
         self.us.clean()
 
@@ -180,7 +181,7 @@ def hello_world():
 @catches_model_exception
 def get_all_media():
      "Get a list of all the available media's metadata."
-     retval=state.mms.get_all_media()
+     retval = state.mms.get_all_media()
      return response_as_json(retval)
 
 @app.route('/media/id/<id>', methods = ['GET'])

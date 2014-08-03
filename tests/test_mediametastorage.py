@@ -18,7 +18,7 @@ from users.model import UserStorage
 
 from mediameta.model import RDBMSMediaAndMetaStorage
 
-class control_meta_test_case(unittest.TestCase):
+class test_media_meta_storage(unittest.TestCase):
 
 
     def assumeNoKeys(self):
