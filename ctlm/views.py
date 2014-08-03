@@ -1,17 +1,17 @@
-from flask import  jsonify, Response, request, abort
 import json
 import sys
 import logging
 
+from flask import jsonify
+
 from ctlm import app
-from database import Base, db_session, init_db, commit_db
+from database import db_session, commit_db
 from mediameta.model import RDBMSMediaAndMetaStorage
 from model_exception import ModelException
 from task.model import RDBQueueStorage
 from users.model import UserStorage
 import config
 
-import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -21,14 +21,13 @@ logger = logging.getLogger(__name__)
 
 # Promote into a separate class perhaps?
 class State:
-
     def __init__(self):
-        base_url=config.DEFAULT_HOME_URL
-        if (len(sys.argv) > 1):
-            base_url=str(sys.argv[1])
+        base_url = config.DEFAULT_HOME_URL
+        if len(sys.argv) > 1:
+            base_url = str(sys.argv[1])
         self.mms = RDBMSMediaAndMetaStorage(base_url)
         self.tqs = RDBQueueStorage()
-        self.us  = UserStorage(base_url)
+        self.us = UserStorage(base_url)
 
 
     def clean(self):
@@ -40,67 +39,76 @@ class State:
 
 state = State()
 
+
 def bootstrap_username_password(username, password):
-    print("bootstrap_username_password(%r, %r)"%(username, password))
-    user =  state.us.find_user_by_email(username)
-    if  not user:
+    print("bootstrap_username_password(%r, %r)" % (username, password))
+    user = state.us.find_user_by_email(username)
+    if not user:
         print("bootstrap_username_password: Creating user %r" % username)
         state.us.new_user_with_password(username, password)
         commit_db()
     else:
-        print( "bootstrap_username_password: User %r already exists." % username)
-        print(" User is %r"%user)
-        print( "All users (1)= %r"% state.us.find_all_users())
+        print("bootstrap_username_password: User %r already exists." % username)
+        print(" User is %r" % user)
+        print("All users (1)= %r" % state.us.find_all_users())
+
 
 def dump_users_to_stdout(msg):
-    print( "dump_users_to_stdout %r" % msg)
-    print( "All users (2) = %r"% state.us.find_all_users())
+    print("dump_users_to_stdout %r" % msg)
+    print("All users (2) = %r" % state.us.find_all_users())
 
-##
-## Helper functions to make it simpler to translate return values
+
+# #
+# # Helper functions to make it simpler to translate return values
 ## into response objects.
 ##
 
-def response_as_json(retval, status=200):
-
-    if not retval:
-        retval = {}
+def response_as_json(return_value, status=200):
+    if not return_value:
+        return_value = {}
 
     commit_db()
 
-    json_dump = json.dumps(retval)
-    response =  Response(json_dump, status=status, mimetype="application/json")
+    json_dump = json.dumps(return_value)
+    response = Response(json_dump, status=status, mimetype="application/json")
 
-# XXX Why is this commented out?  Can't grok it, should I nuke it?
-#   response = jsonify(retval)
-#   response.status_code = status
+    # XXX Why is this commented out?  Can't grok it, should I nuke it?
+    #   response = jsonify(retval)
+    #   response.status_code = status
     return response
 
 
-def expect_non_empty_map_response_as_json(retval, errorcode=404, status=200):
-    if (not retval):
-        return Response(status=errorcode)
+def expect_non_empty_map_response_as_json(return_value, error_code=404, status=200):
+    """
+    :rtype : object
+    """
+    if not return_value:
+        return Response(status=error_code)
     else:
         commit_db()
-        return Response(json.dumps(retval), status=status, mimetype="application/json")
+        return Response(json.dumps(return_value), status=status, mimetype="application/json")
 
-def allow_empty_map_response_as_json(retval, status=200):
+
+def allow_empty_map_response_as_json(return_value, status=200):
     commit_db()
-    if (not retval):
+    assert isinstance(return_value, object)
+    if not return_value:
         return Response(status=status)
     else:
-        return Response(json.dumps(retval), status=status, mimetype="application/json")
+        return Response(json.dumps(return_value), status=status, mimetype="application/json")
 
-def expect_empty_map_return_error_as_json(retval, status=204, errorcode=404):
-    if (not bool(retval)):
+
+def expect_empty_map_return_error_as_json(return_value, status=204, error_code=404):
+    if not bool(return_value):
         commit_db()
         return Response(status=status)
     else:
         # XXX The "use a map as a datastructure" antipattern, evaluate and refactor.
-        if "HTTP_error_code" in retval:
-            errorcode= retval["HTTP_error_code"]
-        retvaldump=json.dumps(retval)
-        return Response(retvaldump, status=errorcode, mimetype="application/json")
+        if "HTTP_error_code" in return_value:
+            error_code = return_value["HTTP_error_code"]
+        return_value_as_json = json.dumps(return_value)
+        return Response(return_value_as_json, status=error_code, mimetype="application/json")
+
 
 ##
 ## Application lifecycle
@@ -116,18 +124,20 @@ def shutdown_session(exception=None):
 from functools import wraps
 from flask import request, Response
 
+
 def check_auth(username, password):
     """This function is called to check if a username /
-    password combination is valid.
-    """
+    password combination is valid."""
     return username == 'admin' and password == 'secret'
+
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
     return Response(
-    'Could not verify your access level for that URL.\n'
-    'You have to login with proper credentials', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
 
 def requires_auth(f):
     @wraps(f)
@@ -137,19 +147,19 @@ def requires_auth(f):
         if not auth:
             return authenticate()
 
-        elif  not state.us.check_auth(auth.username, auth.password):
+        elif not state.us.check_auth(auth.username, auth.password):
 
-            print( "Failed to authenticate %r/%r"%(auth.username, auth.password) )
-            print( "All users (3)= %r"% state.us.find_all_users())
+            print("Failed to authenticate %r/%r" % (auth.username, auth.password))
+            print("All users (3)= %r" % state.us.find_all_users())
             return authenticate()
 
         else:
-            request.authenticated_user =  \
-                 state.us.find_user_by_email(auth.username)
-            
-            return f(*args, **kwargs)
-    return decorated
+            request.authenticated_user = \
+                state.us.find_user_by_email(auth.username)
 
+            return f(*args, **kwargs)
+
+    return decorated
 
 
 def catches_model_exception(f):
@@ -162,8 +172,10 @@ def catches_model_exception(f):
                 json.dumps(e.message),
                 status=e.http_returnvalue,
                 mimetype="application/json")
+
     return decorated
-    
+
+
 ###
 ###  Static pages
 ###
@@ -172,157 +184,162 @@ def catches_model_exception(f):
 def hello_world():
     return "lol control meta!"
 
+
 ###
 ### Media CRUD
 ###
 
-@app.route('/media', methods = ['GET'])
+@app.route('/media', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def get_all_media():
-     "Get a list of all the available media's metadata."
-     retval = state.mms.get_all_media()
-     return response_as_json(retval)
+    """Get a list of all the available media's metadata."""
+    return_value = state.mms.get_all_media()
+    return response_as_json(return_value)
 
-@app.route('/media/id/<id>', methods = ['GET'])
+
+@app.route('/media/id/<media_id>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_media(id):
-     "Get the media representation of identified asset"
-     mimetype, data = state.mms.get_media(id)
-     if (not mimetype):
-         return Response(status=404)
-     else:
-         return Response(data, mimetype=mimetype, status=200)
+def get_media(media_id):
+    "Get the media representation of identified asset"
+    mime_type, data = state.mms.get_media(media_id)
+    if not mime_type:
+        return Response(status=404)
+    else:
+        return Response(data, mimetype=mime_type, status=200)
 
 
-@app.route('/media/id/<id>/exists', methods = ['GET'])
+@app.route('/media/id/<id>/exists', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def exists_media(id):
-     "Get the media representation of identified asset"
-     exists = state.mms.exists_media(id)
-     if (not exists):
-         return Response(status=404)
-     else:
-         return Response(status=200)
+    "Get the media representation of identified asset"
+    exists = state.mms.exists_media(id)
+    if not exists:
+        return Response(status=404)
+    else:
+        return Response(status=200)
 
 
-@app.route('/media/', methods = ['POST'])
+@app.route('/media/', methods=['POST'])
 @requires_auth
 @catches_model_exception
 def create_new_media_entry_from_upload():
-     "Write the media representation an unidentified asset, returns the asset ID"
-     
-     user = request.authenticated_user
+    """Write the media representation an unidentified asset, returns the asset ID"""
 
-     retval = state.mms.create_new_media_entry(request.mimetype, request.data, user)
-     return response_as_json(retval, status=201)
+    user = request.authenticated_user
 
-@app.route('/media/id/<id>', methods = ['POST'])
+    return_value = state.mms.create_new_media_entry(request.mimetype, request.data, user)
+    return response_as_json(return_value, status=201)
+
+
+@app.route('/media/id/<media_id>', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def post_media_to_id(id):
-    "Write the media representation an identified asset"
+def post_media_to_id(media_id):
+    """Write the media representation an identified asset"""
     user = request.authenticated_user
-    returnvalue = state.mms.post_media_to_id(id, request.mimetype, request.data, user)
-    return allow_empty_map_response_as_json(returnvalue, status=201)
+    return_value = state.mms.post_media_to_id(media_id, request.mimetype, request.data, user)
+    return allow_empty_map_response_as_json(return_value, status=201)
 
-@app.route('/media/id/<mediaid>/supplement-meta/<metaid>', methods = ['POST'])
+
+@app.route('/media/id/<media_id>/supplement-meta/<meta_id>', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def post_supplement_meta_with_media(mediaid, metaid):
-    "Write the media representation an identified asset"
+def post_supplement_meta_with_media(media_id, meta_id):
+    """Write the media representation an identified asset"""
     user = request.authenticated_user
-    returnvalue = state.mms.supplement_media_to_meta(mediaid, metaid, user)
-    return expect_non_empty_map_response_as_json(returnvalue, status=200)
+    return_value = state.mms.supplement_media_to_meta(media_id, meta_id, user)
+    return expect_non_empty_map_response_as_json(return_value, status=200)
 
 
-@app.route('/media/id/<id>', methods = ['DELETE'])
+@app.route('/media/id/<media_id>', methods=['DELETE'])
 @requires_auth
 @catches_model_exception
-def delete_media_and_meta(id):
-    "Delete both media and metadata for an identified asset"
+def delete_media_and_meta(media_id):
+    """Delete both media and metadata for an identified asset"""
     user = request.authenticated_user
-    state.mms.delete_media(id, user)
+    state.mms.delete_media(media_id, user)
     commit_db()
     return Response(status=204)
+
 
 ###
 ###  Meta CRUD
 ###
 
 
-@app.route('/media/id/<id>/metatype/<metatype>', methods = ['GET'])
+@app.route('/media/id/<meta_id>/metatype/<meta_type>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_meta_list_from_id_and_metatype(id, metatype):
-    "Get list of metadata assets associated with a media asset"
+def get_meta_list_from_id_and_metatype(meta_id, meta_type):
+    """Get list of metadata assets associated with a media asset"""
     user = request.authenticated_user
-    retval = state.mms.get_metadata_from_id_and_metatype(id, metatype, user)
-    return response_as_json(retval)
-
-@app.route('/media/metaid/<metaid>', methods = ['GET'])
-@requires_auth
-@catches_model_exception
-def get_metadata_from_metaid(metaid):
-    user = request.authenticated_user
-    retval = state.mms.get_metadata_from_id(metaid, user)
+    retval = state.mms.get_metadata_from_id_and_metatype(meta_id, meta_type, user)
     return response_as_json(retval)
 
 
-@app.route('/media/id/<id>', methods = ['GET'])
+@app.route('/media/metaid/<meta_id>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_metadata_from_id(id):
-    "Get all the metadata for a particular media id."
+def get_metadata_from_metaid(meta_id):
     user = request.authenticated_user
-    retval = state.mms.get_metadata_from_id(id, user)
-    return response_as_json(retval)
+    return_value = state.mms.get_metadata_from_id(meta_id, user)
+    return response_as_json(return_value)
 
 
-@app.route('/media/id/<id>/metatype/<metatype>', methods = ['POST'])
+@app.route('/media/id/<media_id>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def post_new_meta(id, metatype):
-    "Post a new bit of metadata for a media item"
+def get_metadata_from_id(media_id):
+    """Get all the metadata for a particular media id."""
+    user = request.authenticated_user
+    return_value = state.mms.get_metadata_from_id(media_id, user)
+    return response_as_json(return_value)
+
+
+@app.route('/media/id/<media_id>/metatype/<meta_type>', methods=['POST'])
+@requires_auth
+@catches_model_exception
+def post_new_meta(media_id, meta_type):
+    """Post a new bit of metadata for a media item"""
     payload = request.json
     user = request.authenticated_user
-    retval = state.mms.store_new_meta_from_id_and_type(id, metatype, payload, user)
-    return response_as_json(retval)
+    return_value = state.mms.store_new_meta_from_id_and_type(media_id, meta_type, payload, user)
+    return response_as_json(return_value)
 
 
-@app.route('/media/metatype/<metatype>', methods = ['POST'])
+@app.route('/media/metatype/<meta_type>', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def post_new_meta_with_metatype_only(metatype):
-    "Post a new bit of metadata for a media item"
+def post_new_meta_with_metatype_only(meta_type):
+    """Post a new bit of metadata for a media item"""
     payload = request.json
     user = request.authenticated_user
-    retval = state.mms.store_new_meta_from_type(metatype, payload, user)
-    return response_as_json(retval,status=201)
+    return_value = state.mms.store_new_meta_from_type(meta_type, payload, user)
+    return response_as_json(return_value, status=201)
 
 
-@app.route('/media/metaid/<metaid>', methods = ['POST'])
+@app.route('/media/metaid/<meta_id>', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def post_meta(metaid):
-    "Post to a particular metadata instance"
+def post_meta(meta_id):
+    """Post to a particular metadata instance"""
     payload = request.json
     user = request.authenticated_user
-    retval = state.mms.update_meta(metaid, request.json, user)
-    return response_as_json(retval)
+    return_value = state.mms.update_meta(meta_id, request.json, user)
+    return response_as_json(return_value)
 
 
-@app.route('/media/metaid/<metaid>', methods = ['DELETE'])
+@app.route('/media/metaid/<meta_id>', methods=['DELETE'])
 @requires_auth
 @catches_model_exception
-def delete_meta(id, metaid):
-    "Delete a particular metadata instance"
+def delete_meta(meta_id):
+    """Delete a particular metadata instance"""
     user = request.authenticated_user
-    retval = state.mms.delete_metaid(metaid, user)
-    return response_as_json(retval)
-
+    return_value = state.mms.delete_metaid(meta_id, user)
+    return response_as_json(return_value)
 
 
 ###
@@ -330,7 +347,7 @@ def delete_meta(id, metaid):
 ###
 
 # Get all tasks (for debugging)
-@app.route('/task', methods = ['GET'])
+@app.route('/task', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def list_all_tasks():
@@ -339,21 +356,24 @@ def list_all_tasks():
     tasks = state.tqs.list_all_tasks()
     return response_as_json(tasks)
 
-@app.route('/task/waiting', methods = ['GET'])
+
+@app.route('/task/waiting', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def list_all_waiting_tasks():
     tasks = state.tqs.list_all_waiting_tasks()
     return response_as_json(tasks)
 
-@app.route('/task/done', methods = ['GET'])
+
+@app.route('/task/done', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def list_all_done_tasks():
     tasks = state.tqs.list_all_done_tasks()
     return response_as_json(tasks)
 
-@app.route('/task/running', methods = ['GET'])
+
+@app.route('/task/running', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def get_running_tasks_list():
@@ -363,98 +383,100 @@ def get_running_tasks_list():
 
 # XXX The state queries are inconsistent
 
-@app.route('/task/type/<tasktype>/running', methods = ['GET'])
+@app.route('/task/type/<task_type>/running', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_running_tasks_of_type_list(tasktype):
-    tasks = state.tqs.list_all_running_tasks_of_type(tasktype)
-    return  response_as_json(tasks)
+def get_running_tasks_of_type_list(task_type):
+    tasks = state.tqs.list_all_running_tasks_of_type(task_type)
+    return response_as_json(tasks)
 
-        
-@app.route('/task/type/<type>/done', methods = ['GET'])
+
+@app.route('/task/type/<task_type>/done', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_done_task_list(type):
+def get_done_task_list(task_type):
     return response_as_json(state.tqs.list_all_done_tasks())
 
 
-@app.route('/task/waiting/type/<type>', methods = ['GET'])
+@app.route('/task/waiting/type/<task_type>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def list_waiting_task_of_type(type):
-    tasks = state.tqs.list_all_waiting_tasks_of_type(type)
-    return  response_as_json(tasks)
-        
-@app.route('/task/waiting/type/<type>/pick', methods = ['POST'])
+def list_waiting_task_of_type(task_type):
+    tasks = state.tqs.list_all_waiting_tasks_of_type(task_type)
+    return response_as_json(tasks)
+
+
+@app.route('/task/waiting/type/<task_type>/pick', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def pick_next_waiting_task(type):
+def pick_next_waiting_task(task_type):
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
-    agent_description=request.json
+    agent_description = request.json
     if not agent_description:
         data = request.stream.read()
-        raise ModelException("Agent description was not legal JSON syntax: '%s' "%(data), 400)
+        raise ModelException("Agent description was not legal JSON syntax: '%s' " % data, 400)
 
-    task = state.tqs.pick_next_waiting_task_of_type(type, agent_description)
+    task = state.tqs.pick_next_waiting_task_of_type(task_type, agent_description)
     return response_as_json(task)
 
 
-@app.route('/task/id/<id>', methods = ['GET'])
+@app.route('/task/id/<task_id>', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def get_task_from_id(id):
-    retval = state.tqs.get_task(id)
-    return  jsonify(retval)
+def get_task_from_id(task_id):
+    return_value = state.tqs.get_task(task_id)
+    return jsonify(return_value)
 
 
-@app.route('/task/id/<id>/done', methods = ['POST'])
+@app.route('/task/id/<task_id>/done', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def declare_task_as_done(id):
+def declare_task_as_done(task_id):
     tqs = state.tqs
-    params=request.json
+    params = request.json
     if not params:
         raise ModelException("No params specified when marking task as done", 400)
 
-    if  not 'agentId' in params:
+    if not 'agentId' in params:
         raise ModelException("No agent specified when marking task as done", 400)
 
     agent_id = params['agentId']
 
-    retval = tqs.declare_as_done(id, agent_id)
+    return_value = tqs.declare_as_done(task_id, agent_id)
     commit_db()
-    return  jsonify(retval)
+    return jsonify(return_value)
 
 
-    
-@app.route('/task/type/<type>', methods = ['POST'])
+@app.route('/task/type/<task_type>', methods=['POST'])
 @requires_auth
 @catches_model_exception
-def create_task(type):
-    params=request.json
+def create_task(task_type):
+    params = request.json
     if not params:
         params = request.stream.read()
-        raise ModelException("Agent description was not legal JSON syntax: '%s' "%(data), 400)
-    retval = state.tqs.create_task(type, params)
-    return response_as_json(retval, status=201)
+        raise ModelException("Agent description was not legal JSON syntax: '%s' " % request.data, 400)
+    return_value = state.tqs.create_task(task_type, params)
+    return response_as_json(return_value, status=201)
 
-@app.route('/task/id/<taskid>', methods = ['DELETE'])
+
+@app.route('/task/id/<task_id>', methods=['DELETE'])
 @requires_auth
 @catches_model_exception
-def delete_task(taskid):
-    retval = state.tqs.delete_task(taskid)
-    return expect_empty_map_return_error_as_json(retval)
+def delete_task(task_id):
+    return_value = state.tqs.delete_task(task_id)
+    return expect_empty_map_return_error_as_json(return_value)
 
 
 # XXX This method is not reachable through the web server.  Why not?
 # @requires_auth
-@app.route('/users', methods = ['GET'])
+@app.route('/users', methods=['GET'])
 @catches_model_exception
 def get_users():
-    print( "server:get_users was hit")
+    print("server:get_users was hit")
     state.us.report()
-    retval = state.us.find_all_users()
-    print( "server:get_users returning users = %r" % retval)
-    return allow_empty_map_response_as_json(retval)
+    return_value = state.us.find_all_users()
+    print("server:get_users returning users = %r" % return_value)
+    return allow_empty_map_response_as_json(return_value)
+
 # XXX More user management needed, all of it is missing :-)
