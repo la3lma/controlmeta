@@ -95,6 +95,10 @@ class Task(Base):
 
 class RDBQueueStorage():
 
+    def clean(self):
+        Task.query.delete()
+        commit_db()
+
     def list_all_tasks_of_status(self, status):
         result = db_session.query(Task).filter(Task.status == status).all()
         mapped_result = map(lambda x: x.as_map(), result)
