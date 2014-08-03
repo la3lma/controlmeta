@@ -92,6 +92,8 @@ class UserEntry(Base):
             "hashed_api_secret": self.hashed_api_secret # XXX Just for debuggingl
             }
 
+    def force_verified(self):
+        self.verified = True
 
     def __repr__(self):
         return "UserEntry(%r)"%self.as_map()
@@ -115,6 +117,9 @@ class UserStorage:
         UserEntry.query.delete()
 
     
+    def report(self):
+        pass
+
     def check_auth(self, email, password):
         user = self.find_user_by_email(email)
         if not user:
@@ -144,7 +149,7 @@ class UserStorage:
     def new_user_with_password(self, email, password):
         user = self.new_user(email)
         user.set_password(password)
-
+        user.force_verified() # XXX Not very smart as a default
 
     # XXX This is a rather bogus method.
     def verify_user(self, code):
@@ -154,15 +159,10 @@ class UserStorage:
         elif not vc.verify(code):
             return False # Throw exception?
         else:
-            self.verified = true
+            pass # What?
 
-
-    # XXX Why not just use .all()?
     def find_all_users(self):
-        users = []
-        for u in db_session.query(UserEntry):
-            users.append(u)
-        return users
+        return db_session.query(UserEntry).all()
 
     def find_user_by_api_key(self, api_key):
         api_key = str(api_key)

@@ -8,13 +8,13 @@ from requests.auth import HTTPBasicAuth
 base_url = str(sys.argv[1])
 
 # Use the very secret admin password for testing
-auth = HTTPBasicAuth('admin','secret')
+auth = HTTPBasicAuth('admin', 'secret')
 
 # Then set up a client against that server
 cmc = client.ControlMetaClient(base_url, auth=auth)
 
 # Upload a task of type "face" with some parameters.
-parameters = {'parameter1':'Value 1'}
+parameters = {'parameter1': 'Value 1'}
 data = cmc.upload_task("face", parameters)
 
 t1 = cmc.all_tasks()

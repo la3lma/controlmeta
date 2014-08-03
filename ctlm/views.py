@@ -1,6 +1,7 @@
 from flask import  jsonify, Response, request, abort
 import json
 import sys
+import logging
 
 from ctlm import app
 from database import Base, db_session, init_db, commit_db
@@ -11,7 +12,8 @@ from users.model import UserStorage
 import config
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # A class to hold a singleton instance. That instance                                  
 # holds the state of the application.                                                  
@@ -32,18 +34,20 @@ class State:
 state = State()
 
 def bootstrap_username_password(username, password):
-    print "bootstrap_username_password(%r, %r)"%(username, password)
-    if  not state.us.find_user_by_email(username):
-        print "bootstrap_username_password: Creating user %r" % username
+    print("bootstrap_username_password(%r, %r)"%(username, password))
+    user =  state.us.find_user_by_email(username)
+    if  not user:
+        print("bootstrap_username_password: Creating user %r" % username)
         state.us.new_user_with_password(username, password)
         commit_db()
     else:
-        print "bootstrap_username_password: User %r already exists." % username
-    print "All users = %r"% state.us.find_all_users()
+        print( "bootstrap_username_password: User %r already exists." % username)
+        print(" User is %r"%user)
+        print( "All users (1)= %r"% state.us.find_all_users())
 
 def dump_users_to_stdout(msg):
-    print "dump_users_to_stdout %r" % msg
-    print "All users = %r"% state.us.find_all_users()
+    print( "dump_users_to_stdout %r" % msg)
+    print( "All users (2) = %r"% state.us.find_all_users())
 
 ##
 ## Helper functions to make it simpler to translate return values
@@ -105,7 +109,6 @@ def shutdown_session(exception=None):
 from functools import wraps
 from flask import request, Response
 
-
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
@@ -129,8 +132,8 @@ def requires_auth(f):
 
         elif  not state.us.check_auth(auth.username, auth.password):
 
-            print "Failed to authenticate %r/%r"%(auth.username, auth.password) 
-            print "All users = %r"% state.us.find_all_users()
+            print( "Failed to authenticate %r/%r"%(auth.username, auth.password) )
+            print( "All users (3)= %r"% state.us.find_all_users())
             return authenticate()
 
         else:
@@ -442,8 +445,9 @@ def delete_task(taskid):
 @app.route('/users', methods = ['GET'])
 @catches_model_exception
 def get_users():
-    print "server:get_users was hit"
+    print( "server:get_users was hit")
+    state.us.report()
     retval = state.us.find_all_users()
-    print "server:get_users returning users = %r" % retval
+    print( "server:get_users returning users = %r" % retval)
     return allow_empty_map_response_as_json(retval)
 # XXX More user management needed, all of it is missing :-)
