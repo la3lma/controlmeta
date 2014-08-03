@@ -88,7 +88,9 @@ for test in $TESTS ; do
    # Reset the user database (so that we can log in)
    curl "$RESET_URL" > /dev/null 2>&1
 
-   open "$USERS_URL"
+   # On osx, open the users URL just to see if it's ok.  Very
+   # useful for debuggingg, so I'll keep it here for a while
+   # open "$USERS_URL"
 
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
    $PYTHON "${TESTFILE}" "$BASE_URL" > "$STDOUT" 2> "$STDERR"

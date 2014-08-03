@@ -43,8 +43,8 @@ cmc = client.ControlMetaClient(base_url, auth=auth)
 ##
 ## Then upload an image from a file
 ##
-filepath='tests/images/lena1.jpeg'
-file_upload_result = cmc.upload_media_from_file('image/jpeg', filepath)
+file_path='tests/images/lena1.jpeg'
+file_upload_result = cmc.upload_media_from_file('image/jpeg', file_path)
 image_id = file_upload_result.document_id
 image_url = file_upload_result.document_url
 
@@ -62,8 +62,8 @@ image_url = file_upload_result.document_url
 ##
 
 parameters={'image_id':str(image_id)}
-data = cmc.upload_task("extract_image_basics", parameters)
-data = cmc.upload_task("find_faces", parameters)
+basics_upload_result = cmc.upload_task("extract_image_basics", parameters)
+faces_upload_result = cmc.upload_task("find_faces", parameters)
 
 
 ###
@@ -80,7 +80,7 @@ data = cmc.upload_task("find_faces", parameters)
 
 task = cmc.pick_task("extract_image_basics", "agent_009")
 task_image_id =  task.parameters['image_id']
-(tempfile_name, mediatype) = cmc.get_media_to_tempfile(task_image_id)
+(tempfile_name, media_type) = cmc.get_media_to_tempfile(task_image_id)
 basic_info = parse_image_file(tempfile_name)
 os.remove(tempfile_name)
 
@@ -135,7 +135,7 @@ task = cmc.pick_task("find_faces", "agent_009")
 task_image_id =  task.parameters['image_id']
 
 
-(tempfile_name, mediatype) = cmc.get_media_to_tempfile(task_image_id)
+(tempfile_name, media_type) = cmc.get_media_to_tempfile(task_image_id)
 
 # Extract all the faces
 faces, img = detect(tempfile_name)
