@@ -28,4 +28,4 @@ def suite(unit_tests):
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     test_suite = suite(unit_tests)
-    runner.run (test_suite)
+    runner.run(test_suite)
