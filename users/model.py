@@ -79,9 +79,9 @@ class UserEntry(Base):
 
 
     def check_api_key(self, clairtext_api_secret):
-        ekey = cryptohash(clairtext_api_secret)
-        retval = (self.hashed_api_secret == ekey)
-        return retval
+        cryptohashed_api_secret = cryptohash(clairtext_api_secret)
+        return_value = (self.hashed_api_secret == cryptohashed_api_secret)
+        return return_value
 
     def as_map(self):
         return {
