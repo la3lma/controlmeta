@@ -1,16 +1,17 @@
-o Rewrite test suite
-  - Use native test suites for unit tests, if at all possible.
+o Prepare to relaunch in EBS
+  - Make bootstrap user inactive in EBS deployment.
+  - Refactor database schema somewhat
+  - Make a helper script that creates and possibly even injects users into the database
+    (the live on)
+  - Regenerate database (prod) inject default user
+  - Push to prod.
+  - Make smoketests that tests that the prod instance is actually doing
+    something useful.
 
-o Squash bug:
-  - Make acceptance tests work!
-
-o Add functionality
-  - Modify to use in a pure python environment?
-  - Make the bootstrap-injected users actually present in the
-    running environment. Some tests are failing because they are
-    apparently not present.
+o Add more API support for user management (fully unit tested).
 
 o Refactor
+  - Go over all code, everywhere to ensure conformance to coding standards.
   - Fix XXXes all over the place.  There are way too many bloopers now.
   - Add comments to methods, use best practices
   - remove the references to the base url everywhere in the client
@@ -23,7 +24,6 @@ o Refactor
 
 
 o Add users
-  o Add more API support for user management.
   o Associate media/meta/jobs with users in the sense that
     only authorized users will get access to things. 
   o Consider adding OAUth users, that log in using
