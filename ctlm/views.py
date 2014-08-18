@@ -38,7 +38,7 @@ class State:
 state = State()
 
 # XXX This stuff for bootstrapping usernames/passwords is a kludge
-#     a symptom of bad design that should be fixed asap, after it
+# a symptom of bad design that should be fixed asap, after it
 #     works!
 
 def bootstrap_username_password(username, password):
@@ -71,7 +71,6 @@ def reset_username_and_password():
         commit_db()
     else:
         print("Server found no bootstrap username/password parameters")
-
 
 
 def dump_users_to_stdout(msg):
@@ -193,6 +192,7 @@ def catches_model_exception(f):
                 json.dumps(e.message),
                 status=e.http_returnvalue,
                 mimetype="application/json")
+
     return decorated
 
 
@@ -498,6 +498,7 @@ def get_users():
     return_value = state.us.find_all_users()
     print("server:get_users returning users = %r" % return_value)
     return allow_empty_map_response_as_json(return_value)
+
 
 #  XXXX Very bogus, only for use during debugging, should be disabled in production!
 # @requires_auth
