@@ -39,7 +39,7 @@ class Task(Base):
         return {"task_id": self.id,
                 "status": self.status,
                 "task_type": self.task_type,
-                "parameters": json.loads(self.params) }
+                "parameters": json.loads(self.params)}
 
     ##
     ## The start state needs some special case handling
@@ -74,9 +74,6 @@ class Task(Base):
         self.runner = runner
         return return_value
 
-    def has_status(self, taskType):
-        return self.taskType == taskType
-
     def has_status(self, status):
         return self.status == status
 
@@ -95,16 +92,19 @@ class Task(Base):
 
 class RDBQueueStorage():
 
-    def clean(self):
+    @staticmethod
+    def clean():
         Task.query.delete()
         commit_db()
 
-    def list_all_tasks_of_status(self, status):
+    @staticmethod
+    def list_all_tasks_of_status(status):
         result = db_session.query(Task).filter(Task.status == status).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result
 
-    def list_all_tasks(self):
+    @staticmethod
+    def list_all_tasks():
         result = db_session.query(Task).all()
         mapped_result = map(lambda x: x.as_map(), result)
         return mapped_result
@@ -118,7 +118,8 @@ class RDBQueueStorage():
     def list_all_done_tasks(self):
         return self.list_all_tasks_of_status(DONE)
 
-    def list_all_tasks_of_type_with_status(self, task_type, status):
+    @staticmethod
+    def list_all_tasks_of_type_with_status(task_type, status):
         result = db_session.query(Task).filter(
             Task.status == status,
             Task.task_type == task_type).all()
@@ -134,7 +135,8 @@ class RDBQueueStorage():
     # The "runner" is the agent description, and it's a map
     # that needs to be serialized before being stored
     
-    def pick_next_waiting_task_of_type(self, task_type, runner):
+    @staticmethod
+    def pick_next_waiting_task_of_type(task_type, runner):
 
         result = db_session.query(Task)\
                 .filter(Task.status == WAITING,
@@ -159,20 +161,22 @@ class RDBQueueStorage():
         else:
             return {}
 
-    def do_if_task_exists_error_if_not(self, task_id, function):
+    @staticmethod
+    def do_if_task_exists_error_if_not(task_id, function):
         # XXX This rampant stringification of taskid is unsound.
         task_id = str(task_id)
         task = db_session.query(Task).get(task_id)
         if not task:
-            raise ModelException("No such task taskid='%s'" % task_id, 404)
+            raise ModelException("No such task task_id='%s'" % task_id, 404)
         else:
             return function(task)
 
     # XXX This design is a bit bogus. It's a bit too astonishing
     #     for its own good.
     def check_if_task_exists(self, task_id):
-        return self.do_if_task_exists_error_if_not(task_id,
-                                            lambda task: task )
+        return self.do_if_task_exists_error_if_not(
+            task_id,
+            lambda task: task)
         
 
     def declare_as_running(self, task_id, runner):
@@ -180,14 +184,15 @@ class RDBQueueStorage():
             (task_id,
             lambda task: task.run(runner))
 
-    def do_done(self, task):
-        retval =  task.done()
-        return retval
+    @staticmethod
+    def do_done(task):
+        return task.done()
 
     def declare_as_done(self, task_id, terminator):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
 
-    def create_task(self, task_type, params):
+    @staticmethod
+    def create_task(task_type, params):
         json_params = json.dumps(params)
         task = Task(WAITING, task_type, json_params)
         db_session.add(task)
@@ -195,7 +200,8 @@ class RDBQueueStorage():
         new_task = task.as_map()
         return new_task
 
-    def nuke(self, task):
+    @staticmethod
+    def nuke(task):
         task_map = task.as_map()
         db_session.delete(task)
         task_map['status'] = 'deleted'
