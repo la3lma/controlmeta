@@ -1,8 +1,6 @@
 from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import schema, types
-from database import Base, db_session, commit_db
+from sqlalchemy import schema
+from database import Base, db_session
 from sqlalchemy.orm import backref, relationship
 from model_exception import ModelException
 from users.model import UserEntry
