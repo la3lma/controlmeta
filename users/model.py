@@ -123,7 +123,6 @@ class UserStorage:
         else:
             return user.check_password(password)
 
-
     def get_user_url(self, user_id):
         return self.base_url + "user/" + str(user_id)
 
@@ -209,7 +208,8 @@ class UserStorage:
         else:
             return None
 
-    def delete_by_id(self, the_class, explanation, user_id):
+    @staticmethod
+    def delete_by_id(the_class, explanation, user_id):
         user_id = str(user_id)
         result = db_session.query(the_class).get(str(user_id))
         if result:
@@ -240,5 +240,3 @@ class UserStorage:
 
     def delete_user(self, user_id):
         self.delete_by_id(UserEntry, "Unknown User id", user_id)
-
-
