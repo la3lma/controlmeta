@@ -1,6 +1,6 @@
 # XXX Too aggressive import list
 from sqlalchemy import *
-from sqlalchemy import schema, types
+from sqlalchemy import schema
 from database import Base, db_session, commit_db
 from model_exception import ModelException
 import json
