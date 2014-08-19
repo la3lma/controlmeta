@@ -2,6 +2,8 @@
 
 WD=$(dirname $0)
 
+(cd $WD && rm $(find . -name '*.pyc'))
+
 echo "================="
 echo "UNIT TESTS"
 echo
