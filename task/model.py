@@ -1,15 +1,13 @@
 # XXX Too aggressive import list
 from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import schema, types
 from database import Base, db_session, commit_db
 from model_exception import ModelException
 import json
 
-WAITING="waiting"
-RUNNING="running"
-DONE="done"
+WAITING = "waiting"
+RUNNING = "running"
+DONE = "done"
 
 class Task(Base):
     __tablename__ = 'tasks'
