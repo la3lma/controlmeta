@@ -233,7 +233,7 @@ def get_media(media_id):
 @requires_auth
 @catches_model_exception
 def exists_media(media_id):
-    "Get the media representation of identified asset"
+    """Get the media representation of identified asset"""
     exists = state.mms.exists_media(media_id)
     if not exists:
         return Response(status=404)
