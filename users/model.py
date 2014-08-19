@@ -1,13 +1,9 @@
 from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import schema, types
-from database import Base, db_session, commit_db
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy import schema
+from database import Base, db_session
 from model_exception import ModelException
 import string
 import random
-import json
 import hashlib
 
 def cryptohash(arg):
@@ -86,9 +82,9 @@ class UserEntry(Base):
     def as_map(self):
         return {
             "id" : self.id,
-            "email_address":     self.email_address,
-            "api_key":           self.api_key,
-            "hashed_password":   self.hashed_password,
+            "email_address": self.email_address,
+            "api_key": self.api_key,
+            "hashed_password": self.hashed_password,
             "hashed_api_secret": self.hashed_api_secret # XXX Just for debuggingl
             }
 
@@ -139,7 +135,7 @@ class UserStorage:
 
     def new_user(self, email):
         # XXX Check that the email isn't already used
-        # XXX Actually, enforce that as a key restreaint int the data model
+        # XXX Actually, enforce that as a key restraint int the data model
         user = UserEntry(email)
         db_session.add(user)
         return user
