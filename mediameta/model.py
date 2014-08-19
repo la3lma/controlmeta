@@ -172,7 +172,8 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException("Null media_id detected", 500)
         return self.store_new_meta(media_id, meta_type, payload)
 
-    def assert_that_media_id_exists(self, media_id):
+    @staticmethod
+    def assert_that_media_id_exists(media_id):
         ret = db_session.query(exists().where(MediaEntry.id == media_id)).scalar()
 
         if not ret:
