@@ -90,6 +90,9 @@ class Task(Base):
 
 class RDBQueueStorage():
 
+    def __init__(self):
+        pass
+
     @staticmethod
     def clean():
         Task.query.delete()
