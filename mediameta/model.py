@@ -29,7 +29,7 @@ class MediaEntry(Base):
 
     # XXX We want all media entries of nonexistant users to 
     # disappear. Don't know how to set up the
-    #     deletion cascade for that.
+    # deletion cascade for that.
     owner = relationship(
         "UserEntry",
         backref=backref('media_entries', order_by=id),
@@ -59,8 +59,8 @@ class MetaEntry(Base):
 
     # XXX This is supposed to be a one to one relationship between
     # metadata (perhaps one to many) indicating that a piece of media
-    #     relates to a piece of meta, and if the meta goes, so should
-    #     the media.
+    # relates to a piece of meta, and if the meta goes, so should
+    # the media.
     supplementing_relationship = relationship(
         "MediaEntry",
         single_parent=True,
@@ -75,7 +75,7 @@ class MetaEntry(Base):
 
 
     # XXX Rename the meta_type to be something else, such as "label"
-    #     to emphasize that its not a media type for the meta content.
+    # to emphasize that its not a media type for the meta content.
     def as_map(self, storage):
         return {
             'meta_id': self.id,
@@ -102,9 +102,9 @@ class RDBMSMediaAndMetaStorage:
         return self.base_url + "media/metaid/" + str(id)
 
 
-    def create_new_media_entry(self, mimetype, data, user):
+    def create_new_media_entry(self, mime_type, data, user):
         ob = MediaEntry(
-            mimetype,
+            mime_type,
             data,
             user)
 
@@ -115,7 +115,6 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException("Null object.id  detected for MediaEntry", 500)
 
         return ob.location_as_map(self)
-
 
     def post_media_to_id(self, media_id, mime_type, data, user):
         media_id = str(media_id)
@@ -131,24 +130,25 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException(error_msg, http_returnvalue=404)
         return entry.location_as_map(self)
 
-    def get_all_media(self):  # XXX Use .all() instead?
+    @staticmethod
+    def get_all_media():  # XXX Use .all() instead?
         keys = []
         for key in db_session.query(MediaEntry.id):
             k = key[0]
             keys.append(k)
         return keys
 
-    def get_media(self, id):
-        id = str(id)
-        result = db_session.query(MediaEntry).get(id)
+    def get_media(self, media_id):
+        media_id = str(media_id)
+        result = db_session.query(MediaEntry).get(media_id)
         if result:
             return (result.content_type, result.content)
         else:
-            raise ModelException("Cannot find media with id = " + id, 404)
+            raise ModelException("Cannot find media with id = " + media_id, 404)
 
     def exists_media(self, media_id):
-        id = str(media_id)
-        result = db_session.query(exists().where(MediaEntry.id == id)).scalar()
+        media_id = str(media_id)
+        result = db_session.query(exists().where(MediaEntry.id == media_id)).scalar()
         return result
 
 
@@ -156,8 +156,8 @@ class RDBMSMediaAndMetaStorage:
         # XXX Ignoring user argument
         media_id = str(media_id)
         # # XXX This is wasteful. We sholdn't have
-        ##     to get the full object, we shuld just
-        ##     nuke it from orbit.
+        # #     to get the full object, we shuld just
+        # #     nuke it from orbit.
         result = db_session.query(MediaEntry).get(str(media_id))
         if result:
             db_session.delete(result)
@@ -208,7 +208,6 @@ class RDBMSMediaAndMetaStorage:
         db_session.commit()
         return entry.as_map(self)
 
-
     def basic_get_metadata_from_id(self, meta_id):
         meta_entry = db_session.query(MetaEntry).get(meta_id)
         if not meta_entry:
@@ -255,7 +254,7 @@ class RDBMSMediaAndMetaStorage:
             raise ModelException("Unknown meta_id" + meta_id, 404)
 
     def clean(self):
-        "Nuke everything"
+        """Nuke everything"""
         db_session.query(MetaEntry).delete()
         db_session.query(MediaEntry).delete()
         db_session.commit()
@@ -269,4 +268,3 @@ class RDBMSMediaAndMetaStorage:
         print "supplement_media_to_meta:  Media exists "
         meta.supplementing_meta_id = media_id  # XXX Bogus naming
         return meta.as_map(self)
-
