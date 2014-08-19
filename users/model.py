@@ -31,7 +31,7 @@ class UserVerification(Base):
     # XXX Missing date issued, date verified
     # verification status, user being verified
     # Once verification is complete, the verification code
-    #     record should be nuked, so that we don't keep
+    # record should be nuked, so that we don't keep
     #     old records in the database.  It may be prudent
     #     to log it into some log (that is then put into
     #     redshift or something just to keep track of times from registration
@@ -70,12 +70,10 @@ class UserEntry(Base):
         self.api_key = api_key
         self.hashed_api_secret = cryptohash(clairtext_secret)
 
-
     def check_password(self, clair_text_password):
         cryptohashed_password = cryptohash(clair_text_password)
         return_value = (self.hashed_password == cryptohashed_password)
         return return_value
-
 
     def check_api_key(self, clairtext_api_secret):
         cryptohashed_api_secret = cryptohash(clairtext_api_secret)
@@ -175,16 +173,17 @@ class UserStorage:
         user = db_session.query(UserEntry).filter(UserEntry.api_key == api_key).first()
         return user
 
-    def find_user_by_id(self, id):
-        id = str(id)
-        user = db_session.query(UserEntry).filter(UserEntry.id == id).first()
+    @staticmethod
+    def find_user_by_id(user_id):
+        user_id = str(user_id)
+        user = db_session.query(UserEntry).filter(UserEntry.id == user_id).first()
         return user
 
-    def find_user_by_email(self, email):
+    @staticmethod
+    def find_user_by_email(email):
         email = str(email)
         user = db_session.query(UserEntry).filter(UserEntry.email_address == email).first()
         return user
-
 
     def new_unused_api_key(self):
         api_key = None
@@ -210,14 +209,14 @@ class UserStorage:
         else:
             return None
 
-    def delete_by_id(self, the_class, explanation, id):
-        id = str(id)
-        result = db_session.query(the_class).get(str(id))
+    def delete_by_id(self, the_class, explanation, user_id):
+        user_id = str(user_id)
+        result = db_session.query(the_class).get(str(user_id))
         if result:
             db_session.delete(result)
         else:
-            raise ModelException(explanation + " " + str(id), 404)
-            ###############
+            raise ModelException(explanation + " " + str(user_id), 404)
+            # ##############
 
     def verify_api_login(self, api_key, api_secret):
         user = self.find_user_by_api_key(api_key)
@@ -226,19 +225,20 @@ class UserStorage:
         else:
             return self.check_and_return(user, user.check_api_key, api_secret)
 
-    def verify_user_login(self, email_address, clairtext_password):
+    def verify_user_login(self, email_address, clair_text_password):
         user = self.find_user_by_email(email_address)
         if not user:
             return None
         else:
-            return self.check_and_return(user, user.check_password, clairtext_password)
+            return self.check_and_return(user, user.check_password, clair_text_password)
 
-    def exists_user(self, user_id):
+    @staticmethod
+    def exists_user(user_id):
         user_id = str(user_id)
         result = db_session.query(exists().where(UserEntry.id == user_id)).scalar()
         return result
 
-    def delete_user(self, id):
-        self.delete_by_id(UserEntry, "Unknown User id", id)
+    def delete_user(self, user_id):
+        self.delete_by_id(UserEntry, "Unknown User id", user_id)
 
 
