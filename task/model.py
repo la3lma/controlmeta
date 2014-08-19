@@ -179,8 +179,8 @@ class RDBQueueStorage():
         
 
     def declare_as_running(self, task_id, runner):
-        return self.do_if_task_exists_error_if_not\
-            (task_id,
+        return self.do_if_task_exists_error_if_not(
+            task_id,
             lambda task: task.run(runner))
 
     @staticmethod
