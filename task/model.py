@@ -9,6 +9,7 @@ WAITING = "waiting"
 RUNNING = "running"
 DONE = "done"
 
+
 class Task(Base):
     __tablename__ = 'tasks'
 
@@ -20,16 +21,16 @@ class Task(Base):
 
     def __init__(self, status, task_type, params=None, runner=None):
         self.status = status
-        self.runner=runner
+        self.runner = runner
         self.task_type = task_type
         self.params = params
 
     # XXX This method should be identical to the one in client.py
     def __repr__(self):
         return "<Task id:'%r', type:'%r',  status:'%r', parameters:'%r'>" % \
-            (self.id, self.task_type, self.status, self.params)
+               (self.id, self.task_type, self.status, self.params)
 
-    ##
+    # #
     ## Represent the task as a map.  To be used when moving it
     ## as a json representation.
     ##
@@ -89,7 +90,6 @@ class Task(Base):
 
 
 class RDBQueueStorage():
-
     def __init__(self):
         pass
 
@@ -125,7 +125,7 @@ class RDBQueueStorage():
             Task.status == status,
             Task.task_type == task_type).all()
         mapped_result = map(lambda x: x.as_map(), result)
-        return mapped_result        
+        return mapped_result
 
     def list_all_waiting_tasks_of_type(self, task_type):
         return self.list_all_tasks_of_type_with_status(task_type, WAITING)
@@ -135,14 +135,14 @@ class RDBQueueStorage():
 
     # The "runner" is the agent description, and it's a map
     # that needs to be serialized before being stored
-    
+
     @staticmethod
     def pick_next_waiting_task_of_type(task_type, runner):
 
-        result = db_session.query(Task)\
-                .filter(Task.status == WAITING,
-                        Task.task_type == task_type)\
-                .first()
+        result = db_session.query(Task) \
+            .filter(Task.status == WAITING,
+                    Task.task_type == task_type) \
+            .first()
 
         # Handle missing object
         if not result:
@@ -152,7 +152,7 @@ class RDBQueueStorage():
         update_result = result.run(serialized_runner)
 
         # XXX Should throw an exception if the
-        #     update_result isn't empty.
+        # update_result isn't empty.
         return result.as_map()
 
     @staticmethod
@@ -174,12 +174,12 @@ class RDBQueueStorage():
             return function(task)
 
     # XXX This design is a bit bogus. It's a bit too astonishing
-    #     for its own good.
+    # for its own good.
     def check_if_task_exists(self, task_id):
         return self.do_if_task_exists_error_if_not(
             task_id,
             lambda task: task)
-        
+
 
     def declare_as_running(self, task_id, runner):
         return self.do_if_task_exists_error_if_not(
