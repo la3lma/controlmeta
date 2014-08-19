@@ -7,7 +7,7 @@ import random
 import hashlib
 
 
-def cryptohash(arg):
+def crypto_hash(arg):
     return hashlib.sha256(arg).hexdigest()
 
 
@@ -64,19 +64,19 @@ class UserEntry(Base):
         # XXX Create user verification code
 
     def set_password(self, clairtext_password):
-        self.hashed_password = cryptohash(clairtext_password)
+        self.hashed_password = crypto_hash(clairtext_password)
 
     def set_api_keys(self, api_key, clairtext_secret):
         self.api_key = api_key
-        self.hashed_api_secret = cryptohash(clairtext_secret)
+        self.hashed_api_secret = crypto_hash(clairtext_secret)
 
     def check_password(self, clair_text_password):
-        cryptohashed_password = cryptohash(clair_text_password)
+        cryptohashed_password = crypto_hash(clair_text_password)
         return_value = (self.hashed_password == cryptohashed_password)
         return return_value
 
     def check_api_key(self, clairtext_api_secret):
-        cryptohashed_api_secret = cryptohash(clairtext_api_secret)
+        cryptohashed_api_secret = crypto_hash(clairtext_api_secret)
         return_value = (self.hashed_api_secret == cryptohashed_api_secret)
         return return_value
 

@@ -12,7 +12,7 @@ import unittest
 import json
 import flask.ext.testing
 from control_meta_test_case import Control_meta_test_case
-from users.model import cryptohash
+from users.model import crypto_hash
 from users.model import UserVerification
 from users.model import UserEntry
 from users.model import UserStorage
@@ -24,7 +24,7 @@ class UserDatabaseTestCases(Control_meta_test_case):
     
     def test_cryptohash(self):
         foo = "xyxxif"
-        efoo = cryptohash(foo)
+        efoo = crypto_hash(foo)
         self.assertNotEqual(foo, efoo)
 
     def test_verification_test(self):
