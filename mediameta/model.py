@@ -21,10 +21,11 @@ class MediaEntry(Base):
         backref='media_id',
         cascade="all, delete, delete-orphan")
 
-    owner_id = Column(Integer,
-                      ForeignKey("user.id"),
-                      # XXX Uncomment when it works ;)
-                      # nullable=False
+    owner_id = Column(
+        Integer,
+        ForeignKey("user.id"),
+        # XXX Uncomment when it works ;)
+        # nullable=False
     )
 
     # XXX We want all media entries of nonexistant users to 
@@ -34,7 +35,6 @@ class MediaEntry(Base):
         "UserEntry",
         backref=backref('media_entries', order_by=id),
         single_parent=True)
-
 
     def __init__(self, content_type, content, user):
         self.content_type = content_type
@@ -73,7 +73,6 @@ class MetaEntry(Base):
         self.metatype = metatype
         self.content = content
 
-
     # XXX Rename the meta_type to be something else, such as "label"
     # to emphasize that its not a media type for the meta content.
     def as_map(self, storage):
@@ -95,12 +94,11 @@ class RDBMSMediaAndMetaStorage:
         else:
             self.base_url = base_url + "/"
 
-    def get_media_url(self, id):
-        return self.base_url + "media/id/" + str(id)
+    def get_media_url(self, media_id):
+        return self.base_url + "media/id/" + str(media_id)
 
-    def get_meta_url(self, id):
-        return self.base_url + "media/metaid/" + str(id)
-
+    def get_meta_url(self, meta_id):
+        return self.base_url + "media/metaid/" + str(meta_id)
 
     def create_new_media_entry(self, mime_type, data, user):
         ob = MediaEntry(
@@ -138,24 +136,26 @@ class RDBMSMediaAndMetaStorage:
             keys.append(k)
         return keys
 
-    def get_media(self, media_id):
+    @staticmethod
+    def get_media(media_id):
         media_id = str(media_id)
         result = db_session.query(MediaEntry).get(media_id)
         if result:
-            return (result.content_type, result.content)
+            return result.content_type, result.content
         else:
             raise ModelException("Cannot find media with id = " + media_id, 404)
 
-    def exists_media(self, media_id):
+    @staticmethod
+    def exists_media(media_id):
         media_id = str(media_id)
         result = db_session.query(exists().where(MediaEntry.id == media_id)).scalar()
         return result
 
-
-    def delete_media(self, media_id, user):
+    @staticmethod
+    def delete_media(media_id, user):
         # XXX Ignoring user argument
         media_id = str(media_id)
-        # # XXX This is wasteful. We sholdn't have
+        # # XXX This is wasteful. We shouldn't have
         # #     to get the full object, we shuld just
         # #     nuke it from orbit.
         result = db_session.query(MediaEntry).get(str(media_id))
@@ -164,15 +164,13 @@ class RDBMSMediaAndMetaStorage:
         else:
             raise ModelException("Unknown media ID = " + str(media_id), 404)
 
-
-    def store_new_meta_from_type(self, metatype, payload, user):
+    def store_new_meta_from_type(self, meta_type, payload, user):
         # XXX Ignoring user!
         meta_data = self.create_new_media_entry(None, None, user)
         media_id = meta_data['media_id']
         if not media_id:
             raise ModelException("Null media_id detected", 500)
-        return self.store_new_meta(media_id, metatype, payload)
-
+        return self.store_new_meta(media_id, meta_type, payload)
 
     def assert_that_media_id_exists(self, media_id):
         ret = db_session.query(exists().where(MediaEntry.id == media_id)).scalar()
@@ -182,20 +180,19 @@ class RDBMSMediaAndMetaStorage:
 
     # XXX Repeated code, refactor
 
-    def assert_that_meta_id_exists(self, meta_id):
+    @staticmethod
+    def assert_that_meta_id_exists(meta_id):
         ret = db_session.query(exists().where(MetaEntry.id == meta_id)).scalar()
 
         if not ret:
             raise ModelException("Unknown meta ID " + meta_id, 404)
 
-
-    def store_new_meta_from_id_and_type(self, media_id, metatype, payload, user):
+    def store_new_meta_from_id_and_type(self, media_id, meta_type, payload, user):
         """Store new meta from a type for an existing media entry."""
         # XXX Ignoring user!
         media_id = str(media_id)
         self.assert_that_media_id_exists(media_id)
-        return self.store_new_meta(media_id, metatype, payload)
-
+        return self.store_new_meta(media_id, meta_type, payload)
 
     def store_new_meta(self, media_id, metatype, payload):
         if not media_id:
@@ -208,7 +205,8 @@ class RDBMSMediaAndMetaStorage:
         db_session.commit()
         return entry.as_map(self)
 
-    def basic_get_metadata_from_id(self, meta_id):
+    @staticmethod
+    def basic_get_metadata_from_id(meta_id):
         meta_entry = db_session.query(MetaEntry).get(meta_id)
         if not meta_entry:
             raise ModelException(
@@ -222,12 +220,10 @@ class RDBMSMediaAndMetaStorage:
         meta_entry = self.basic_get_metadata_from_id(meta_id)
         meta_entry.content = payload
 
-
     def get_metadata_from_id(self, meta_id):
         meta_entry = self.basic_get_metadata_from_id(meta_id)
         return_value = meta_entry.as_map(self)
         return return_value
-
 
     def get_metadata_from_id_and_metatype(self, media_id, meta_type, user):
         # XXX Ignoring user
@@ -243,8 +239,8 @@ class RDBMSMediaAndMetaStorage:
             result.append(item.as_map(self))
         return result
 
-
-    def delete_meta_from_id(self, meta_id):
+    @staticmethod
+    def delete_meta_from_id(meta_id):
         """Empty map means that no data was deleted"""
         result = db_session.query(MetaEntry).get(meta_id)
         if result:
@@ -253,7 +249,8 @@ class RDBMSMediaAndMetaStorage:
         else:
             raise ModelException("Unknown meta_id" + meta_id, 404)
 
-    def clean(self):
+    @staticmethod
+    def clean():
         """Nuke everything"""
         db_session.query(MetaEntry).delete()
         db_session.query(MediaEntry).delete()
