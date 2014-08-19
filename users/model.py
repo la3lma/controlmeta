@@ -133,8 +133,8 @@ class UserStorage:
         return self.base_url + "user/" + str(secret) + "/verification"
 
     def get_user_verification(self, code):
-        secret = str(secret)
-        verification = db_session.query(UserVerification.code == code).first()
+        code_as_string = str(code)
+        verification = db_session.query(UserVerification.code == code_as_string).first()
         return verification
 
     def new_user(self, email):
