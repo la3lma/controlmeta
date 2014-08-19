@@ -27,7 +27,6 @@ class State:
         self.tqs = RDBQueueStorage()
         self.us = UserStorage(base_url)
 
-
     def clean(self):
         self.mms.clean()
         self.mms.clean()
@@ -67,7 +66,7 @@ def reset_username_and_password():
 
     if username and password:
         bootstrap_username_password(username, password)
-        print( "Committing bootstrap parameters")
+        print ("Committing bootstrap parameters")
         commit_db()
     else:
         print("Server found no bootstrap username/password parameters")
@@ -222,7 +221,7 @@ def get_all_media():
 @requires_auth
 @catches_model_exception
 def get_media(media_id):
-    "Get the media representation of identified asset"
+    """Get the media representation of identified asset"""
     mime_type, data = state.mms.get_media(media_id)
     if not mime_type:
         return Response(status=404)
@@ -230,12 +229,12 @@ def get_media(media_id):
         return Response(data, mimetype=mime_type, status=200)
 
 
-@app.route('/media/id/<id>/exists', methods=['GET'])
+@app.route('/media/id/<media_id>/exists', methods=['GET'])
 @requires_auth
 @catches_model_exception
-def exists_media(id):
+def exists_media(media_id):
     "Get the media representation of identified asset"
-    exists = state.mms.exists_media(id)
+    exists = state.mms.exists_media(media_id)
     if not exists:
         return Response(status=404)
     else:
@@ -248,6 +247,8 @@ def exists_media(id):
 def create_new_media_entry_from_upload():
     """Write the media representation an unidentified asset, returns the asset ID"""
 
+    # We're all consenting adults here, so this kind of type-unsafeish
+    # behavior is acceptable(ish).
     user = request.authenticated_user
 
     return_value = state.mms.create_new_media_entry(request.mimetype, request.data, user)
