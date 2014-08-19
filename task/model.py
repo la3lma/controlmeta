@@ -31,7 +31,7 @@ class Task(Base):
                (self.id, self.task_type, self.status, self.params)
 
     # #
-    ## Represent the task as a map.  To be used when moving it
+    # # Represent the task as a map.  To be used when moving it
     ## as a json representation.
     ##
     def as_map(self):
@@ -180,7 +180,6 @@ class RDBQueueStorage():
             task_id,
             lambda task: task)
 
-
     def declare_as_running(self, task_id, runner):
         return self.do_if_task_exists_error_if_not(
             task_id,
@@ -190,7 +189,7 @@ class RDBQueueStorage():
     def do_done(task):
         return task.done()
 
-    def declare_as_done(self, task_id, terminator):
+    def declare_as_done(self, task_id, terminating_agent):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
 
     @staticmethod
