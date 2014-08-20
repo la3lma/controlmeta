@@ -47,6 +47,10 @@ class Task:
 
 
 def new_task_result(rv):
+    """
+
+    :rtype : object
+    """
     if not rv:
         raise ClientException(
             None,
@@ -87,6 +91,10 @@ class ControlMetaClient:
     def process(self, function, url, payload, expected_status, error_message, null_allowed=True,
                 null_json_allowed=True):
 
+        """
+
+        :rtype : object
+        """
         if not payload:
             payload = {}
 
@@ -107,8 +115,7 @@ class ControlMetaClient:
         if not raw_response.text and null_allowed:
             return None
         elif not raw_response.text:
-            raise ClientException(status_code, "Illegal null response for %s request %s detected." % \
-                                  (function, url))
+            raise ClientException(status_code, "Illegal null response for %s request %s detected." % (function, url))
 
         # Since there was a response we will assume it was
         # json and interpret it as such, and return the
@@ -119,8 +126,8 @@ class ControlMetaClient:
             raise ClientException(
                 status_code,
                 "Illegal empty json response for %s request %s detected." % (function, url))
+        assert isinstance(json_retval, object)
         return json_retval
-
 
     def post(self, url, payload, expected_status, error_message, null_allowed=True, null_json_allowed=True):
         return self.process(requests.post,
@@ -147,7 +154,6 @@ class ControlMetaClient:
         task = self.post(url, parameters, 201, "Unable to upload task")
         return new_task_result(task)
 
-
     def pick_task(self, task_type, agent_id):
         parameters = {'agentId': agent_id}
         url = "%stask/waiting/type/%s/pick" % (self.base_url, task_type)
@@ -163,7 +169,6 @@ class ControlMetaClient:
         task = self.post(url, payload, 200, error_message)
         return new_task_result(task)
 
-
     def supplement_meta_with_media(self, media_id, meta_id):
         url = "%smedia/id/%s/supplement-meta/%s" % (self.base_url, media_id, meta_id)
         error_message = "Unable to  supplement metadata with with id  " \
@@ -172,7 +177,6 @@ class ControlMetaClient:
                         str(media_id)
         result = self.post(url, {}, 200, error_message)
         return new_media_result(result)
-
 
     def upload_metadata_for_media(self, media_id, metadata_type, metadata):
         url = "%smedia/id/%s/metatype/%s" % (self.base_url, media_id, metadata_type)
