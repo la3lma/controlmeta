@@ -1,10 +1,9 @@
-
 import requests
 import json
-import tempfile 
+import tempfile
 
 
-class  Media:
+class Media:
     def __init__(self, document_id, document_url):
         self.document_id = document_id
         self.document_url = document_url
@@ -14,7 +13,7 @@ def new_media_result(rv):
     return Media(rv['media_id'], rv['media_url'])
 
 
-class  Meta:
+class Meta:
     def __init__(self, media_id, media_url, meta_id, meta_url, meta_type, meta_content):
         self.media_id = media_id
         self.media_url = media_url
@@ -23,16 +22,18 @@ class  Meta:
         self.type = meta_type
         self.content = meta_content
 
-def new_meta_result(rv):
-        return Meta(
-            rv['media_id'],
-            rv['media_url'],
-            rv['meta_id'],
-            rv['meta_url'],
-            rv['meta_type'],
-            rv['meta_content'])
 
-class  Task:
+def new_meta_result(rv):
+    return Meta(
+        rv['media_id'],
+        rv['media_url'],
+        rv['meta_id'],
+        rv['meta_url'],
+        rv['meta_type'],
+        rv['meta_content'])
+
+
+class Task:
     def __init__(self, task_id, status, parameters, task_type):
         self.status = status
         self.parameters = parameters
@@ -42,12 +43,13 @@ class  Task:
 
     def __repr__(self):
         return "<Task id:'%r', type:'%r',  status:'%r', parameters:'%r'>" % \
-            (self.id, self.task_type, self.status, self.parameters)
+               (self.id, self.task_type, self.status, self.parameters)
+
 
 def new_task_result(rv):
-    if not rv: 
+    if not rv:
         raise ClientException(
-            None, 
+            None,
             "Attempt to create task instance from empty dictionary")
 
     return Task(
@@ -55,15 +57,12 @@ def new_task_result(rv):
         rv['status'],
         rv['parameters'],
         rv['task_type']
-        )
+    )
 
 
-
-    
 class ClientException(Exception):
-
     def __init__(self, httpcode, message):
-        self.httpcode =httpcode
+        self.httpcode = httpcode
         if httpcode:
             self.value = "HTTP return code %s: %s" % (str(httpcode), message)
         else:
@@ -73,42 +72,43 @@ class ClientException(Exception):
         return repr(self.value)
 
 
-class  ControlMetaClient:
+class ControlMetaClient:
     JSON_HEADERS = {'content-type': 'application/json'}
 
     def __init__(self,
                  base_url=None,
                  auth=None):
         if base_url and not base_url.endswith("/"):
-            base_url = base_url + "/"
+            base_url += "/"
 
         self.base_url = base_url
         self.auth = auth
 
-    def process(self, function,  url, payload, expected_status, error_message, null_allowed=True, null_json_allowed=True):
+    def process(self, function, url, payload, expected_status, error_message, null_allowed=True,
+                null_json_allowed=True):
 
         if not payload:
             payload = {}
 
-        raw_response  = function(
-                url,
-                auth = self.auth,
-                data = json.dumps(payload),
-                headers = self.JSON_HEADERS)
+        raw_response = function(
+            url,
+            auth=self.auth,
+            data=json.dumps(payload),
+            headers=self.JSON_HEADERS)
 
         status_code = raw_response.status_code
         if status_code != expected_status:
             raise ClientException(
-                    status_code,
-                    error_message)
+                status_code,
+                error_message)
 
         # If there was no content, then return none
 
-        if not raw_response.text and  null_allowed:
+        if not raw_response.text and null_allowed:
             return None
         elif not raw_response.text:
-            raise ClientException(status_code, "Illegal null response for %s request %s detected." %\
-                                      (function, url))
+            raise ClientException(status_code, "Illegal null response for %s request %s detected." % \
+                                  (function, url))
 
         # Since there was a response we will assume it was
         # json and interpret it as such, and return the
@@ -116,32 +116,34 @@ class  ControlMetaClient:
 
         json_retval = json.loads(raw_response.text)
         if not json_retval and not null_json_allowed:
-            raise ClientException(status_code, "Illegal empty json response for %s request %s detected." %\
-                                      (function, url))
+            raise ClientException(
+                status_code,
+                "Illegal empty json response for %s request %s detected." % (function, url))
         return json_retval
 
-    
 
     def post(self, url, payload, expected_status, error_message, null_allowed=True, null_json_allowed=True):
         return self.process(requests.post,
-                            url, payload, expected_status, error_message, null_allowed=null_allowed, null_json_allowed=null_json_allowed)
+                            url, payload, expected_status, error_message, null_allowed=null_allowed,
+                            null_json_allowed=null_json_allowed)
 
-    def get(self, url,  expected_status, error_message):
+    def get(self, url, expected_status, error_message):
         return self.process(requests.get,
                             url, None, expected_status, error_message, null_allowed=True)
 
     def delete(self, url, payload, expected_status, error_message):
         return self.process(requests.delete,
-                            url, payload, expected_status, error_message,  null_allowed=True)
+                            url, payload, expected_status, error_message, null_allowed=True)
 
+    @property
     def all_tasks(self):
-        url = "%stask" %(self.base_url)
+        url = "%stask" % (self.base_url)
         task_list = self.get(url, 200, "Unable to get task list")
         return map(new_task_result, task_list)
 
-    def upload_task(self, type, parameters):
-        tasktypepath = "task/type/%s" % type
-        url = "%s%s" % (self.base_url, tasktypepath)
+    def upload_task(self, task_type, parameters):
+        task_type_path = "task/type/%s" % task_type
+        url = "%s%s" % (self.base_url, task_type_path)
         task = self.post(url, parameters, 201, "Unable to upload task")
         return new_task_result(task)
 
@@ -182,54 +184,54 @@ class  ControlMetaClient:
         meta = self.post(url, payload, 200, error_message)
         return new_meta_result(meta)
 
-    def upload_metadata(self, type, data):
-        url = "%s/media/metatype/%s" % (self.base_url, type)
+    def upload_metadata(self, metadata_type, data):
+        url = "%s/media/metatype/%s" % (self.base_url, metadata_type)
         error_message = "Unable to create naked  metadata instance."
         raw_response = self.post(url, data, 200, error_message)
         jrv = json.loads(raw_response.text)
         return new_meta_result(jrv)
 
-    def upload_media_from_file(self, type, filepath):
-        url = "%smedia/" % (self.base_url)
-        with open(filepath, 'r') as content_file:
+    def upload_media_from_file(self, media_id, file_path):
+        with open(file_path, 'r') as content_file:
             content = content_file.read()
-            return self.upload_media(type, content)
+            return self.upload_media(media_id, content)
 
-    def get_media(self, id):
-        url = "%smedia/id/%s" % (self.base_url, str(id))
+    def get_media(self, media_id):
+        url = "%smedia/id/%s" % (self.base_url, str(media_id))
         result = requests.get(url, auth=self.auth)
         content_type = result.headers['Content-Type']
         # XXX What is it called?
-        return (result.content, content_type)
+        return result.content, content_type
 
-    def delete_media(self, id):
-        url = "%smedia/id/%s" % (self.base_url, str(id))
+    def delete_media(self, media_id):
+        url = "%smedia/id/%s" % (self.base_url, str(media_id))
         result = requests.delete(url, auth=self.auth)
         if result.status_code != 204:
-            raise ClientException("Could not delete media with id " + str(id))
+            raise ClientException("Could not delete media with id " + str(media_id))
 
-    def exists_media(self, id):
-        url = "%smedia/id/%s/exists" % (self.base_url, str(id))
+    def exists_media(self, media_id):
+        url = "%smedia/id/%s/exists" % (self.base_url, str(media_id))
         result = requests.get(url, auth=self.auth)
         content_type = result.headers['Content-Type']
-        return (result.status_code == 200)
+        return result.status_code == 200
 
-    def get_new_tempfile_name(self):
+    @staticmethod
+    def get_new_tempfile_name():
         filename = tempfile.NamedTemporaryFile()
         return filename.name
 
     def get_media_to_tempfile(self, id):
         (content, content_type) = self.get_media(id)
         tempfile_name = self.get_new_tempfile_name()
-        tempfile = open(tempfile_name, "w")
-        tempfile.write(content)
-        tempfile.close()
-        return (tempfile_name, content_type)
+        temporary_file_name = open(tempfile_name, "w")
+        temporary_file_name.write(content)
+        temporary_file_name.close()
+        return tempfile_name, content_type
 
     # Upload unidentified metadata, get a data ID back
     # XXX Rewrite using the post method.
     def upload_media(self, type, data):
-        url = "%smedia/" % (self.base_url)
+        url = "%smedia/" % self.base_url
         raw_response = requests.post(
             url,
             auth=self.auth,
@@ -243,7 +245,7 @@ class  ControlMetaClient:
 
     def get_users(self):
         # XXX References to self.base_url should be factored out
-        url = "%susers" % (self.base_url)
+        url = "%susers" % self.base_url
         error_message = "Unable to get list of users from url %r" % url
         users = self.get(url, 200, error_message)
         return users

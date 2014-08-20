@@ -19,7 +19,7 @@ cmc = client.ControlMetaClient(base_url, auth=auth)
 parameters = {'parameter1': 'Value 1'}
 data = cmc.upload_task("face", parameters)
 
-t1 = cmc.all_tasks()
+t1 = cmc.all_tasks
 
 # pick up the task ID from the response
 task_id = data.id
@@ -29,10 +29,10 @@ task_id = data.id
 pickresponse = cmc.pick_task('face', '007')
 picked_task_id = pickresponse.id
 
-foo = cmc.all_tasks()
+foo = cmc.all_tasks
 ## And declare it as done
 doneresponse = cmc.declare_task_done(picked_task_id, '007')
 
-t3=cmc.all_tasks()
+t3=cmc.all_tasks
 
 
