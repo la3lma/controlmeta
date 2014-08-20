@@ -240,6 +240,10 @@ def exists_media(media_id):
     else:
         return Response(status=200)
 
+def get_authenticated_user():
+    # We're all consenting adults here, so this kind of type-unsafeish
+    # behavior is acceptable(ish).
+    return request.authenticated_user
 
 @app.route('/media/', methods=['POST'])
 @requires_auth
@@ -247,11 +251,10 @@ def exists_media(media_id):
 def create_new_media_entry_from_upload():
     """Write the media representation an unidentified asset, returns the asset ID"""
 
-    # We're all consenting adults here, so this kind of type-unsafeish
-    # behavior is acceptable(ish).
-    user = request.authenticated_user
-
-    return_value = state.mms.create_new_media_entry(request.mimetype, request.data, user)
+    return_value = state.mms.create_new_media_entry(
+        request.mimetype,
+        request.data,
+        get_authenticated_user())
     return response_as_json(return_value, status=201)
 
 
@@ -260,8 +263,11 @@ def create_new_media_entry_from_upload():
 @catches_model_exception
 def post_media_to_id(media_id):
     """Write the media representation an identified asset"""
-    user = request.authenticated_user
-    return_value = state.mms.post_media_to_id(media_id, request.mimetype, request.data, user)
+    return_value = state.mms.post_media_to_id(
+        media_id,
+        request.mimetype,
+        request.data,
+        get_authenticated_user())
     return allow_empty_map_response_as_json(return_value, status=201)
 
 
@@ -270,8 +276,7 @@ def post_media_to_id(media_id):
 @catches_model_exception
 def post_supplement_meta_with_media(media_id, meta_id):
     """Write the media representation an identified asset"""
-    user = request.authenticated_user
-    return_value = state.mms.supplement_media_to_meta(media_id, meta_id, user)
+    return_value = state.mms.supplement_media_to_meta(media_id, meta_id, get_authenticated_user())
     return expect_non_empty_map_response_as_json(return_value, status=200)
 
 
@@ -280,8 +285,7 @@ def post_supplement_meta_with_media(media_id, meta_id):
 @catches_model_exception
 def delete_media_and_meta(media_id):
     """Delete both media and metadata for an identified asset"""
-    user = request.authenticated_user
-    state.mms.delete_media(media_id, user)
+    state.mms.delete_media(media_id, get_authenticated_user())
     commit_db()
     return Response(status=204)
 
@@ -296,8 +300,7 @@ def delete_media_and_meta(media_id):
 @catches_model_exception
 def get_meta_list_from_id_and_metatype(meta_id, meta_type):
     """Get list of metadata assets associated with a media asset"""
-    user = request.authenticated_user
-    retval = state.mms.get_metadata_from_id_and_metatype(meta_id, meta_type, user)
+    retval = state.mms.get_metadata_from_id_and_metatype(meta_id, meta_type, get_authenticated_user())
     return response_as_json(retval)
 
 
@@ -305,18 +308,21 @@ def get_meta_list_from_id_and_metatype(meta_id, meta_type):
 @requires_auth
 @catches_model_exception
 def get_metadata_from_metaid(meta_id):
-    user = request.authenticated_user
-    return_value = state.mms.get_metadata_from_id(meta_id, user)
+    return_value = state.mms.get_metadata_from_id(
+        meta_id,
+        get_authenticated_user())
     return response_as_json(return_value)
 
+#XXX These two methods match the same pattern, that must be wrong!
 
 @app.route('/media/id/<media_id>', methods=['GET'])
 @requires_auth
 @catches_model_exception
 def get_metadata_from_id(media_id):
     """Get all the metadata for a particular media id."""
-    user = request.authenticated_user
-    return_value = state.mms.get_metadata_from_id(media_id, user)
+    return_value = state.mms.get_metadata_from_id(
+        media_id,
+        get_authenticated_user())
     return response_as_json(return_value)
 
 
@@ -326,9 +332,13 @@ def get_metadata_from_id(media_id):
 def post_new_meta(media_id, meta_type):
     """Post a new bit of metadata for a media item"""
     payload = request.json
-    user = request.authenticated_user
-    return_value = state.mms.store_new_meta_from_id_and_type(media_id, meta_type, payload, user)
+    return_value = state.mms.store_new_meta_from_id_and_type(
+        media_id,
+        meta_type,
+        payload,
+        get_authenticated_user())
     return response_as_json(return_value)
+
 
 
 @app.route('/media/metatype/<meta_type>', methods=['POST'])
@@ -337,8 +347,10 @@ def post_new_meta(media_id, meta_type):
 def post_new_meta_with_metatype_only(meta_type):
     """Post a new bit of metadata for a media item"""
     payload = request.json
-    user = request.authenticated_user
-    return_value = state.mms.store_new_meta_from_type(meta_type, payload, user)
+    return_value = state.mms.store_new_meta_from_type(
+        meta_type,
+        payload,
+        get_authenticated_user())
     return response_as_json(return_value, status=201)
 
 
@@ -348,8 +360,10 @@ def post_new_meta_with_metatype_only(meta_type):
 def post_meta(meta_id):
     """Post to a particular metadata instance"""
     payload = request.json
-    user = request.authenticated_user
-    return_value = state.mms.update_meta(meta_id, request.json, user)
+    return_value = state.mms.update_meta(
+        meta_id,
+        payload,
+        get_authenticated_user())
     return response_as_json(return_value)
 
 
@@ -358,8 +372,9 @@ def post_meta(meta_id):
 @catches_model_exception
 def delete_meta(meta_id):
     """Delete a particular metadata instance"""
-    user = request.authenticated_user
-    return_value = state.mms.delete_metaid(meta_id, user)
+    return_value = state.mms.delete_metaid(
+        meta_id,
+        get_authenticated_user())
     return response_as_json(return_value)
 
 
