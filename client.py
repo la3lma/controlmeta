@@ -137,7 +137,7 @@ class ControlMetaClient:
 
     @property
     def all_tasks(self):
-        url = "%stask" % (self.base_url)
+        url = "%stask" % self.base_url
         task_list = self.get(url, 200, "Unable to get task list")
         return map(new_task_result, task_list)
 
@@ -148,10 +148,10 @@ class ControlMetaClient:
         return new_task_result(task)
 
 
-    def pick_task(self, type, agent_id):
+    def pick_task(self, task_type, agent_id):
         parameters = {'agentId': agent_id}
-        url = "%stask/waiting/type/%s/pick" % (self.base_url, type)
-        error_message = "Unable to pick task of type %s for agent %s" % (type, agent_id)
+        url = "%stask/waiting/type/%s/pick" % (self.base_url, task_type)
+        error_message = "Unable to pick task of type %s for agent %s" % (task_type, agent_id)
         task = self.post(url, parameters, 200, error_message, null_allowed=False, null_json_allowed=False)
         print "task = ", task
         return new_task_result(task)
@@ -212,7 +212,6 @@ class ControlMetaClient:
     def exists_media(self, media_id):
         url = "%smedia/id/%s/exists" % (self.base_url, str(media_id))
         result = requests.get(url, auth=self.auth)
-        content_type = result.headers['Content-Type']
         return result.status_code == 200
 
     @staticmethod
@@ -220,8 +219,8 @@ class ControlMetaClient:
         filename = tempfile.NamedTemporaryFile()
         return filename.name
 
-    def get_media_to_tempfile(self, id):
-        (content, content_type) = self.get_media(id)
+    def get_media_to_tempfile(self, media_id):
+        (content, content_type) = self.get_media(media_id)
         tempfile_name = self.get_new_tempfile_name()
         temporary_file_name = open(tempfile_name, "w")
         temporary_file_name.write(content)
@@ -230,13 +229,13 @@ class ControlMetaClient:
 
     # Upload unidentified metadata, get a data ID back
     # XXX Rewrite using the post method.
-    def upload_media(self, type, data):
+    def upload_media(self, media_type, data):
         url = "%smedia/" % self.base_url
         raw_response = requests.post(
             url,
             auth=self.auth,
             data=data,
-            headers={'content-type': type})
+            headers={'content-type': media_type})
         if (raw_response.status_code // 100) != 2:
             msg = "Could not upload media."
             raise ClientException(raw_response.status_code, msg)
