@@ -372,7 +372,7 @@ def post_meta(meta_id):
 @catches_model_exception
 def delete_meta(meta_id):
     """Delete a particular metadata instance"""
-    return_value = state.mms.delete_metaid(
+    return_value = state.mms.delete_meta_from_id(
         meta_id,
         get_authenticated_user())
     return response_as_json(return_value)
