@@ -14,7 +14,7 @@ import os
 
 def rds_connect_string(dbcfg):
     db_uri  = dbcfg['ENGINE'] + "://"
-    db_uri += dbcfg['USER'] + ":" +  dbcfg['PASSWORD']
+    db_uri += dbcfg['USER'] + ":" + dbcfg['PASSWORD']
     db_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
     db_uri += '/' + dbcfg['NAME']
     return db_uri
@@ -59,7 +59,7 @@ else:
 print ("db_uri =  %r" % db_uri)
 
 # At this point we should have a non-empty db_uri, or else we're screwed.
-if (db_uri == ""):
+if db_uri == "":
     raise RuntimeError("Could not determine database connect string.")
 
 # Change to True to print all SQL statements going into and coming out of the database.
