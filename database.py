@@ -13,7 +13,7 @@ import os
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Python.rds.html
 
 def rds_connect_string(dbcfg):
-    db_uri  = dbcfg['ENGINE'] + "://"
+    db_uri = dbcfg['ENGINE'] + "://"
     db_uri += dbcfg['USER'] + ":" + dbcfg['PASSWORD']
     db_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
     db_uri += '/' + dbcfg['NAME']
@@ -30,8 +30,8 @@ def get_database_params_from_EBS_envir_params(environ):
                 'PASSWORD': environ['RDS_PASSWORD'],
                 'HOST': environ['RDS_HOSTNAME'],
                 'PORT': environ['RDS_PORT'],
-                }
             }
+        }
         return DATABASES
     else:
         return {}
@@ -39,12 +39,12 @@ def get_database_params_from_EBS_envir_params(environ):
 
 # Then we do our thing to pick up connect params from 
 # various places
-DATABASES=get_database_params_from_EBS_envir_params(os.environ)
+DATABASES = get_database_params_from_EBS_envir_params(os.environ)
 
-db_uri=""
+db_uri = ""
 if DATABASES:
-    selected_db='default'
-    dbcfg=DATABASES[selected_db]
+    selected_db = 'default'
+    dbcfg = DATABASES[selected_db]
     # XXX Monkeypatch due to brain damage in EBS config.
     dbcfg['PASSWORD'] = 'foobarzz'
     dbcfg['NAME'] = 'ctlmeta'
@@ -63,7 +63,7 @@ if db_uri == "":
     raise RuntimeError("Could not determine database connect string.")
 
 # Change to True to print all SQL statements going into and coming out of the database.
-echo=False
+echo = False
 engine = create_engine(db_uri, echo=echo)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
@@ -71,8 +71,10 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+
 def init_db():
     Base.metadata.create_all(bind=engine)
+
 
 def commit_db():
     try:
