@@ -19,8 +19,7 @@ def rds_connect_string(dbcfg):
     db_uri += '/' + dbcfg['NAME']
     return db_uri
 
-
-def get_database_params_from_EBS_envir_params(environ):
+def get_database_params(environ):
     if 'RDS_HOSTNAME' in environ:
         DATABASES = {
             'default': {
@@ -39,7 +38,7 @@ def get_database_params_from_EBS_envir_params(environ):
 
 # Then we do our thing to pick up connect params from 
 # various places
-DATABASES = get_database_params_from_EBS_envir_params(os.environ)
+DATABASES = get_database_params(os.environ)
 
 db_uri = ""
 if DATABASES:

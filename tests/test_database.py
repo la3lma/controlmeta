@@ -10,7 +10,7 @@
 """
 import os
 import unittest
-from database import rds_connect_string, get_database_params_from_EBS_envir_params
+from database import rds_connect_string, get_database_params
 
 class DatabaseTestCase(unittest.TestCase):
 
@@ -52,7 +52,7 @@ class DatabaseTestCase(unittest.TestCase):
         environ['RDS_HOSTNAME'] = self.db_hostname
         environ['RDS_PORT'] = self.db_port
         
-        dbparams = get_database_params_from_EBS_envir_params(environ)
+        dbparams = get_database_params(environ)
         self.assertEqual(self.cfg, dbparams)
 
 
