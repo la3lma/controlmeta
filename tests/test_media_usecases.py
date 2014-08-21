@@ -80,12 +80,9 @@ class MediaUsecases(Control_meta_test_case):
         # see what we can do roundtripping for.
 
         from ctlm.views import state
-        print "prior to deleting content item id = 1 the user population is: %r" % state.us.find_all_users()
         # Then we nuke everything
         rv = self.app.delete('/media/id/1', headers=self.auth_headers)
         self.assertEqual(rv.status_code, 204)
-
-        print "After deleting content item id = 1 the user population is: %r" % state.us.find_all_users()
 
         # Finally we check if it's gone
         rv = self.app.get('/media', headers=self.auth_headers)
