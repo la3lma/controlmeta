@@ -12,17 +12,17 @@ import os
 # We're using the receipe suggested in 
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Python.rds.html
 
-def rds_connect_string(dbcfg):
-    database_uri = dbcfg['ENGINE'] + "://"
-    database_uri += dbcfg['USER'] + ":" + dbcfg['PASSWORD']
-    database_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
-    database_uri += '/' + dbcfg['NAME']
+def rds_connect_string(db_config):
+    database_uri = db_config['ENGINE'] + "://"
+    database_uri += db_config['USER'] + ":" + db_config['PASSWORD']
+    database_uri += '@' + db_config['HOST'] + ':' + db_config['PORT']
+    database_uri += '/' + db_config['NAME']
     return database_uri
 
 
 def get_database_params(environ):
     if 'RDS_HOSTNAME' in environ:
-        DATABASES = {
+        databases = {
             'default': {
                 'ENGINE': 'postgresql',
                 'NAME': environ['RDS_DB_NAME'],
@@ -32,7 +32,7 @@ def get_database_params(environ):
                 'PORT': environ['RDS_PORT'],
             }
         }
-        return DATABASES
+        return databases
     else:
         return {}
 
