@@ -13,11 +13,12 @@ import os
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Python.rds.html
 
 def rds_connect_string(dbcfg):
-    db_uri = dbcfg['ENGINE'] + "://"
-    db_uri += dbcfg['USER'] + ":" + dbcfg['PASSWORD']
-    db_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
-    db_uri += '/' + dbcfg['NAME']
-    return db_uri
+    database_uri = dbcfg['ENGINE'] + "://"
+    database_uri += dbcfg['USER'] + ":" + dbcfg['PASSWORD']
+    database_uri += '@' + dbcfg['HOST'] + ':' + dbcfg['PORT']
+    database_uri += '/' + dbcfg['NAME']
+    return database_uri
+
 
 def get_database_params(environ):
     if 'RDS_HOSTNAME' in environ:
@@ -43,12 +44,12 @@ DATABASES = get_database_params(os.environ)
 db_uri = ""
 if DATABASES:
     selected_db = 'default'
-    dbcfg = DATABASES[selected_db]
+    database_config = DATABASES[selected_db]
     # XXX Monkeypatch due to brain damage in EBS config.
-    dbcfg['PASSWORD'] = 'foobarzz'
-    dbcfg['NAME'] = 'ctlmeta'
+    database_config['PASSWORD'] = 'foobarzz'
+    database_config['NAME'] = 'ctlmeta'
 
-    db_uri = rds_connect_string(dbcfg)
+    db_uri = rds_connect_string(database_config)
 else:
     try:
         db_uri = os.environ["SQLALCHEMY_DATABASE_URI"]
