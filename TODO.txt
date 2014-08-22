@@ -1,3 +1,8 @@
+o Consider the docker option
+  - Make a dockerfile that will make this thing run
+  - Figure out how to configure connections to the RDS instance
+  - Figure out how to run the docker thingy on the beanstalk
+
 o Prepare to relaunch in EBS
   - Make bootstrap user inactive in EBS deployment.
   - Refactor database schema somewhat
