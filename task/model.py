@@ -139,7 +139,6 @@ class RDBQueueStorage():
     @staticmethod
     def pick_next_waiting_task_of_type(task_type, runner):
 
-
         # Find first task of the appropriate type that is in state
         # WAITING.
         task_to_run = db_session.query(Task) \
@@ -157,7 +156,8 @@ class RDBQueueStorage():
         updated_task = task_to_run.change_status_to_run(serialized_runner)
 
         if not updated_task:
-            raise ModelException("Unable to run runner %r, return value indicates error: %r" % (runner, updated_task), http_returnvalue=500)
+            raise ModelException("Unable to run runner %r, return value indicates error: %r" % (runner, updated_task),
+                                 http_returnvalue=500)
         else:
             return task_to_run.as_map()
 
