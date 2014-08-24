@@ -1,4 +1,8 @@
 import unittest
+import os
+
+# XXX This is monkeypatching !!!!
+os.environ['SQLALCHEMY_DATABASE_URI'] = "sqlite:///:memory:"
 
 from test_empty_crud import SimpleCrudCases
 from test_flask_task_manipulations import FullTaskLifecycleTest

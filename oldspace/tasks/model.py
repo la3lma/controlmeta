@@ -210,7 +210,7 @@ class InMemoryTaskQueueStorage(TaskQueueStorage):
             return errors
         else:
             task=self.tasks[taskid]
-            return task.done();
+            return task.change_status_to_done();
 
     def create_task(self, tasktype, params):
         taskid = str(self.next_taskid)

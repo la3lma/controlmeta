@@ -65,10 +65,10 @@ class Task(Base):
             self.status = destination
         return self.as_map()
 
-    def done(self):
+    def change_status_to_done(self):
         return self.state_transition(RUNNING, DONE)
 
-    def run(self, runner):
+    def change_status_to_run(self, runner):
         return_value = self.state_transition(WAITING, RUNNING)
         self.runner = runner
         return return_value
@@ -139,21 +139,27 @@ class RDBQueueStorage():
     @staticmethod
     def pick_next_waiting_task_of_type(task_type, runner):
 
-        result = db_session.query(Task) \
+
+        # Find first task of the appropriate type that is in state
+        # WAITING.
+        task_to_run = db_session.query(Task) \
             .filter(Task.status == WAITING,
                     Task.task_type == task_type) \
             .first()
 
         # Handle missing object
-        if not result:
+        if not task_to_run:
             return None
 
+        # Transform the runner into a json object describing
+        # it.
         serialized_runner = json.dumps(runner)
-        update_result = result.run(serialized_runner)
+        updated_task = task_to_run.change_status_to_run(serialized_runner)
 
-        # XXX Should throw an exception if the
-        # update_result isn't empty.
-        return result.as_map()
+        if not updated_task:
+            raise ModelException("Unable to run runner %r, return value indicates error: %r" % (runner, updated_task), http_returnvalue=500)
+        else:
+            return task_to_run.as_map()
 
     @staticmethod
     def get_task(task_id):
@@ -183,11 +189,11 @@ class RDBQueueStorage():
     def declare_as_running(self, task_id, runner):
         return self.do_if_task_exists_error_if_not(
             task_id,
-            lambda task: task.run(runner))
+            lambda task: task.change_status_to_run(runner))
 
     @staticmethod
     def do_done(task):
-        return task.done()
+        return task.change_status_to_done()
 
     def declare_as_done(self, task_id, terminating_agent):
         return self.do_if_task_exists_error_if_not(task_id, lambda task: self.do_done(task))
