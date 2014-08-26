@@ -334,7 +334,7 @@ def get_metadata_from_metaid(meta_id):
         get_authenticated_user())
     return response_as_json(return_value)
 
-#XXX These two methods match the same pattern, that must be wrong!
+#XXX These two methods looks far to similar for comfort!
 
 @app.route('/media/id/<media_id>', methods=['GET'])
 @requires_auth
@@ -554,7 +554,7 @@ def create_user(name, email):
 def update_user(name, email):
     print("update user was hit")
     user_description = get_request_json_payload()
-    return_value = state.us.create_user(user_description, auth.username)
+    return_value = state.us.update_userdata(user_description, auth.username)
     return expect_non_empty_map_response_as_json(return_value)
 
 
@@ -582,5 +582,5 @@ def user_forgot_password(email):
 @app.route('/users/id/<user_id>/reset_code/<reset_code>/password_reset', methods=['POST'])
 @catches_model_exception
 def reset_password(user_id, reset_code):
-    return_value = state.us.forgot_password(user_id, reset_code)
+    return_value = state.us.reset_password(user_id, reset_code)
     return expect_non_empty_map_response_as_json(return_value)
