@@ -96,6 +96,28 @@ def response_as_json(return_value, status=200):
     #   response.status_code = status
     return response
 
+# XXX TODO: Add further validation steps so that the result is only delivered
+#     only after it has been completely validated!
+def get_request_json_payload():
+    """
+
+    :rtype : object
+    """
+    payload = request.json
+    if not payload:
+        data = request.stream.read()
+        try:
+            decoded = json.loads(data)
+        except Exception as e:
+            message = e.message
+            raise ModelException("User data was not legal _JSON_ syntax: '%s', error: %r " % (data, e), 400)
+        if decoded:
+            return decoded
+        else:
+            raise ModelException("User data was not legal JSON syntax: '%s' " % data, 400)
+    return payload
+
+
 
 def expect_non_empty_map_response_as_json(return_value, error_code=404, status=200):
     """
@@ -193,7 +215,6 @@ def catches_model_exception(f):
                 mimetype="application/json")
 
     return decorated
-
 
 ###
 ###  Static pages
@@ -331,7 +352,7 @@ def get_metadata_from_id(media_id):
 @catches_model_exception
 def post_new_meta(media_id, meta_type):
     """Post a new bit of metadata for a media item"""
-    payload = request.json
+    payload = get_request_json_payload()
     return_value = state.mms.store_new_meta_from_id_and_type(
         media_id,
         meta_type,
@@ -346,7 +367,7 @@ def post_new_meta(media_id, meta_type):
 @catches_model_exception
 def post_new_meta_with_metatype_only(meta_type):
     """Post a new bit of metadata for a media item"""
-    payload = request.json
+    payload =  get_request_json_payload()
     return_value = state.mms.store_new_meta_from_type(
         meta_type,
         payload,
@@ -359,7 +380,7 @@ def post_new_meta_with_metatype_only(meta_type):
 @catches_model_exception
 def post_meta(meta_id):
     """Post to a particular metadata instance"""
-    payload = request.json
+    payload = get_request_json_payload()
     return_value = state.mms.update_meta(
         meta_id,
         payload,
@@ -448,11 +469,7 @@ def list_waiting_task_of_type(task_type):
 def pick_next_waiting_task(task_type):
     # XXX This will fail with a 500 error if the JSON is syntactically bogus
     #     We should test for that and fail gracefully instead
-    agent_description = request.json
-    if not agent_description:
-        data = request.stream.read()
-        raise ModelException("Agent description was not legal JSON syntax: '%s' " % data, 400)
-
+    agent_description = get_request_json_payload()
     task = state.tqs.pick_next_waiting_task_of_type(task_type, agent_description)
     return response_as_json(task)
 
@@ -470,10 +487,7 @@ def get_task_from_id(task_id):
 @catches_model_exception
 def declare_task_as_done(task_id):
     tqs = state.tqs
-    params = request.json
-    if not params:
-        raise ModelException("No params specified when marking task as done", 400)
-
+    params = get_request_json_payload()
     if not 'agentId' in params:
         raise ModelException("No agent specified when marking task as done", 400)
 
@@ -488,10 +502,7 @@ def declare_task_as_done(task_id):
 @requires_auth
 @catches_model_exception
 def create_task(task_type):
-    params = request.json
-    if not params:
-        params = request.stream.read()
-        raise ModelException("Agent description was not legal JSON syntax: '%s' " % request.data, 400)
+    params = get_request_json_payload()
     return_value = state.tqs.create_task(task_type, params)
     return response_as_json(return_value, status=201)
 
@@ -517,6 +528,7 @@ def get_users():
 
 
 #  XXXX Very bogus, only for use during debugging, should be disabled in production!
+#       and should also be "/users/reset"
 # @requires_auth
 @app.route('/reset', methods=['GET'])
 @catches_model_exception
@@ -526,3 +538,49 @@ def reset_users():
     return get_users()
 
 # XXX More user management needed, all of it is missing :-)
+
+@app.route('/users/create/name/<name>/email/<email>', methods=['GET'])
+@catches_model_exception
+def create_user(name, email):
+    print("create user was hit")
+    return_value = state.us.create_user(name, email)
+    return expect_non_empty_map_response_as_json(return_value)
+
+
+# XXX All of the stuff below is unimplemented and also untested.
+
+@app.route('/users/id/<id>/update_userdata', methods=['POST'])
+@catches_model_exception
+def update_user(name, email):
+    print("update user was hit")
+    user_description = get_request_json_payload()
+    return_value = state.us.create_user(user_description, auth.username)
+    return expect_non_empty_map_response_as_json(return_value)
+
+
+@app.route('/users/id/<user_id>/update_password', methods=['POST'])
+@catches_model_exception
+def update_password(user_id):
+    password_update = get_request_json_payload()
+    return_value = state.us.update_password(password_update, auth.username)
+    return expect_non_empty_map_response_as_json(return_value)
+
+
+@app.route('/users/id/<user_id>/update_api_key', methods=['POST'])
+@catches_model_exception
+def update_api_key(user_id):
+    return_value = state.us.update_api_key(user_id, auth.username)
+    return expect_non_empty_map_response_as_json(return_value)
+
+@app.route('/users/email/<email>/forgot_password', methods=['POST'])
+@catches_model_exception
+def user_forgot_password(email):
+    return_value = state.us.forgot_password(email)
+    return expect_non_empty_map_response_as_json(return_value)
+
+
+@app.route('/users/id/<user_id>/reset_code/<reset_code>/password_reset', methods=['POST'])
+@catches_model_exception
+def reset_password(user_id, reset_code):
+    return_value = state.us.forgot_password(user_id, reset_code)
+    return expect_non_empty_map_response_as_json(return_value)
