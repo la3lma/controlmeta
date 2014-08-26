@@ -89,7 +89,7 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.post(
             url,
             headers=self.plain_headers,
-            data={"we love": "poker"})
+            data=json.dumps({"we love": "poker"}))
         self.assertEqual(rv.status_code, 200)
 
 
@@ -97,7 +97,7 @@ class SimpleCrudCases(Control_meta_test_case):
         rv = self.app.post(
             '/media/metatype/faces',
             headers=self.plain_headers,
-            data={"we love": "poker"})
+            data=json.dumps({"we love": "poker"}))
         self.assertEqual(rv.status_code, 201)
 
 
