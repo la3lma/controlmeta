@@ -17,7 +17,7 @@ EXPOSE 5000
 # Download and install Flask framework:
 RUN  pip install flask
 WORKDIR /controlmeta
-ADD /controlmeta/requirements.txt /controlmeta/requirements.txt
-RUN  pip install -r requirements.txt
+COPY  controlmeta  /controlmeta
+RUN  pip install -r /controlmeta/requirements.txt
 
 CMD python app.py
