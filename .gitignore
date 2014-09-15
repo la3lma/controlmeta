@@ -17,3 +17,4 @@ mkeep/src/main/resources/git.properties
 .idea/*
 docker/controlmeta/*
 testdb.db
+tmp
