@@ -94,7 +94,13 @@ for test in $TESTS ; do
    (cd "$BASEDIR" && $PYTHON "$CREATE_DATABASE_SCRIPT")
 
    # Reset the user database (so that we can log in)
-   curl "$RESET_URL" > /dev/null 2>&1
+   #curl "$RESET_URL" > /dev/null 2>&1
+   curl "$RESET_URL" > tmp/user_reset.log 2>&1
+   if [ -n $(grep "Failed to connect to localhost port 5000" tmp/user_reset_log) ]  ; then 
+       echo "Could not reset user data, connection refused, bailing out."
+       exit 1
+   fi
+
 
    # On OSX, open the users URL just to see if it's ok.  Very
    # useful for debugging, so I'll keep it here for a while
