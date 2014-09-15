@@ -65,8 +65,6 @@ RESET_URL="${BASE_URL}reset"
 # Very useful URL to reset the user database
 USERS_URL="${BASE_URL}users"
 
-
-
 TESTS="test-availability-of-user.py test-upload-media.py test-upload-task.py test-image-processing-roundtrip.py"
 
 SUCCESS_OR_FAILURE="succeeded"
@@ -79,7 +77,6 @@ if [ ! -f "$CREATE_DATABASE_SCRIPT" ] ; then
    echo "Could not find database creation script $CREATE_DATABASE_SCRIPT"
    exit 1
 fi
-
 
 
 for test in $TESTS ; do 
@@ -99,8 +96,8 @@ for test in $TESTS ; do
    # Reset the user database (so that we can log in)
    curl "$RESET_URL" > /dev/null 2>&1
 
-   # On osx, open the users URL just to see if it's ok.  Very
-   # useful for debuggingg, so I'll keep it here for a while
+   # On OSX, open the users URL just to see if it's ok.  Very
+   # useful for debugging, so I'll keep it here for a while
    # open "$USERS_URL"
 
    echo -n "Running test $test, stdout/err to files in $TMPDIR ..."
@@ -115,15 +112,12 @@ for test in $TESTS ; do
        SUCCESS_OR_FAILURE="failed"
    fi
 
-
    if [ "$SUCCESS_OR_FAILURE" = "failed" ] ; then
        break
    else
        echo "  Success."
    fi
-   
 done
-
 
 echo "Acceptance tests run against the server at $BASE_URL ${SUCCESS_OR_FAILURE}."
 
