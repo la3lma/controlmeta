@@ -1,0 +1,80 @@
+Image: tests/images/lena1.jpeg
+  Format: JPEG (Joint Photographic Experts Group JFIF format)
+  Mime type: image/jpeg
+  Class: DirectClass
+  Geometry: 300x168+0+0
+  Units: Undefined
+  Type: TrueColor
+  Endianess: Undefined
+  Colorspace: sRGB
+  Depth: 8-bit
+  Channel depth:
+    red: 8-bit
+    green: 8-bit
+    blue: 8-bit
+  Channel statistics:
+    Red:
+      min: 3 (0.0117647)
+      max: 255 (1)
+      mean: 136.073 (0.53362)
+      standard deviation: 51.494 (0.201937)
+      kurtosis: -0.782758
+      skewness: -0.169742
+    Green:
+      min: 0 (0)
+      max: 232 (0.909804)
+      mean: 82.3407 (0.322905)
+      standard deviation: 37.9124 (0.148676)
+      kurtosis: 0.140211
+      skewness: 0.553692
+    Blue:
+      min: 0 (0)
+      max: 220 (0.862745)
+      mean: 68.011 (0.26671)
+      standard deviation: 31.4847 (0.123469)
+      kurtosis: 1.43816
+      skewness: 1.0309
+  Image statistics:
+    Overall:
+      min: 0 (0)
+      max: 255 (1)
+      mean: 95.4749 (0.374411)
+      standard deviation: 41.1512 (0.161377)
+      kurtosis: 3.16837
+      skewness: 1.28073
+  Rendering intent: Perceptual
+  Gamma: 0.454545
+  Chromaticity:
+    red primary: (0.64,0.33)
+    green primary: (0.3,0.6)
+    blue primary: (0.15,0.06)
+    white point: (0.3127,0.329)
+  Background color: white
+  Border color: srgb(223,223,223)
+  Matte color: grey74
+  Transparent color: black
+  Interlace: None
+  Intensity: Undefined
+  Compose: Over
+  Page geometry: 300x168+0+0
+  Dispose: Undefined
+  Iterations: 0
+  Compression: JPEG
+  Quality: 74
+  Orientation: Undefined
+  Properties:
+    date:create: 2014-05-27T22:32:43+02:00
+    date:modify: 2014-05-27T22:32:43+02:00
+    jpeg:colorspace: 2
+    jpeg:sampling-factor: 2x2,1x1,1x1
+    signature: 2596eb6ff77d0f1906f1923d0b7c98a352227fff88eab4cbb523dc26622d6e7f
+  Artifacts:
+    filename: tests/images/lena1.jpeg
+    verbose: true
+  Tainted: False
+  Filesize: 7.99KB
+  Number pixels: 50.4K
+  Pixels per second: 5.04MB
+  User time: 0.000u
+  Elapsed time: 0:01.009
+  Version: ImageMagick 6.8.8-9 Q16 x86_64 2014-03-23 http://www.imagemagick.org
