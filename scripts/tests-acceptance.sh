@@ -21,7 +21,7 @@ export PASSWORD="VeRySeCReTpAsSw0Rd"
 START_SERVER=""
 BASE_URL="$1"
 if [ -z "$BASE_URL" ] ; then
-    BASE_URL="http://localhost:5000/"
+    BASE_URL="http://127.0.0.1:5000/"
     START_SERVER="yes"
 fi
 
@@ -65,7 +65,7 @@ fi
 
 
 # Very useful URL to reset the user database
-RESET_URL="${BASE_URL}reset"
+RESET_URL="${BASE_URL}users/reset"
 
 # Very useful URL to reset the user database
 USERS_URL="${BASE_URL}users"
@@ -84,6 +84,7 @@ if [ ! -f "$CREATE_DATABASE_SCRIPT" ] ; then
 fi
 
 
+echo "Before starting tests"
 for test in $TESTS ; do 
    TESTFILE="tests/$test"
    STDOUT="${TMPDIR}/${test}.out"
@@ -99,13 +100,13 @@ for test in $TESTS ; do
    (cd "$BASEDIR" && $PYTHON "$CREATE_DATABASE_SCRIPT")
 
    # Reset the user database (so that we can log in)
-   #curl "$RESET_URL" > /dev/null 2>&1
+   echo "Resetting using reset URL=$RESET_URL"
    curl "$RESET_URL" > tmp/user_reset.log 2>&1
-   if [ -n $(grep "Failed to connect to localhost port 5000" tmp/user_reset_log) ]  ; then
+
+   if [ -n "$(grep "Failed to connect" tmp/user_reset.log)" ]  ; then
        echo "Could not reset user data, connection refused, bailing out."
        break
    fi
-
 
    # On OSX, open the users URL just to see if it's ok.  Very
    # useful for debugging, so I'll keep it here for a while

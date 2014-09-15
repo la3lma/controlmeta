@@ -530,7 +530,7 @@ def get_users():
 #  XXXX Very bogus, only for use during debugging, should be disabled in production!
 #       and should also be "/users/reset"
 # @requires_auth
-@app.route('/reset', methods=['GET'])
+@app.route('/users/reset', methods=['GET'])
 @catches_model_exception
 def reset_users():
     print("server:reset_users was hit")
