@@ -96,7 +96,7 @@ for test in $TESTS ; do
    # Reset the user database (so that we can log in)
    #curl "$RESET_URL" > /dev/null 2>&1
    curl "$RESET_URL" > tmp/user_reset.log 2>&1
-   if [ -n $(grep "Failed to connect to localhost port 5000" tmp/user_reset_log) ]  ; then 
+   if [ -n $(grep "Failed to connect to localhost port 5000" tmp/user_reset_log) ]  ; then
        echo "Could not reset user data, connection refused, bailing out."
        exit 1
    fi
