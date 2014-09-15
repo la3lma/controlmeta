@@ -103,7 +103,7 @@ for test in $TESTS ; do
    curl "$RESET_URL" > tmp/user_reset.log 2>&1
    if [ -n $(grep "Failed to connect to localhost port 5000" tmp/user_reset_log) ]  ; then
        echo "Could not reset user data, connection refused, bailing out."
-       exit 1
+       break
    fi
 
 
