@@ -1,6 +1,6 @@
-FROM ubuntu:14.04
+		FROM ubuntu:14.04
 
-MAINTAINER rmz "rmz@comoyo.com"
+MAINTAINER rmz "	rmz@comoyo.com"
 
 # Update and install misc. toosl we need
 RUN apt-get update -y -qq
@@ -21,3 +21,4 @@ COPY  controlmeta  /controlmeta
 RUN  pip install -r /controlmeta/requirements.txt
 
 CMD python app.py
+CMD cat /.pip/pip.log
