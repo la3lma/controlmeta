@@ -16,3 +16,4 @@ mkeep/src/main/resources/git.properties
 *.pyc
 .idea/*
 docker/controlmeta/*
+testdb.db
