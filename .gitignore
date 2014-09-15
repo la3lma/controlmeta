@@ -18,4 +18,4 @@ mkeep/src/main/resources/git.properties
 docker/controlmeta/*
 testdb.db
 tmp
- scripts/secrets.sh
+scripts/secrets.sh
