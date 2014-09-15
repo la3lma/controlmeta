@@ -54,6 +54,11 @@ if [ ! -z "$START_SERVER" ] ; then
     
     sleep 1
 
+    if [ -n "$(grep Traceback $SERVER_STDERR)" ] ; then
+	echo "Failed to start server, see $SERVER_STDERR for details"
+	exit 1
+    fi
+
     echo
     echo "Server running, starting tests."
 fi
