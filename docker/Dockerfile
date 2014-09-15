@@ -21,4 +21,5 @@ COPY  controlmeta  /controlmeta
 RUN  pip install -r /controlmeta/requirements.txt
 
 CMD python app.py
-CMD cat /.pip/pip.log
+CMD [ -f /.pip/pip.log && cat /.pip/pip.log ]
+
