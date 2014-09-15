@@ -2,7 +2,7 @@
 
 # Test regression with a full stack, using wire-protocols
 
-BASEDIR=$(dirname $0)
+BASEDIR=$(dirname $(dirname $0))
 
 TMPDIR=$BASEDIR/tmp
 
