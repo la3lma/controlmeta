@@ -71,6 +71,17 @@ TESTS="test-availability-of-user.py test-upload-media.py test-upload-task.py tes
 
 SUCCESS_OR_FAILURE="succeeded"
 
+
+BASEDIR=$(dirname $(cd  $(dirname "$0") ; pwd -P))
+CREATE_DATABASE_SCRIPT="$BASEDIR/scripts/create_database.py"
+
+if [ ! -f "$CREATE_DATABASE_SCRIPT" ] ; then
+   echo "Could not find database creation script $CREATE_DATABASE_SCRIPT"
+   exit 1
+fi
+
+
+
 for test in $TESTS ; do 
    TESTFILE="tests/$test"
    STDOUT="${TMPDIR}/${test}.out"
@@ -83,7 +94,7 @@ for test in $TESTS ; do
    fi
 
    # Nuke old testdb if present.
-   (cd "$BASEDIR" && $PYTHON create_database.py)
+   (cd "$BASEDIR" && $PYTHON "$CREATE_DATABASE_SCRIPT")
 
    # Reset the user database (so that we can log in)
    curl "$RESET_URL" > /dev/null 2>&1
