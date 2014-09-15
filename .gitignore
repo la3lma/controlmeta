@@ -19,3 +19,4 @@ docker/controlmeta/*
 testdb.db
 tmp
 scripts/secrets.sh
+*#*
