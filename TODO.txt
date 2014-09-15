@@ -1,5 +1,8 @@
+o Immediate
+  - Make the acceptance tests run after the refactoring.
+  - Make acceptance-tests run for dockerized instance.
+
 o Consider the docker option
-  - Make a dockerfile that will make this thing run
   - Figure out how to configure connections to the RDS instance
   - Figure out how to run the docker thingy on the beanstalk
 
