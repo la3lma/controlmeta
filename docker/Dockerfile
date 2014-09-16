@@ -1,6 +1,6 @@
-		FROM ubuntu:14.04
+FROM ubuntu:14.04
 
-MAINTAINER rmz "	rmz@comoyo.com"
+MAINTAINER rmz "rmz@rmz.no"
 
 # Update and install misc. toosl we need
 RUN apt-get update -y -qq
