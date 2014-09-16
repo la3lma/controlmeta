@@ -20,6 +20,6 @@ WORKDIR /controlmeta
 COPY  controlmeta  /controlmeta
 RUN  pip install -r /controlmeta/requirements.txt
 
-CMD python app.py
+RUN  python app.py
 CMD [ -f /.pip/pip.log && cat /.pip/pip.log ]
 
